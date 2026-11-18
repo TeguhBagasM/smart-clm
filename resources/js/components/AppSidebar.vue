@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { KeyRound, LayoutGrid, Users } from '@lucide/vue';
+import { FileText, KeyRound, LayoutGrid, Users } from '@lucide/vue';
 import { computed } from 'vue';
+import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import RoleController from '@/actions/App/Http/Controllers/Admin/RoleController';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import AppLogo from '@/components/AppLogo.vue';
@@ -27,6 +28,14 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+];
+
+const documentNavItems: NavItem[] = [
+    {
+        title: 'Dokumen Terkontrol',
+        href: DocumentController.index(),
+        icon: FileText,
     },
 ];
 
@@ -68,6 +77,7 @@ const visibleConfigurationNavItems = computed(() =>
 
         <SidebarContent>
             <NavMain :items="mainNavItems" label="Menu" />
+            <NavMain :items="documentNavItems" label="Dokumen" />
             <NavMain
                 v-if="visibleConfigurationNavItems.length"
                 :items="visibleConfigurationNavItems"

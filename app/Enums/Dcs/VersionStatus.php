@@ -15,6 +15,20 @@ enum VersionStatus: string
     case Superseded = 'superseded';
 
     /**
+     * The name shown to people (Indonesian, as in the interface).
+     */
+    public function label(): string
+    {
+        return match ($this) {
+            self::Draft => 'Draft',
+            self::UnderReview => 'Menunggu tanda tangan',
+            self::Approved => 'Disetujui',
+            self::Effective => 'Berlaku',
+            self::Superseded => 'Tidak berlaku',
+        };
+    }
+
+    /**
      * @return list<self>
      */
     public function allowedNext(): array

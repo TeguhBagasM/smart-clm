@@ -6,6 +6,8 @@ use App\Models\Concerns\HasUuid;
 use App\Models\Tenant;
 use App\Models\User;
 use Database\Factories\Dcs\DocumentFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -81,6 +83,40 @@ class Document extends Model
     public function versions(): HasMany
     {
         return $this->hasMany(DocumentVersion::class)->orderByDesc('major')->orderByDesc('minor');
+    }
+
+    /**
+     * The newest Terbitan and Revisi, whatever its status.
+     *
+     * @return HasOne<DocumentVersion, $this>
+     */
+    public function latestVersion(): HasOne
+    {
+        return $this->hasOne(DocumentVersion::class)->ofMany(['major' => 'max', 'minor' => 'max']);
+    }
+
+    /**
+     * The version in force, if any.
+     *
+     * @return BelongsTo<DocumentVersion, $this>
+     */
+    public function currentVersion(): BelongsTo
+    {
+        return $this->belongsTo(DocumentVersion::class, 'current_version_id');
+    }
+
+    /**
+     * Limit the query to the documents the viewer may see: their own tenant's,
+     * or all of them for a super admin.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, User $viewer): void
+    {
+        if (! $viewer->isSuperAdmin()) {
+            $query->where('tenant_id', $viewer->tenant_id);
+        }
     }
 
     /**
