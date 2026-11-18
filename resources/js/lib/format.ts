@@ -19,3 +19,20 @@ export function versionLabel(version: {
 }): string {
     return `Terbitan ${version.major} Revisi ${version.minor}`;
 }
+
+/** Whole days since a moment, never negative. */
+export function daysSince(value: string | null): number {
+    return value
+        ? Math.max(
+              0,
+              Math.floor((Date.now() - new Date(value).getTime()) / 86_400_000),
+          )
+        : 0;
+}
+
+/** "Hari ini", "1 hari", "5 hari": how long something has waited. */
+export function waitingLabel(value: string | null): string {
+    const days = daysSince(value);
+
+    return days === 0 ? 'Hari ini' : `${days} hari`;
+}

@@ -112,6 +112,8 @@ class SignVersion
             ], reviewRound: $locked->review_round);
 
             if ($column->order < $columns->count()) {
+                $locked->touch();
+
                 return false;
             }
 

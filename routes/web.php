@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserStatusController;
 use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Documents\DocumentTimelineController;
+use App\Http\Controllers\Documents\TaskQueueController;
 use App\Http\Controllers\Documents\VersionCommentController;
 use App\Http\Controllers\Documents\VersionDistributionController;
 use App\Http\Controllers\Documents\VersionFileController;
@@ -19,6 +20,8 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+
+    Route::get('documents/queue', [TaskQueueController::class, 'index'])->name('documents.queue');
 
     Route::prefix('documents/{document:uuid}')->scopeBindings()->group(function () {
         Route::get('/', [DocumentController::class, 'show'])->name('documents.show');

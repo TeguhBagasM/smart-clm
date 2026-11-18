@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { FileText, KeyRound, LayoutGrid, Users } from '@lucide/vue';
+import {
+    ClipboardCheck,
+    FileText,
+    KeyRound,
+    LayoutGrid,
+    Users,
+} from '@lucide/vue';
 import { computed } from 'vue';
+import TaskQueueController from '@/actions/App/Http/Controllers/Documents/TaskQueueController';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import RoleController from '@/actions/App/Http/Controllers/Admin/RoleController';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
@@ -32,6 +39,11 @@ const mainNavItems: NavItem[] = [
 ];
 
 const documentNavItems: NavItem[] = [
+    {
+        title: 'Tugas saya',
+        href: TaskQueueController.index(),
+        icon: ClipboardCheck,
+    },
     {
         title: 'Dokumen Terkontrol',
         href: DocumentController.index(),

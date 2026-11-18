@@ -32,7 +32,12 @@ export function isEmptyFilter(value: FilterValue): boolean {
  * Inertia visit that reloads only the list props, and a filter or sort change
  * goes back to page 1. Search waits for a pause in typing.
  */
-export function useListQuery(list: () => ListMeta, only: string[]) {
+export function useListQuery(
+    list: () => ListMeta,
+    only: string[],
+    /** Params that belong to the page, not the list (such as a tab), kept on every visit. */
+    fixed: () => Record<string, string> = () => ({}),
+) {
     const search: Ref<string> = ref(list().search);
     const loading = ref(false);
     const page = usePage();
@@ -58,6 +63,7 @@ export function useListQuery(list: () => ListMeta, only: string[]) {
         router.get(
             new URL(page.url, 'http://localhost').pathname,
             {
+                ...fixed(),
                 ...(state.search ? { search: state.search } : {}),
                 ...(Object.keys(filter).length ? { filter } : {}),
                 sort: state.sort,

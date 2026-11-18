@@ -13,9 +13,15 @@ const props = defineProps<{
     only: string[];
     searchPlaceholder?: string;
     emptyText?: string;
+    /** Page params kept on every list visit, e.g. the active tab. */
+    params?: Record<string, string>;
 }>();
 
-const query = useListQuery(() => props.list, props.only);
+const query = useListQuery(
+    () => props.list,
+    props.only,
+    () => props.params ?? {},
+);
 provideListQuery(query);
 </script>
 

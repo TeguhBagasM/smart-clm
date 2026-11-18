@@ -41,7 +41,7 @@ class QueueListSpec extends ListSpec
     protected function sorts(): array
     {
         return [
-            Sort::column('waiting', 'Menunggu paling lama', 'dcs_document_versions.updated_at'),
+            Sort::column('waiting', 'Menunggu terlama', 'dcs_document_versions.updated_at'),
             new Sort('number', 'Nomor dokumen', fn (Builder $query, string $direction) => $query->orderBy(
                 Document::query()->select('document_number')->whereColumn('dcs_documents.id', 'dcs_document_versions.document_id'), $direction === 'asc' ? 'asc' : 'desc')),
             new Sort('title', 'Judul', fn (Builder $query, string $direction) => $query->orderBy(

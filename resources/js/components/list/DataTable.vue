@@ -26,7 +26,37 @@ function cell(row: T, key: string): unknown {
 </script>
 
 <template>
-    <div class="rounded-xl border">
+    <ul class="flex flex-col gap-3 md:hidden" aria-label="Daftar">
+        <li
+            v-for="row in rows"
+            :key="rowKey(row)"
+            class="flex flex-col gap-3 rounded-xl border p-4"
+        >
+            <div>
+                <slot :name="`cell-${columns[0].key}`" :row="row">
+                    {{ cell(row, columns[0].key) }}
+                </slot>
+            </div>
+            <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                <template v-for="column in columns.slice(1)" :key="column.key">
+                    <template v-if="column.label">
+                        <dt class="text-muted-foreground">
+                            {{ column.label }}
+                        </dt>
+                        <dd>
+                            <slot :name="`cell-${column.key}`" :row="row">
+                                {{ cell(row, column.key) }}
+                            </slot>
+                        </dd>
+                    </template>
+                    <dd v-else class="col-span-2">
+                        <slot :name="`cell-${column.key}`" :row="row" />
+                    </dd>
+                </template>
+            </dl>
+        </li>
+    </ul>
+    <div class="hidden rounded-xl border md:block">
         <Table>
             <TableHeader>
                 <TableRow class="hover:bg-transparent">

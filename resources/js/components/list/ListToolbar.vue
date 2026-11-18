@@ -15,11 +15,15 @@ defineProps<{ list: ListMeta; searchPlaceholder?: string }>();
             <ListSort :list="list" />
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <FilterDropdown
-                v-for="filter in list.filters.filter((item) => item.primary)"
-                :key="filter.key"
-                :filter="filter"
-            />
+            <div class="hidden flex-wrap items-center gap-2 md:flex">
+                <FilterDropdown
+                    v-for="filter in list.filters.filter(
+                        (item) => item.primary,
+                    )"
+                    :key="filter.key"
+                    :filter="filter"
+                />
+            </div>
             <FilterSheet :list="list" />
         </div>
     </div>

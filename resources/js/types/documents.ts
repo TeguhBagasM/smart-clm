@@ -156,3 +156,33 @@ export type EventRow = {
     to_status: string | null;
     imported: boolean;
 };
+
+/** Shape of App\Http\Resources\Documents\QueueItemResource. */
+export type QueueItem = {
+    id: string;
+    document: {
+        id: string;
+        number: string;
+        title: string;
+        type: string;
+        department: string;
+        owner: string;
+    };
+    major: number;
+    minor: number;
+    status: VersionStatus;
+    status_label: string;
+    waiting_since: string | null;
+    detail: string;
+    urgent: boolean;
+};
+
+export type TaskKindTab = { value: string; label: string; count: number };
+
+export type TaskKindInfo = {
+    value: string;
+    label: string;
+    description: string;
+    empty: string;
+    action: string;
+};

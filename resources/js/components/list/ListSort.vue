@@ -17,12 +17,15 @@ const { setSort, setDirection } = useListContext();
 </script>
 
 <template>
-    <div class="flex items-center gap-1">
+    <div class="flex w-full items-center gap-1 sm:w-auto">
         <Select
             :model-value="list.sort"
             @update:model-value="setSort(String($event))"
         >
-            <SelectTrigger class="w-48" aria-label="Urutkan berdasarkan">
+            <SelectTrigger
+                class="w-full sm:w-52"
+                aria-label="Urutkan berdasarkan"
+            >
                 <SelectValue placeholder="Urutkan" />
             </SelectTrigger>
             <SelectContent>
