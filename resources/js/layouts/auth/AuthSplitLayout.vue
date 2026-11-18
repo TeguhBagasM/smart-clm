@@ -36,6 +36,7 @@ const highlights = [
             </Link>
 
             <div class="max-w-md space-y-8">
+                <span class="block h-1 w-12 rounded-full bg-highlight" />
                 <p class="text-3xl leading-tight font-semibold">
                     Contract Lifecycle Management untuk tim legal dan bisnis.
                 </p>
@@ -51,7 +52,7 @@ const highlights = [
                 </ul>
             </div>
 
-            <p class="text-xs text-primary-foreground/70">
+            <p class="text-xs text-primary-foreground/90">
                 Aplikasi internal. Akun dibuat oleh administrator.
             </p>
         </aside>

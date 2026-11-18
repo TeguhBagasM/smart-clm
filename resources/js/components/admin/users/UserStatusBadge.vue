@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
     <Badge v-if="isActive" variant="secondary" class="gap-1.5">
-        <span class="size-1.5 rounded-full bg-emerald-500" />
+        <span class="size-1.5 rounded-full bg-success" />
         Aktif
     </Badge>
     <Badge v-else variant="outline" class="gap-1.5 text-muted-foreground">

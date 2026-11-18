@@ -26,6 +26,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                 <SidebarMenuButton
                     as-child
                     :is-active="isCurrentOrParentUrl(item.href)"
+                    class="relative data-[active=true]:before:absolute data-[active=true]:before:inset-y-1.5 data-[active=true]:before:left-0 data-[active=true]:before:w-0.5 data-[active=true]:before:rounded-full data-[active=true]:before:bg-highlight"
                     :tooltip="item.title"
                 >
                     <Link :href="item.href">
