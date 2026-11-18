@@ -92,9 +92,9 @@ describe('creating a document', function () {
         $type = $this->tenant->dcsDocumentTypes()->where('code', 'SOP')->first();
         app(SyncDocTypeTemplate::class)->handle($this->tenant, $type, ['lanes' => ['HR', 'Legal'], 'defaultClauseIds' => [$clause->uuid]]);
 
-        ['document' => $document, 'version' => $version] = wzCreate(['languageMode' => 'multi', 'initialMajor' => 3, 'initialMinor' => 2, 'ownerUserId' => (string) $this->legal->id]);
+        ['document' => $document, 'version' => $version] = wzCreate(['languageMode' => 'multi', 'initialMajor' => 3, 'initialMinor' => 2, /* ignored: the system counts */ 'ownerUserId' => (string) $this->legal->id]);
 
-        expect($document->owner_user_id)->toBe($this->legal->id)->and([$version->major, $version->minor])->toBe([3, 2])->and($version->status)->toBe(VersionStatus::Draft);
+        expect($document->owner_user_id)->toBe($this->legal->id)->and([$version->major, $version->minor])->toBe([1, 0])->and($version->status)->toBe(VersionStatus::Draft);
         $draft = $version->load(['content', 'sections', 'clauses'])->content;
         expect($draft->language_mode)->toBe('multi')->and($draft->flow_lanes)->toBe(['HR', 'Legal'])->and($version->sections->count())->toBeGreaterThan(0)->and($version->clauses->pluck('uuid')->all())->toBe([$clause->uuid]);
         expect($version->steps()->count())->toBeGreaterThan(0);

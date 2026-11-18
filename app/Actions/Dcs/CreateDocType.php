@@ -3,6 +3,7 @@
 namespace App\Actions\Dcs;
 
 use App\Actions\Audit\RecordAuditLog;
+use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
 use App\Models\Dcs\DocumentType;
@@ -19,7 +20,7 @@ class CreateDocType
     /**
      * @param  array{
      *     code: string, name: string, description: string|null, layoutStyle: LayoutStyle|null, headerStyle: HeaderStyle|null,
-     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, template: array<string, mixed>
+     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, headerLayout?: array<string, mixed>|null, bodyStyle?: BodyStyle|null, template: array<string, mixed>
      * }  $data
      */
     public function handle(User $actor, Tenant $tenant, array $data): DocumentType
@@ -45,6 +46,8 @@ class CreateDocType
                     'letterhead' => $data['letterhead'] ?? false,
                     'document_level' => $data['documentLevel'] ?? 'Internal',
                     'process_owner' => $data['processOwner'] ?? '',
+                    'body_style' => $data['bodyStyle'] ?? BodyStyle::Standard,
+                    'header_layout' => $data['headerLayout'] ?? null,
                     'default_lanes' => [],
                     'is_active' => true,
                 ])->save();

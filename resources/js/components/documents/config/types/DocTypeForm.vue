@@ -9,7 +9,13 @@ import SectionsEditor from '@/components/documents/config/types/SectionsEditor.v
 import SignatureGroupsEditor from '@/components/documents/config/types/SignatureGroupsEditor.vue';
 import FormActions from '@/components/documents/config/FormActions.vue';
 import StringListEditor from '@/components/documents/config/StringListEditor.vue';
-import type { ChoiceOption, DocTypeForm } from '@/types';
+import HeaderLayoutEditor from '@/components/documents/config/header/HeaderLayoutEditor.vue';
+import type {
+    ChoiceOption,
+    DocTypeForm,
+    HeaderFieldOption,
+    HeaderLayout,
+} from '@/types';
 import type { RouteFormDefinition } from '@/wayfinder';
 
 const props = defineProps<{
@@ -18,6 +24,8 @@ const props = defineProps<{
     type?: DocTypeForm;
     roleOptions: ChoiceOption[];
     clauseOptions: ChoiceOption[];
+    headerFields: HeaderFieldOption[];
+    headerDefault: HeaderLayout;
 }>();
 
 const source = props.type;
@@ -28,6 +36,7 @@ const state = reactive({
         description: source?.description ?? '',
         layoutStyle: source?.layoutStyle ?? 'standard',
         headerStyle: source?.headerStyle ?? 'iso',
+        bodyStyle: source?.bodyStyle ?? 'standard',
         letterhead: source?.letterhead ?? false,
         documentLevel: source?.documentLevel ?? 'Internal',
         processOwner: source?.processOwner ?? '',
@@ -36,6 +45,9 @@ const state = reactive({
     groups: source?.signatureGroups ?? [
         { heading: '', columns: [{ label: 'Disetujui oleh', role: '' }] },
     ],
+    header: JSON.parse(
+        JSON.stringify(source?.headerLayout ?? props.headerDefault),
+    ) as HeaderLayout,
     lanes: source?.defaultLanes ?? [],
     clauses: source?.defaultClauseIds ?? [],
 });
@@ -53,6 +65,7 @@ function payload(): Record<string, never> {
                 roleName: column.roleName || null,
             })),
         })),
+        headerLayout: state.header,
         defaultLanes: state.lanes,
         defaultClauseIds: state.clauses,
     } as never;
@@ -73,6 +86,11 @@ function payload(): Record<string, never> {
                 :code-locked="!!type"
             />
         </Panel>
+        <HeaderLayoutEditor
+            v-model="state.header"
+            :fields="headerFields"
+            :default-layout="headerDefault"
+        />
         <SectionsEditor v-model="state.sections" :errors="errors" />
         <SignatureGroupsEditor
             v-model="state.groups"

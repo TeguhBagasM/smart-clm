@@ -36,6 +36,7 @@ export type DocTypeForm = {
     description: string | null;
     layoutStyle: 'standard' | 'memo' | 'kebijakan';
     headerStyle: 'iso' | 'simple';
+    bodyStyle?: 'standard' | 'formal';
     letterhead: boolean;
     documentLevel: string;
     processOwner: string;
@@ -43,6 +44,7 @@ export type DocTypeForm = {
     signatureGroups: SignatureGroup[];
     defaultLanes: string[];
     defaultClauseIds: string[];
+    headerLayout?: HeaderLayout;
     is_active: boolean;
 };
 
@@ -85,4 +87,29 @@ export type NumberingRow = {
     mask: string;
     custom: boolean;
     example: string;
+};
+
+export type HeaderCell = {
+    span: number;
+    label: string;
+    field: string;
+    bold: boolean;
+    italic: boolean;
+    uppercase: boolean;
+    align: 'left' | 'center' | 'right';
+    fill: 'none' | 'muted' | 'dark';
+};
+
+export type HeaderRow = { height: number; cells: HeaderCell[] };
+
+/** App\Support\Dcs\Header\HeaderLayout. */
+export type HeaderLayout = {
+    logo: { enabled: boolean; rows: number; width: number };
+    rows: HeaderRow[];
+};
+
+export type HeaderFieldOption = {
+    value: string;
+    label: string;
+    sample: string;
 };

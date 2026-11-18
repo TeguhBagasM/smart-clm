@@ -49,7 +49,7 @@ class NodePdfEngine implements PdfEngine
     private function post(string $path, array $payload): Response
     {
         if ($this->baseUrl === null || $this->baseUrl === '' || $this->secret === null || $this->secret === '') {
-            throw new PdfEngineException('The PDF engine is not configured (DCS_PDF_ENGINE_URL and DCS_PDF_ENGINE_SECRET).');
+            throw PdfEngineException::notConfigured();
         }
 
         try {

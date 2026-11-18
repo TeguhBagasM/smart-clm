@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import DocTypeConfigController from '@/actions/App/Http/Controllers/Documents/Config/DocTypeConfigController';
 import DocTypeForm from '@/components/documents/config/types/DocTypeForm.vue';
 import Heading from '@/components/Heading.vue';
-import type { ChoiceOption } from '@/types';
+import type { HeaderFieldOption, HeaderLayout, ChoiceOption } from '@/types';
 
 defineOptions({
     layout: {
@@ -23,6 +23,8 @@ defineOptions({
 defineProps<{
     role_options: ChoiceOption[];
     clause_options: ChoiceOption[];
+    header_fields: HeaderFieldOption[];
+    header_default: HeaderLayout;
 }>();
 </script>
 
@@ -39,6 +41,8 @@ defineProps<{
             submit-label="Simpan jenis dokumen"
             :role-options="role_options"
             :clause-options="clause_options"
+            :header-fields="header_fields"
+            :header-default="header_default"
         />
     </div>
 </template>

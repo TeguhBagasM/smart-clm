@@ -36,6 +36,10 @@ class SubmitVersionForReview
                 throw DcsException::conflict("Versi berstatus {$locked->status->value} tidak bisa diajukan untuk tanda tangan; hanya Draft.");
             }
 
+            if ($locked->currentRendition() === null) {
+                throw DcsException::conflict('Belum ada berkas PDF. Susun atau unggah PDF sebelum mengajukan untuk tanda tangan.');
+            }
+
             // After a reset the current file still carries the old signatures: it must be redrawn or replaced first.
             if ($locked->currentRendition()?->kind === RenditionKind::Signed) {
                 throw DcsException::conflict('Berkas masih membawa tanda tangan lama. Susun ulang atau unggah berkas baru sebelum mengajukan ulang.');

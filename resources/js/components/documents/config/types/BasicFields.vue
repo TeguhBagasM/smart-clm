@@ -18,6 +18,7 @@ export type BasicState = {
     description: string;
     layoutStyle: string;
     headerStyle: string;
+    bodyStyle: string;
     letterhead: boolean;
     documentLevel: string;
     processOwner: string;
@@ -35,6 +36,10 @@ const layouts = [
     { value: 'standard', label: 'Standar (SOP, instruksi kerja)' },
     { value: 'memo', label: 'Memo' },
     { value: 'kebijakan', label: 'Kebijakan' },
+];
+const bodies = [
+    { value: 'standard', label: 'Standar (judul biru)' },
+    { value: 'formal', label: 'Formal SOP (angka romawi, rata kiri-kanan)' },
 ];
 const headers = [
     { value: 'iso', label: 'Kop ISO (kotak metadata formal)' },
@@ -112,6 +117,24 @@ const headers = [
                 <SelectContent>
                     <SelectItem
                         v-for="option in headers"
+                        :key="option.value"
+                        :value="option.value"
+                    >
+                        {{ option.label }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <Label>Gaya isi dokumen</Label>
+            <Select
+                :model-value="model.bodyStyle"
+                @update:model-value="set('bodyStyle', String($event))"
+            >
+                <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                    <SelectItem
+                        v-for="option in bodies"
                         :key="option.value"
                         :value="option.value"
                     >

@@ -2,6 +2,7 @@
 
 namespace App\Models\Dcs;
 
+use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
 use App\Models\Concerns\HasUuid;
@@ -26,10 +27,12 @@ use Illuminate\Support\Carbon;
  * @property string|null $description
  * @property LayoutStyle $layout_style
  * @property HeaderStyle $header_style
+ * @property BodyStyle $body_style
  * @property bool $letterhead
  * @property string $document_level
  * @property string $process_owner
  * @property list<string> $default_lanes
+ * @property array<string, mixed>|null $header_layout
  * @property bool $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -91,8 +94,10 @@ class DocumentType extends Model
         return [
             'layout_style' => LayoutStyle::class,
             'header_style' => HeaderStyle::class,
+            'body_style' => BodyStyle::class,
             'letterhead' => 'boolean',
             'default_lanes' => 'array',
+            'header_layout' => 'array',
             'is_active' => 'boolean',
         ];
     }

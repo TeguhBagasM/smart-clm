@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Dcs;
 
+use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
+use App\Support\Dcs\Header\HeaderLayout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -23,9 +25,11 @@ abstract class DocTypeRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'layoutStyle' => ['nullable', Rule::enum(LayoutStyle::class)],
             'headerStyle' => ['nullable', Rule::enum(HeaderStyle::class)],
+            'bodyStyle' => ['nullable', Rule::enum(BodyStyle::class)],
             'letterhead' => ['nullable', 'boolean'],
             'documentLevel' => ['nullable', 'string', 'max:100'],
             'processOwner' => ['nullable', 'string', 'max:150'],
+            ...HeaderLayout::rules('headerLayout'),
             'defaultSections' => ['nullable', 'array'],
             'defaultSections.*.heading' => ['required', 'string', 'max:200'],
             'defaultSections.*.content' => ['nullable', 'string'],
@@ -51,7 +55,7 @@ abstract class DocTypeRequest extends FormRequest
      *
      * @return array{
      *     description: string|null, layoutStyle: LayoutStyle|null, headerStyle: HeaderStyle|null,
-     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, template: array<string, mixed>
+     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, headerLayout: array<string, mixed>|null, bodyStyle: BodyStyle|null, template: array<string, mixed>
      * }
      */
     protected function sharedData(): array
@@ -63,6 +67,8 @@ abstract class DocTypeRequest extends FormRequest
             'letterhead' => $this->has('letterhead') && $this->input('letterhead') !== null ? $this->boolean('letterhead') : null,
             'documentLevel' => $this->filled('documentLevel') ? $this->string('documentLevel')->toString() : null,
             'processOwner' => $this->filled('processOwner') ? $this->string('processOwner')->toString() : null,
+            'bodyStyle' => $this->enum('bodyStyle', BodyStyle::class),
+            'headerLayout' => is_array($this->input('headerLayout')) ? HeaderLayout::normalize($this->input('headerLayout')) : null,
             'template' => $this->template(),
         ];
     }

@@ -66,6 +66,13 @@ function url(download = false): string {
         >
             <FileX class="size-8" />
             Versi ini belum memiliki berkas PDF.
+            <span class="max-w-sm px-4 text-center text-sm">
+                {{
+                    version.can.edit
+                        ? 'Buka "Lanjutkan menyusun", lalu susun PDF di langkah terakhir.'
+                        : 'Penyusun perlu menyusun atau mengunggah PDF terlebih dahulu.'
+                }}
+            </span>
         </div>
         <p v-if="version.has_file" class="text-xs text-muted-foreground">
             Salinan ini diberi watermark sesuai status dokumen saat dibuka, dan

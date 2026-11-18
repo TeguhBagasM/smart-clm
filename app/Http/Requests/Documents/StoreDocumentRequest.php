@@ -55,4 +55,18 @@ class StoreDocumentRequest extends BaseRequest
     {
         return $this->input('languageMode') === 'multi' ? 'multi' : 'single';
     }
+
+    /**
+     * Terbitan and Revisi are the system's to count: a new document always starts
+     * at 1 and 0, whatever the request says.
+     *
+     * @return array{
+     *     docTypeCode: string, department: string, title: string, ownerUserId: string|null, manualNumber: string|null,
+     *     initialMajor: int|null, initialMinor: int|null, archiveCategory: string|null, archiveSubFolderId: string|null
+     * }
+     */
+    public function documentData(): array
+    {
+        return [...parent::documentData(), 'initialMajor' => null, 'initialMinor' => null];
+    }
 }

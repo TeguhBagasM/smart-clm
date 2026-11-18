@@ -3,6 +3,7 @@
 namespace App\Actions\Dcs;
 
 use App\Actions\Audit\RecordAuditLog;
+use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
 use App\Models\Dcs\DocumentType;
@@ -20,7 +21,7 @@ class UpdateDocType
     /**
      * @param  array{
      *     name: string|null, description: string|null, layoutStyle: LayoutStyle|null, headerStyle: HeaderStyle|null,
-     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, template: array<string, mixed>
+     *     letterhead: bool|null, documentLevel: string|null, processOwner: string|null, headerLayout?: array<string, mixed>|null, bodyStyle?: BodyStyle|null, template: array<string, mixed>
      * }  $data
      */
     public function handle(User $actor, DocumentType $type, array $data): DocumentType
@@ -28,7 +29,7 @@ class UpdateDocType
         return DB::transaction(function () use ($actor, $type, $data): DocumentType {
             $before = $this->snapshot($type);
 
-            $type->forceFill(array_filter([
+            $attributes = array_filter([
                 'name' => $data['name'],
                 'description' => $data['description'],
                 'layout_style' => $data['layoutStyle'],
@@ -36,7 +37,11 @@ class UpdateDocType
                 'letterhead' => $data['letterhead'],
                 'document_level' => $data['documentLevel'],
                 'process_owner' => $data['processOwner'],
-            ], fn (mixed $value): bool => $value !== null))->save();
+                'body_style' => $data['bodyStyle'] ?? null,
+                'header_layout' => $data['headerLayout'] ?? null,
+            ], fn (mixed $value): bool => $value !== null);
+
+            $type->forceFill($attributes)->save();
 
             $this->syncDocTypeTemplate->handle($type->tenant, $type, $data['template']);
 

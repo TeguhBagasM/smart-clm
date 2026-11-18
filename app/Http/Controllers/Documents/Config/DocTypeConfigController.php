@@ -18,6 +18,8 @@ use App\Models\Dcs\Clause;
 use App\Models\Dcs\DocumentType;
 use App\Models\Role;
 use App\Models\Tenant;
+use App\Support\Dcs\Header\HeaderField;
+use App\Support\Dcs\Header\HeaderLayout;
 use App\Support\Listing\DocTypeListSpec;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,7 +68,7 @@ class DocTypeConfigController extends Controller
         $model = $this->find($tenant, $type)->load(['sections', 'steps.role', 'defaultClauses']);
 
         return Inertia::render('documents/config/types/Edit', [
-            'type' => [...DocTypeResource::make($model)->resolve($request), 'is_active' => $model->is_active],
+            'type' => [...DocTypeResource::make($model)->resolve($request), 'bodyStyle' => $model->body_style->value, 'headerLayout' => HeaderLayout::effective($model->header_layout), 'is_active' => $model->is_active],
             ...$this->formOptions($tenant),
         ]);
     }
@@ -107,6 +109,8 @@ class DocTypeConfigController extends Controller
     private function formOptions(Tenant $tenant): array
     {
         return [
+            'header_fields' => HeaderField::catalog(),
+            'header_default' => HeaderLayout::default(),
             'role_options' => Role::query()->where(fn ($query) => $query->whereNull('tenant_id')->orWhere('tenant_id', $tenant->id))->where('is_super_admin', false)
                 ->orderByDesc('level')->get(['key', 'name'])->unique('key')->map(fn (Role $role): array => ['value' => $role->key, 'label' => $role->name])->values()->all(),
             'clause_options' => Clause::query()->where('tenant_id', $tenant->id)->where('is_active', true)->orderBy('title')->get(['uuid', 'title', 'category'])

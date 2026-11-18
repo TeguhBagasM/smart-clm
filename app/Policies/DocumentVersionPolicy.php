@@ -31,7 +31,9 @@ class DocumentVersionPolicy
 
     public function submit(User $actor, DocumentVersion $version): bool
     {
-        return $version->status === VersionStatus::Draft && $version->currentRendition()?->kind !== RenditionKind::Signed;
+        $rendition = $version->currentRendition();
+
+        return $version->status === VersionStatus::Draft && $rendition !== null && $rendition->kind !== RenditionKind::Signed;
     }
 
     public function sign(User $actor, DocumentVersion $version): bool

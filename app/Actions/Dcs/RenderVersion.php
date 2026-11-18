@@ -15,6 +15,8 @@ use App\Models\Dcs\VersionStep;
 use App\Models\User;
 use App\Support\Dcs\ApiDate;
 use App\Support\Dcs\DcsException;
+use App\Support\Dcs\Header\HeaderField;
+use App\Support\Dcs\Header\HeaderLayout;
 use App\Support\Dcs\Pdf\PdfEngine;
 use App\Support\Dcs\Pdf\PdfEngineException;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +51,9 @@ class RenderVersion
         } catch (PdfEngineException $e) {
             report($e);
 
-            throw DcsException::serverError('Gagal menyusun dokumen.');
+            throw DcsException::serverError($e->notConfigured
+                ? 'Mesin PDF belum dikonfigurasi. Hubungi administrator server (DCS_PDF_ENGINE_URL dan DCS_PDF_ENGINE_SECRET).'
+                : 'Gagal menyusun dokumen.');
         }
 
         return DB::transaction(function () use ($actor, $version, $content, $composed): Rendition {
@@ -102,11 +106,13 @@ class RenderVersion
             'appendix' => $version->attachments()->get()->map(fn ($attachment): array => ['label' => $attachment->label, 'url' => $attachment->url])->all(),
             'margins' => $settings->marginsInPoints(),
             'headerStyle' => $type->header_style->value,
+            'bodyStyle' => $type->body_style->value,
             'docTypeName' => $type->name,
             'documentLevel' => $type->document_level,
             'processOwner' => $type->process_owner !== '' ? $type->process_owner : $document->department->code,
             'language' => $content->language_mode === 'multi' ? 'Indonesia / English' : 'Indonesia',
             'issuedDateIso' => collect($history)->firstWhere('effectiveAt', '!=', null)['effectiveAt'] ?? null,
+            'header' => ['layout' => HeaderLayout::effective($type->header_layout), 'values' => $this->headerValues($version, $content)],
             'statusLabel' => 'Draft',
             'confidentialityNotice' => $settings->confidentiality_notice ?: null,
         ];
@@ -131,6 +137,33 @@ class RenderVersion
         }
 
         return ['mode' => 'none'];
+    }
+
+    /**
+     * The values the system fills into the letterhead. Revision and issue numbers
+     * come from the version itself, never from what a person typed.
+     *
+     * @return array<string, string>
+     */
+    private function headerValues(DocumentVersion $version, VersionContent $content): array
+    {
+        $document = $version->document;
+        $type = $document->type;
+
+        return [
+            HeaderField::DocumentNumber->value => $document->document_number,
+            HeaderField::Title->value => $document->title,
+            HeaderField::DocTypeName->value => $type->name,
+            HeaderField::DocTypeCode->value => $type->code,
+            HeaderField::IssueNumber->value => (string) $version->major,
+            HeaderField::RevisionNumber->value => str_pad((string) $version->minor, 2, '0', STR_PAD_LEFT),
+            HeaderField::RevisionLabel->value => str_pad((string) $version->minor, 2, '0', STR_PAD_LEFT).'/'.substr((string) ($version->created_at ?? now())->format('Y'), -2),
+            HeaderField::Language->value => $content->language_mode === 'multi' ? 'Indonesia / English' : 'Indonesia',
+            HeaderField::DocumentLevel->value => $type->document_level,
+            HeaderField::ProcessOwner->value => $type->process_owner !== '' ? $type->process_owner : $document->department->code,
+            HeaderField::Department->value => $document->department->code,
+            HeaderField::Owner->value => (string) $document->owner?->name,
+        ];
     }
 
     /**

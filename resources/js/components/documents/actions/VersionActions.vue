@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import {
     Ban,
+    PencilLine,
     CalendarX,
     CheckCheck,
     PenLine,
     Undo2,
     Upload,
 } from '@lucide/vue';
+import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import DocumentDraftController from '@/actions/App/Http/Controllers/Documents/DocumentDraftController';
+import { Button } from '@/components/ui/button';
 import VersionDistributionController from '@/actions/App/Http/Controllers/Documents/VersionDistributionController';
 import VersionReleaseController from '@/actions/App/Http/Controllers/Documents/VersionReleaseController';
 import VersionWorkflowController from '@/actions/App/Http/Controllers/Documents/VersionWorkflowController';
@@ -105,6 +109,11 @@ const any = computed(
         role="toolbar"
         aria-label="Tindakan untuk versi ini"
     >
+        <Button v-if="version.can.edit" as-child>
+            <Link :href="DocumentDraftController.edit(params)">
+                <PencilLine /> Lanjutkan menyusun
+            </Link>
+        </Button>
         <template v-for="item in confirmations" :key="item.label">
             <ActionDialog
                 v-if="item.show"

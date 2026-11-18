@@ -35,8 +35,6 @@ const state = reactive({
     department: '',
     title: '',
     ownerUserId: props.me,
-    initialMajor: 1,
-    initialMinor: 0,
     languageMode: 'single',
 });
 
@@ -66,43 +64,24 @@ function transform(
             />
         </fieldset>
 
-        <div class="grid gap-4 sm:grid-cols-[1fr_8rem_8rem]">
-            <div class="flex flex-col gap-1.5">
-                <Label>Jenis dokumen</Label>
-                <Select v-model="state.docTypeCode">
-                    <SelectTrigger class="w-full"
-                        ><SelectValue
-                    /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem
-                            v-for="type in types"
-                            :key="type.code"
-                            :value="type.code"
-                        >
-                            {{ type.code }} — {{ type.name }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-                <InputError :message="errors.docTypeCode" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <Label for="major">Terbitan</Label>
-                <Input
-                    id="major"
-                    v-model="state.initialMajor"
-                    type="number"
-                    min="1"
-                />
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <Label for="minor">Revisi</Label>
-                <Input
-                    id="minor"
-                    v-model="state.initialMinor"
-                    type="number"
-                    min="0"
-                />
-            </div>
+        <div class="flex flex-col gap-1.5">
+            <Label>Jenis dokumen</Label>
+            <Select v-model="state.docTypeCode">
+                <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                    <SelectItem
+                        v-for="type in types"
+                        :key="type.code"
+                        :value="type.code"
+                    >
+                        {{ type.code }} — {{ type.name }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+            <InputError :message="errors.docTypeCode" />
+            <p class="text-xs text-muted-foreground">
+                Nomor terbitan dan revisi diatur otomatis oleh sistem.
+            </p>
         </div>
 
         <DepartmentField
