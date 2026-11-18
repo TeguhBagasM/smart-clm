@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Permission;
+use App\Http\Resources\AuthUserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,7 +41,13 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn (): ?array => $request->user()
+                    ? AuthUserResource::make($request->user())->resolve($request)
+                    : null,
+                'permissions' => fn (): array => array_map(
+                    fn (Permission $permission): string => $permission->value,
+                    $request->user()?->role->permissions() ?? [],
+                ),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

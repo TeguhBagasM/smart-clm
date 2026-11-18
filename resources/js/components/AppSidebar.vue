@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { KeyRound, LayoutGrid, Users } from '@lucide/vue';
+import { computed } from 'vue';
+import RoleController from '@/actions/App/Http/Controllers/Admin/RoleController';
+import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -14,8 +16,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { usePermissions } from '@/composables/usePermissions';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+
+const { can } = usePermissions();
 
 const mainNavItems: NavItem[] = [
     {
@@ -25,18 +30,26 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const configurationNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
+        title: 'Pengguna',
+        href: UserController.index(),
+        icon: Users,
+        permission: 'settings.manage',
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Hak Akses',
+        href: RoleController(),
+        icon: KeyRound,
+        permission: 'settings.manage',
     },
 ];
+
+const visibleConfigurationNavItems = computed(() =>
+    configurationNavItems.filter(
+        (item) => item.permission === undefined || can(item.permission),
+    ),
+);
 </script>
 
 <template>
@@ -54,11 +67,15 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :items="mainNavItems" label="Menu" />
+            <NavMain
+                v-if="visibleConfigurationNavItems.length"
+                :items="visibleConfigurationNavItems"
+                label="Konfigurasi"
+            />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

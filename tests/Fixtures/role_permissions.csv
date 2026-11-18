@@ -1,0 +1,353 @@
+role,permission,default_allowed,basis
+super_admin,contract.edit,true,bypass di isPermAllowed (roles.ts:185)
+it_system,contract.edit,false,tidak ada di defaults
+admin,contract.edit,true,defaults
+legal,contract.edit,true,defaults
+manajemen,contract.edit,false,tidak ada di defaults
+marketing,contract.edit,false,tidak ada di defaults
+business_partnership,contract.edit,false,tidak ada di defaults
+account_executive,contract.edit,false,tidak ada di defaults
+operasional,contract.edit,false,tidak ada di defaults
+hr_ga,contract.edit,true,defaults
+direktur,contract.edit,false,tidak ada di defaults
+finance,contract.edit,false,tidak ada di defaults
+tax,contract.edit,false,tidak ada di defaults
+staff,contract.edit,false,tidak ada di defaults
+viewer,contract.edit,false,tidak ada di defaults
+manager,contract.edit,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,contract.delete,true,bypass di isPermAllowed (roles.ts:185)
+it_system,contract.delete,false,tidak ada di defaults
+admin,contract.delete,false,tidak ada di defaults
+legal,contract.delete,true,defaults
+manajemen,contract.delete,false,tidak ada di defaults
+marketing,contract.delete,false,tidak ada di defaults
+business_partnership,contract.delete,false,tidak ada di defaults
+account_executive,contract.delete,false,tidak ada di defaults
+operasional,contract.delete,false,tidak ada di defaults
+hr_ga,contract.delete,false,tidak ada di defaults
+direktur,contract.delete,false,tidak ada di defaults
+finance,contract.delete,false,tidak ada di defaults
+tax,contract.delete,false,tidak ada di defaults
+staff,contract.delete,false,tidak ada di defaults
+viewer,contract.delete,false,tidak ada di defaults
+manager,contract.delete,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,contract.move,true,bypass di isPermAllowed (roles.ts:185)
+it_system,contract.move,false,tidak ada di defaults
+admin,contract.move,false,tidak ada di defaults
+legal,contract.move,true,defaults
+manajemen,contract.move,false,tidak ada di defaults
+marketing,contract.move,false,tidak ada di defaults
+business_partnership,contract.move,false,tidak ada di defaults
+account_executive,contract.move,false,tidak ada di defaults
+operasional,contract.move,false,tidak ada di defaults
+hr_ga,contract.move,false,tidak ada di defaults
+direktur,contract.move,false,tidak ada di defaults
+finance,contract.move,false,tidak ada di defaults
+tax,contract.move,false,tidak ada di defaults
+staff,contract.move,false,tidak ada di defaults
+viewer,contract.move,false,tidak ada di defaults
+manager,contract.move,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,contract.classify,true,bypass di isPermAllowed (roles.ts:185)
+it_system,contract.classify,false,tidak ada di defaults
+admin,contract.classify,true,defaults
+legal,contract.classify,true,defaults
+manajemen,contract.classify,false,tidak ada di defaults
+marketing,contract.classify,false,tidak ada di defaults
+business_partnership,contract.classify,false,tidak ada di defaults
+account_executive,contract.classify,false,tidak ada di defaults
+operasional,contract.classify,false,tidak ada di defaults
+hr_ga,contract.classify,true,defaults
+direktur,contract.classify,false,tidak ada di defaults
+finance,contract.classify,false,tidak ada di defaults
+tax,contract.classify,false,tidak ada di defaults
+staff,contract.classify,false,tidak ada di defaults
+viewer,contract.classify,false,tidak ada di defaults
+manager,contract.classify,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,contract.bulk,true,bypass di isPermAllowed (roles.ts:185)
+it_system,contract.bulk,false,tidak ada di defaults
+admin,contract.bulk,true,defaults
+legal,contract.bulk,true,defaults
+manajemen,contract.bulk,false,tidak ada di defaults
+marketing,contract.bulk,false,tidak ada di defaults
+business_partnership,contract.bulk,false,tidak ada di defaults
+account_executive,contract.bulk,false,tidak ada di defaults
+operasional,contract.bulk,false,tidak ada di defaults
+hr_ga,contract.bulk,true,defaults
+direktur,contract.bulk,false,tidak ada di defaults
+finance,contract.bulk,false,tidak ada di defaults
+tax,contract.bulk,false,tidak ada di defaults
+staff,contract.bulk,false,tidak ada di defaults
+viewer,contract.bulk,false,tidak ada di defaults
+manager,contract.bulk,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,review.access,true,bypass di isPermAllowed (roles.ts:185)
+it_system,review.access,false,tidak ada di defaults
+admin,review.access,true,defaults
+legal,review.access,true,defaults
+manajemen,review.access,false,tidak ada di defaults
+marketing,review.access,false,tidak ada di defaults
+business_partnership,review.access,false,tidak ada di defaults
+account_executive,review.access,false,tidak ada di defaults
+operasional,review.access,false,tidak ada di defaults
+hr_ga,review.access,false,tidak ada di defaults
+direktur,review.access,false,tidak ada di defaults
+finance,review.access,false,tidak ada di defaults
+tax,review.access,false,tidak ada di defaults
+staff,review.access,false,tidak ada di defaults
+viewer,review.access,false,tidak ada di defaults
+manager,review.access,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,review.markup_decide,true,bypass di isPermAllowed (roles.ts:185)
+it_system,review.markup_decide,false,tidak ada di defaults
+admin,review.markup_decide,true,defaults
+legal,review.markup_decide,true,defaults
+manajemen,review.markup_decide,false,tidak ada di defaults
+marketing,review.markup_decide,false,tidak ada di defaults
+business_partnership,review.markup_decide,false,tidak ada di defaults
+account_executive,review.markup_decide,false,tidak ada di defaults
+operasional,review.markup_decide,false,tidak ada di defaults
+hr_ga,review.markup_decide,true,defaults
+direktur,review.markup_decide,false,tidak ada di defaults
+finance,review.markup_decide,false,tidak ada di defaults
+tax,review.markup_decide,false,tidak ada di defaults
+staff,review.markup_decide,false,tidak ada di defaults
+viewer,review.markup_decide,false,tidak ada di defaults
+manager,review.markup_decide,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,review.send_external,true,bypass di isPermAllowed (roles.ts:185)
+it_system,review.send_external,false,tidak ada di defaults
+admin,review.send_external,true,defaults
+legal,review.send_external,true,defaults
+manajemen,review.send_external,false,tidak ada di defaults
+marketing,review.send_external,false,tidak ada di defaults
+business_partnership,review.send_external,false,tidak ada di defaults
+account_executive,review.send_external,false,tidak ada di defaults
+operasional,review.send_external,false,tidak ada di defaults
+hr_ga,review.send_external,false,tidak ada di defaults
+direktur,review.send_external,false,tidak ada di defaults
+finance,review.send_external,false,tidak ada di defaults
+tax,review.send_external,false,tidak ada di defaults
+staff,review.send_external,false,tidak ada di defaults
+viewer,review.send_external,false,tidak ada di defaults
+manager,review.send_external,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,signing.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,signing.manage,false,tidak ada di defaults
+admin,signing.manage,true,defaults
+legal,signing.manage,true,defaults
+manajemen,signing.manage,false,tidak ada di defaults
+marketing,signing.manage,false,tidak ada di defaults
+business_partnership,signing.manage,false,tidak ada di defaults
+account_executive,signing.manage,false,tidak ada di defaults
+operasional,signing.manage,false,tidak ada di defaults
+hr_ga,signing.manage,true,defaults
+direktur,signing.manage,false,tidak ada di defaults
+finance,signing.manage,false,tidak ada di defaults
+tax,signing.manage,false,tidak ada di defaults
+staff,signing.manage,false,tidak ada di defaults
+viewer,signing.manage,false,tidak ada di defaults
+manager,signing.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,release.announce,true,bypass di isPermAllowed (roles.ts:185)
+it_system,release.announce,false,tidak ada di defaults
+admin,release.announce,true,defaults
+legal,release.announce,true,defaults
+manajemen,release.announce,false,tidak ada di defaults
+marketing,release.announce,false,tidak ada di defaults
+business_partnership,release.announce,false,tidak ada di defaults
+account_executive,release.announce,false,tidak ada di defaults
+operasional,release.announce,false,tidak ada di defaults
+hr_ga,release.announce,false,tidak ada di defaults
+direktur,release.announce,false,tidak ada di defaults
+finance,release.announce,false,tidak ada di defaults
+tax,release.announce,false,tidak ada di defaults
+staff,release.announce,false,tidak ada di defaults
+viewer,release.announce,false,tidak ada di defaults
+manager,release.announce,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,retention.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,retention.manage,false,tidak ada di defaults
+admin,retention.manage,true,defaults
+legal,retention.manage,true,defaults
+manajemen,retention.manage,false,tidak ada di defaults
+marketing,retention.manage,false,tidak ada di defaults
+business_partnership,retention.manage,false,tidak ada di defaults
+account_executive,retention.manage,false,tidak ada di defaults
+operasional,retention.manage,false,tidak ada di defaults
+hr_ga,retention.manage,false,tidak ada di defaults
+direktur,retention.manage,false,tidak ada di defaults
+finance,retention.manage,false,tidak ada di defaults
+tax,retention.manage,false,tidak ada di defaults
+staff,retention.manage,false,tidak ada di defaults
+viewer,retention.manage,false,tidak ada di defaults
+manager,retention.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,templates.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,templates.manage,false,tidak ada di defaults
+admin,templates.manage,true,defaults
+legal,templates.manage,true,defaults
+manajemen,templates.manage,false,tidak ada di defaults
+marketing,templates.manage,false,tidak ada di defaults
+business_partnership,templates.manage,false,tidak ada di defaults
+account_executive,templates.manage,false,tidak ada di defaults
+operasional,templates.manage,false,tidak ada di defaults
+hr_ga,templates.manage,false,tidak ada di defaults
+direktur,templates.manage,false,tidak ada di defaults
+finance,templates.manage,false,tidak ada di defaults
+tax,templates.manage,false,tidak ada di defaults
+staff,templates.manage,false,tidak ada di defaults
+viewer,templates.manage,false,tidak ada di defaults
+manager,templates.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,dcs.config,true,bypass di isPermAllowed (roles.ts:185)
+it_system,dcs.config,false,tidak ada di defaults
+admin,dcs.config,true,defaults
+legal,dcs.config,true,defaults
+manajemen,dcs.config,false,tidak ada di defaults
+marketing,dcs.config,false,tidak ada di defaults
+business_partnership,dcs.config,false,tidak ada di defaults
+account_executive,dcs.config,false,tidak ada di defaults
+operasional,dcs.config,false,tidak ada di defaults
+hr_ga,dcs.config,false,tidak ada di defaults
+direktur,dcs.config,false,tidak ada di defaults
+finance,dcs.config,false,tidak ada di defaults
+tax,dcs.config,false,tidak ada di defaults
+staff,dcs.config,false,tidak ada di defaults
+viewer,dcs.config,false,tidak ada di defaults
+manager,dcs.config,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,dcs.edit,true,bypass di isPermAllowed (roles.ts:185)
+it_system,dcs.edit,false,tidak ada di defaults
+admin,dcs.edit,true,defaults
+legal,dcs.edit,true,defaults
+manajemen,dcs.edit,false,tidak ada di defaults
+marketing,dcs.edit,false,tidak ada di defaults
+business_partnership,dcs.edit,false,tidak ada di defaults
+account_executive,dcs.edit,false,tidak ada di defaults
+operasional,dcs.edit,false,tidak ada di defaults
+hr_ga,dcs.edit,true,defaults
+direktur,dcs.edit,false,tidak ada di defaults
+finance,dcs.edit,false,tidak ada di defaults
+tax,dcs.edit,false,tidak ada di defaults
+staff,dcs.edit,false,tidak ada di defaults
+viewer,dcs.edit,false,tidak ada di defaults
+manager,dcs.edit,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,dcs.release,true,bypass di isPermAllowed (roles.ts:185)
+it_system,dcs.release,false,tidak ada di defaults
+admin,dcs.release,true,defaults
+legal,dcs.release,true,defaults
+manajemen,dcs.release,true,defaults
+marketing,dcs.release,false,tidak ada di defaults
+business_partnership,dcs.release,false,tidak ada di defaults
+account_executive,dcs.release,false,tidak ada di defaults
+operasional,dcs.release,false,tidak ada di defaults
+hr_ga,dcs.release,false,tidak ada di defaults
+direktur,dcs.release,false,tidak ada di defaults
+finance,dcs.release,false,tidak ada di defaults
+tax,dcs.release,false,tidak ada di defaults
+staff,dcs.release,false,tidak ada di defaults
+viewer,dcs.release,false,tidak ada di defaults
+manager,dcs.release,true,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,legaljob.request,true,bypass di isPermAllowed (roles.ts:185)
+it_system,legaljob.request,false,tidak ada di defaults
+admin,legaljob.request,true,defaults
+legal,legaljob.request,true,defaults
+manajemen,legaljob.request,false,tidak ada di defaults
+marketing,legaljob.request,true,defaults
+business_partnership,legaljob.request,true,defaults
+account_executive,legaljob.request,true,defaults
+operasional,legaljob.request,true,defaults
+hr_ga,legaljob.request,false,tidak ada di defaults
+direktur,legaljob.request,false,tidak ada di defaults
+finance,legaljob.request,false,tidak ada di defaults
+tax,legaljob.request,false,tidak ada di defaults
+staff,legaljob.request,false,tidak ada di defaults
+viewer,legaljob.request,false,tidak ada di defaults
+manager,legaljob.request,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,legaljob.process,true,bypass di isPermAllowed (roles.ts:185)
+it_system,legaljob.process,false,tidak ada di defaults
+admin,legaljob.process,true,defaults
+legal,legaljob.process,true,defaults
+manajemen,legaljob.process,false,tidak ada di defaults
+marketing,legaljob.process,false,tidak ada di defaults
+business_partnership,legaljob.process,false,tidak ada di defaults
+account_executive,legaljob.process,false,tidak ada di defaults
+operasional,legaljob.process,false,tidak ada di defaults
+hr_ga,legaljob.process,false,tidak ada di defaults
+direktur,legaljob.process,false,tidak ada di defaults
+finance,legaljob.process,false,tidak ada di defaults
+tax,legaljob.process,false,tidak ada di defaults
+staff,legaljob.process,false,tidak ada di defaults
+viewer,legaljob.process,false,tidak ada di defaults
+manager,legaljob.process,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,budgets.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,budgets.manage,false,tidak ada di defaults
+admin,budgets.manage,true,defaults
+legal,budgets.manage,true,defaults
+manajemen,budgets.manage,true,defaults
+marketing,budgets.manage,false,tidak ada di defaults
+business_partnership,budgets.manage,false,tidak ada di defaults
+account_executive,budgets.manage,false,tidak ada di defaults
+operasional,budgets.manage,false,tidak ada di defaults
+hr_ga,budgets.manage,false,tidak ada di defaults
+direktur,budgets.manage,false,tidak ada di defaults
+finance,budgets.manage,false,tidak ada di defaults
+tax,budgets.manage,false,tidak ada di defaults
+staff,budgets.manage,false,tidak ada di defaults
+viewer,budgets.manage,false,tidak ada di defaults
+manager,budgets.manage,true,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,employees.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,employees.manage,false,tidak ada di defaults
+admin,employees.manage,true,defaults
+legal,employees.manage,false,tidak ada di defaults
+manajemen,employees.manage,false,tidak ada di defaults
+marketing,employees.manage,false,tidak ada di defaults
+business_partnership,employees.manage,false,tidak ada di defaults
+account_executive,employees.manage,false,tidak ada di defaults
+operasional,employees.manage,false,tidak ada di defaults
+hr_ga,employees.manage,true,defaults
+direktur,employees.manage,false,tidak ada di defaults
+finance,employees.manage,false,tidak ada di defaults
+tax,employees.manage,false,tidak ada di defaults
+staff,employees.manage,false,tidak ada di defaults
+viewer,employees.manage,false,tidak ada di defaults
+manager,employees.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,vendors.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,vendors.manage,false,tidak ada di defaults
+admin,vendors.manage,true,defaults
+legal,vendors.manage,true,defaults
+manajemen,vendors.manage,false,tidak ada di defaults
+marketing,vendors.manage,false,tidak ada di defaults
+business_partnership,vendors.manage,false,tidak ada di defaults
+account_executive,vendors.manage,false,tidak ada di defaults
+operasional,vendors.manage,false,tidak ada di defaults
+hr_ga,vendors.manage,false,tidak ada di defaults
+direktur,vendors.manage,false,tidak ada di defaults
+finance,vendors.manage,false,tidak ada di defaults
+tax,vendors.manage,false,tidak ada di defaults
+staff,vendors.manage,false,tidak ada di defaults
+viewer,vendors.manage,false,tidak ada di defaults
+manager,vendors.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,settings.manage,true,bypass di isPermAllowed (roles.ts:185)
+it_system,settings.manage,true,defaults
+admin,settings.manage,true,defaults
+legal,settings.manage,false,tidak ada di defaults
+manajemen,settings.manage,false,tidak ada di defaults
+marketing,settings.manage,false,tidak ada di defaults
+business_partnership,settings.manage,false,tidak ada di defaults
+account_executive,settings.manage,false,tidak ada di defaults
+operasional,settings.manage,false,tidak ada di defaults
+hr_ga,settings.manage,false,tidak ada di defaults
+direktur,settings.manage,false,tidak ada di defaults
+finance,settings.manage,false,tidak ada di defaults
+tax,settings.manage,false,tidak ada di defaults
+staff,settings.manage,false,tidak ada di defaults
+viewer,settings.manage,false,tidak ada di defaults
+manager,settings.manage,false,alias: manager dinormalkan ke manajemen (roles.ts:177)
+super_admin,settings.employment_types,true,bypass di isPermAllowed (roles.ts:185)
+it_system,settings.employment_types,false,tidak ada di defaults
+admin,settings.employment_types,false,tidak ada di defaults
+legal,settings.employment_types,false,tidak ada di defaults
+manajemen,settings.employment_types,false,tidak ada di defaults
+marketing,settings.employment_types,false,tidak ada di defaults
+business_partnership,settings.employment_types,false,tidak ada di defaults
+account_executive,settings.employment_types,false,tidak ada di defaults
+operasional,settings.employment_types,false,tidak ada di defaults
+hr_ga,settings.employment_types,false,tidak ada di defaults
+direktur,settings.employment_types,false,tidak ada di defaults
+finance,settings.employment_types,false,tidak ada di defaults
+tax,settings.employment_types,false,tidak ada di defaults
+staff,settings.employment_types,false,tidak ada di defaults
+viewer,settings.employment_types,false,tidak ada di defaults
+manager,settings.employment_types,false,alias: manager dinormalkan ke manajemen (roles.ts:177)

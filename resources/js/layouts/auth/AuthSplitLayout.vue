@@ -1,47 +1,89 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { FileCheck2, ShieldCheck, Workflow } from '@lucide/vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
-const page = usePage();
-const name = page.props.name;
+const name = usePage().props.name;
 
 defineProps<{
     title?: string;
     description?: string;
 }>();
+
+const highlights = [
+    { icon: FileCheck2, text: 'Kontrak dan dokumen terkontrol di satu tempat' },
+    { icon: Workflow, text: 'Alur review dan persetujuan yang tercatat' },
+    { icon: ShieldCheck, text: 'Akses sesuai peran di setiap perusahaan' },
+];
 </script>
 
 <template>
-    <div
-        class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0"
-    >
-        <div
-            class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r"
+    <div class="grid min-h-dvh lg:grid-cols-[1fr_1.1fr]">
+        <aside
+            class="hidden flex-col justify-between bg-primary p-12 text-primary-foreground lg:flex"
         >
-            <div class="absolute inset-0 bg-zinc-900" />
             <Link
                 :href="home()"
-                class="relative z-20 flex items-center text-lg font-medium"
+                class="flex items-center gap-3 text-lg font-semibold"
             >
-                <AppLogoIcon class="mr-2 size-8 fill-current text-white" />
+                <span
+                    class="flex size-10 items-center justify-center rounded-xl bg-primary-foreground/15"
+                >
+                    <AppLogoIcon class="size-6 fill-current" />
+                </span>
                 {{ name }}
             </Link>
-        </div>
-        <div class="lg:p-8">
-            <div
-                class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
-            >
-                <div class="flex flex-col space-y-2 text-center">
-                    <h1 class="text-xl font-medium tracking-tight" v-if="title">
+
+            <div class="max-w-md space-y-8">
+                <p class="text-3xl leading-tight font-semibold">
+                    Contract Lifecycle Management untuk tim legal dan bisnis.
+                </p>
+                <ul class="space-y-4">
+                    <li
+                        v-for="item in highlights"
+                        :key="item.text"
+                        class="flex items-center gap-3 text-sm text-primary-foreground/85"
+                    >
+                        <component :is="item.icon" class="size-5 shrink-0" />
+                        {{ item.text }}
+                    </li>
+                </ul>
+            </div>
+
+            <p class="text-xs text-primary-foreground/70">
+                Aplikasi internal. Akun dibuat oleh administrator.
+            </p>
+        </aside>
+
+        <main class="flex items-center justify-center px-6 py-12 sm:px-12">
+            <div class="flex w-full max-w-sm flex-col gap-8">
+                <Link
+                    :href="home()"
+                    class="flex items-center gap-2 font-semibold lg:hidden"
+                >
+                    <span
+                        class="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+                    >
+                        <AppLogoIcon class="size-5 fill-current" />
+                    </span>
+                    {{ name }}
+                </Link>
+
+                <div class="space-y-2">
+                    <h1
+                        v-if="title"
+                        class="text-2xl font-semibold tracking-tight"
+                    >
                         {{ title }}
                     </h1>
-                    <p class="text-sm text-muted-foreground" v-if="description">
+                    <p v-if="description" class="text-sm text-muted-foreground">
                         {{ description }}
                     </p>
                 </div>
+
                 <slot />
             </div>
-        </div>
+        </main>
     </div>
 </template>

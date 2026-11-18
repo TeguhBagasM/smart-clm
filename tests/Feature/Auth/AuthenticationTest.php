@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
@@ -74,4 +75,49 @@ test('users are rate limited', function () {
     ]);
 
     $response->assertTooManyRequests();
+});
+
+test('rejects login for a deactivated user with the generic message', function () {
+    $user = User::factory()->inactive()->create();
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasErrors(['email' => __('auth.failed')]);
+
+    $this->assertGuest();
+});
+
+test('rejects login for a member of a deactivated tenant', function () {
+    $user = User::factory()->for(Tenant::factory()->inactive())->create();
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasErrors(['email' => __('auth.failed')]);
+
+    $this->assertGuest();
+});
+
+test('allows a super admin without a tenant to log in', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticatedAs($user);
+    expect($user->fresh()->last_login_at)->not->toBeNull();
+});
+
+test('signs out a user deactivated during their session', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->get(route('dashboard'))->assertOk();
+
+    $user->forceFill(['is_active' => false])->save();
+
+    $this->get(route('dashboard'))->assertRedirect(route('login'));
+    $this->assertGuest();
 });
