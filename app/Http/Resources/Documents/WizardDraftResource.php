@@ -8,6 +8,7 @@ use App\Models\Dcs\VersionStep;
 use App\Support\Dcs\DraftCompleteness;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
 /**
  * The draft as the wizard edits it. Signers are people named by the id the
@@ -35,12 +36,19 @@ class WizardDraftResource extends JsonResource
         ];
         [$extra, $base] = $this->steps->partition(fn (VersionStep $step): bool => $step->group_heading === self::EXTRA_GROUP);
 
+        // Older drafts keep Tujuan and Ruang Lingkup in their own fields; the engine prints them before the
+        // sections, so they are shown the same way, as the first sections, until the wizard saves the sections.
+        $legacy = collect([['Tujuan', $content->purpose ?? ''], ['Ruang Lingkup', $content->scope ?? '']])
+            ->filter(fn (array $item): bool => trim($item[1]) !== '')
+            ->map(fn (array $item): array => ['heading' => $item[0], 'content' => $item[1]]);
+        $sections = $this->sections->map(fn ($section): array => ['heading' => $section->heading, 'content' => $section->content, ...($section->table_data === null ? [] : ['table' => $section->table_data])]);
+
         return [
             'revision' => $content->draft_revision ?? 0,
             'purpose' => $content->purpose ?? '',
             'scope' => $content->scope ?? '',
             'language_mode' => $content->language_mode ?? 'single',
-            'sections' => $this->sections->map(fn ($section): array => ['heading' => $section->heading, 'content' => $section->content, ...($section->table_data === null ? [] : ['table' => $section->table_data])])->values()->all(),
+            'sections' => $legacy->concat($sections)->values()->all(),
             'flow' => [
                 'mode' => $content->flow_mode ?? 'none',
                 'style' => $content->flow_display_style ?? 'diagram',
@@ -52,10 +60,26 @@ class WizardDraftResource extends JsonResource
             'clause_ids' => $this->clauses->pluck('uuid')->values()->all(),
             'signers' => $base->values()->map(fn (VersionStep $step): array => [...$column($step), 'group' => $step->group_heading])->all(),
             'extra_reviewers' => $extra->values()->map($column)->all(),
-            'completeness' => DraftCompleteness::of($this->resource),
+            'completeness' => $this->completeness($legacy),
             'has_file' => $this->currentRendition() !== null,
             'file_kind' => $this->currentRendition()?->kind->value,
             'composed' => $this->renditions()->where('kind', RenditionKind::Composed->value)->exists(),
         ];
+    }
+
+    /**
+     * Progress per wizard step. Tujuan and Ruang Lingkup are sections now, so there is no step of their own,
+     * and a section only counts once it has text or a table (a title alone is not content).
+     *
+     * @param  Collection<int, array{heading: string, content: string}>  $legacy
+     * @return array<string, bool>
+     */
+    private function completeness(Collection $legacy): array
+    {
+        $steps = DraftCompleteness::of($this->resource);
+        unset($steps['purpose_scope']);
+        $steps['body'] = $legacy->isNotEmpty() || $this->sections->contains(fn ($section): bool => trim($section->content) !== '' || $section->table_data !== null);
+
+        return $steps;
     }
 }

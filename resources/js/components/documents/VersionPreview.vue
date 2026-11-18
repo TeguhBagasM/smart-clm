@@ -58,7 +58,7 @@ function url(download = false): string {
             :key="url()"
             :src="url()"
             title="Pratinjau dokumen"
-            class="h-[75vh] w-full rounded-xl border bg-muted"
+            class="mx-auto h-[75vh] w-full max-w-3xl rounded-xl border bg-muted"
         />
         <div
             v-else

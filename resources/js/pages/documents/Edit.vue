@@ -7,7 +7,6 @@ import { steps } from '@/components/documents/wizard/steps';
 import type { StepKey } from '@/components/documents/wizard/steps';
 import AttachmentsStep from '@/components/documents/wizard/steps/AttachmentsStep.vue';
 import FlowStep from '@/components/documents/wizard/steps/FlowStep.vue';
-import PurposeScopeStep from '@/components/documents/wizard/steps/PurposeScopeStep.vue';
 import ReviewStep from '@/components/documents/wizard/steps/ReviewStep.vue';
 import SectionsStep from '@/components/documents/wizard/steps/SectionsStep.vue';
 import SignersStep from '@/components/documents/wizard/steps/SignersStep.vue';
@@ -54,7 +53,7 @@ provideDraftWizard({
 function fromHash(): StepKey {
     const key = window.location.hash.slice(1);
 
-    return steps.find((step) => step.key === key)?.key ?? 'purpose';
+    return steps.find((step) => step.key === key)?.key ?? 'body';
 }
 
 const step = ref<StepKey>(fromHash());
@@ -88,8 +87,7 @@ onBeforeUnmount(() => {
         :step="step"
         @go="go"
     >
-        <PurposeScopeStep v-if="step === 'purpose'" />
-        <SectionsStep v-else-if="step === 'body'" />
+        <SectionsStep v-if="step === 'body'" />
         <FlowStep v-else-if="step === 'flow'" />
         <AttachmentsStep v-else-if="step === 'attachments'" />
         <SignersStep v-else-if="step === 'signers'" />

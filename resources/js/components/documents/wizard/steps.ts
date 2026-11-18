@@ -1,12 +1,6 @@
 import type { Draft } from '@/types';
 
-export type StepKey =
-    | 'purpose'
-    | 'body'
-    | 'flow'
-    | 'attachments'
-    | 'signers'
-    | 'review';
+export type StepKey = 'body' | 'flow' | 'attachments' | 'signers' | 'review';
 
 export type StepInfo = {
     key: StepKey;
@@ -18,15 +12,9 @@ export type StepInfo = {
 
 export const steps: StepInfo[] = [
     {
-        key: 'purpose',
-        label: 'Tujuan & lingkup',
-        hint: 'Untuk apa dokumen ini',
-        done: 'purpose_scope',
-    },
-    {
         key: 'body',
         label: 'Isi dokumen',
-        hint: 'Bagian dan tabel',
+        hint: 'Tujuan, lingkup, dan bagian lain',
         done: 'body',
     },
     {

@@ -77,7 +77,7 @@ class DocumentCreateController extends Controller
             $type = $document->type()->with(['sections', 'defaultClauses'])->firstOrFail();
             $saveDraftContent->handle($user, $tenant, $version, [
                 'languageMode' => $request->languageMode(),
-                'sections' => $type->sections->map(fn ($section): array => ['heading' => $section->heading, 'content' => (string) $section->content])->values()->all(),
+                'sections' => $this->startingSections($type->sections->map(fn ($section): array => ['heading' => $section->heading, 'content' => (string) $section->content])->values()->all()),
                 'flowLanes' => $type->default_lanes,
                 'clauseIds' => $type->defaultClauses->pluck('uuid')->values()->all(),
             ]);
@@ -121,6 +121,24 @@ class DocumentCreateController extends Controller
     public function appendixUpload(UploadAppendixRequest $request, StoreAppendixFile $storeAppendixFile): JsonResponse
     {
         return response()->json($storeAppendixFile->handle($this->tenant($request), $request->document()));
+    }
+
+    /**
+     * Tujuan and Ruang Lingkup are ordinary sections: the author may rename, move or delete them.
+     * They start at the top unless the type's template already has them.
+     *
+     * @param  array<int, array{heading: string, content: string}>  $template
+     * @return array<int, array{heading: string, content: string}>
+     */
+    private function startingSections(array $template): array
+    {
+        $has = fn (string $heading): bool => collect($template)->contains(fn (array $s): bool => mb_strtolower(trim($s['heading'])) === mb_strtolower($heading));
+
+        return [
+            ...($has('Tujuan') ? [] : [['heading' => 'Tujuan', 'content' => '']]),
+            ...($has('Ruang Lingkup') ? [] : [['heading' => 'Ruang Lingkup', 'content' => '']]),
+            ...$template,
+        ];
     }
 
     private function tenant(Request $request): Tenant

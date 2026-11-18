@@ -52,8 +52,6 @@ export type DraftAppendix = { label: string; url: string };
 /** Shape of App\Http\Resources\Documents\WizardDraftResource. */
 export type Draft = {
     revision: number;
-    purpose: string;
-    scope: string;
     language_mode: 'single' | 'multi';
     sections: DraftSection[];
     flow: DraftFlow;
@@ -62,7 +60,7 @@ export type Draft = {
     signers: DraftSigner[];
     extra_reviewers: DraftSigner[];
     completeness: Record<
-        'basic' | 'purpose_scope' | 'body' | 'flow' | 'attachments' | 'signers',
+        'basic' | 'body' | 'flow' | 'attachments' | 'signers',
         boolean
     >;
     has_file: boolean;

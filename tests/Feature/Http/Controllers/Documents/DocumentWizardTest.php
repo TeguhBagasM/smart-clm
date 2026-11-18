@@ -140,7 +140,7 @@ describe('the wizard', function () {
         $this->actingAs($this->admin)->get(route('documents.versions.edit', [$document, $version]))->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('documents/Edit')->where('document.id', $document->uuid)->where('version.id', $version->uuid)
             ->where('draft.revision', 1)->where('draft.language_mode', 'single')->where('draft.flow.mode', 'none')
-            ->where('draft.completeness.basic', true)->where('draft.completeness.purpose_scope', false)
+            ->where('draft.completeness.basic', true)->where('draft.completeness.body', false)->missing('draft.completeness.purpose_scope')
             ->where('draft.signers', fn ($signers) => count($signers) > 0 && array_keys($signers[0]) === ['label', 'role', 'role_name', 'assigned', 'group'])
             ->has('user_options')->has('role_options')->has('clause_options'));
     });
@@ -173,7 +173,7 @@ describe('the wizard', function () {
             ->and($draft->flow_steps[1])->toMatchArray(['id' => 's2', 'type' => 'decision', 'yesId' => 's3', 'noId' => 's1'])->and($draft->flow_steps[0]['color'])->toBe('#ccffcc');
         expect($version->sections()->get()->first()->table_data)->toEqual(['columns' => ['A'], 'rows' => [['1']]]);
         $this->actingAs($this->admin)->get(route('documents.versions.edit', [$document, $version]))->assertInertia(fn (Assert $page) => $page
-            ->where('draft.revision', 3)->where('draft.flow.steps.1.type', 'decision')->where('draft.appendix.0.label', 'Form')->where('draft.completeness.purpose_scope', true));
+            ->where('draft.revision', 3)->where('draft.flow.steps.1.type', 'decision')->where('draft.appendix.0.label', 'Form')->where('draft.completeness.body', true));
         expect(session()->has(SessionKey::FLASH_DATA))->toBeFalse();
     });
 
@@ -256,4 +256,20 @@ it('accepts every flowchart symbol and refuses an unknown one', function () {
 
     $draft = $created['version']->fresh('content')->content;
     wzPatch($created, ['revision' => $draft->draft_revision, 'flowSteps' => $steps('hexagon')])->assertSessionHasErrors('flowSteps.0.type');
+});
+
+it('starts a new draft with Tujuan and Ruang Lingkup as ordinary sections, and shows older ones the same way', function () {
+    $created = wzCreate();
+    $headings = $created['version']->fresh('sections')->sections->pluck('heading')->all();
+    expect(array_slice($headings, 0, 2))->toBe(['Tujuan', 'Ruang Lingkup']);
+
+    $old = wzCreate(['title' => 'Dokumen lama']);
+    $old['version']->sections()->delete();
+    $old['version']->content->forceFill(['purpose' => 'Tujuan lama', 'scope' => 'Lingkup lama'])->save();
+
+    $this->actingAs($this->admin)->get(route('documents.versions.edit', [$old['document'], $old['version']]))->assertInertia(fn (Assert $page) => $page
+        ->where('draft.sections.0.heading', 'Tujuan')->where('draft.sections.0.content', 'Tujuan lama')->where('draft.sections.1.heading', 'Ruang Lingkup')->where('draft.completeness.body', true));
+
+    wzPatch($old, ['revision' => $old['version']->content->fresh()->draft_revision, 'sections' => [['heading' => 'Maksud', 'content' => 'x']], 'purpose' => '', 'scope' => ''])->assertSessionHasNoErrors();
+    expect($old['version']->content->fresh()->purpose)->toBeNull()->and($old['version']->fresh('sections')->sections->pluck('heading')->all())->toBe(['Maksud']);
 });

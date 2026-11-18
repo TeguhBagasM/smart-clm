@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Plus } from '@lucide/vue';
+import LanguagePicker from '@/components/documents/wizard/LanguagePicker.vue';
 import SectionCard from '@/components/documents/wizard/steps/SectionCard.vue';
 import { Button } from '@/components/ui/button';
 import { useWizard } from '@/composables/useDraftWizard';
@@ -24,12 +25,13 @@ function edit(index: number, section: DraftSection): void {
 
 <template>
     <div class="flex flex-col gap-3">
+        <LanguagePicker />
         <p
             v-if="state.sections.length === 0"
             class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground"
         >
-            Belum ada bagian. Tambahkan bagian pertama, mis. Definisi atau
-            Prosedur.
+            Belum ada bagian. Tambahkan bagian pertama, mis. Tujuan, Ruang
+            Lingkup, atau Prosedur.
         </p>
         <ol class="flex flex-col gap-3">
             <SectionCard

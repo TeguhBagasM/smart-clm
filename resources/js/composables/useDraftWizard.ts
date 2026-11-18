@@ -5,8 +5,6 @@ import { inject, provide, reactive, ref } from 'vue';
 import type { ChoiceOption, Draft } from '@/types';
 
 export type DraftKey =
-    | 'purpose'
-    | 'scope'
     | 'language'
     | 'sections'
     | 'flow'
@@ -18,8 +16,6 @@ export type DraftStatus = 'saved' | 'dirty' | 'saving' | 'error' | 'conflict';
 
 export type DraftState = Pick<
     Draft,
-    | 'purpose'
-    | 'scope'
     | 'language_mode'
     | 'sections'
     | 'flow'
@@ -38,14 +34,11 @@ export type WizardOptions = {
 /** The part of the request that carries one piece of the draft, in the names of the API. */
 function payloadFor(key: DraftKey, s: DraftState): Record<string, unknown> {
     switch (key) {
-        case 'purpose':
-            return { purpose: s.purpose };
-        case 'scope':
-            return { scope: s.scope };
         case 'language':
             return { languageMode: s.language_mode };
         case 'sections':
-            return { sections: s.sections };
+            // Tujuan and Ruang Lingkup now live in the sections: clear the old fields so nothing prints twice.
+            return { sections: s.sections, purpose: '', scope: '' };
         case 'flow':
             return {
                 flowMode: s.flow.mode,
