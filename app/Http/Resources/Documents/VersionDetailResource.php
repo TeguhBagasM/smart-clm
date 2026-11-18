@@ -61,6 +61,7 @@ class VersionDetailResource extends JsonResource
             ])->all(),
             'receipts' => $this->receipts(),
             'can' => [
+                'edit' => $user->can('edit', $this->resource),
                 'submit' => $user->can('submit', $this->resource),
                 'sign' => $user->can('sign', $this->resource),
                 'request_changes' => $user->can('requestChanges', $this->resource),

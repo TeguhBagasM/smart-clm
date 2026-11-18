@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Dcs;
 
 use App\Http\Requests\Dcs\Concerns\DraftContent;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +15,7 @@ class SaveDraftRequest extends FormRequest
 {
     use DraftContent;
 
-    public function authorize(): bool
+    public function authorize(): bool|Response
     {
         return true;
     }

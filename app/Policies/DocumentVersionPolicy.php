@@ -21,6 +21,14 @@ class DocumentVersionPolicy
 {
     public function __construct(private SignerGate $signerGate) {}
 
+    /**
+     * Writing the content of a draft (the wizard).
+     */
+    public function edit(User $actor, DocumentVersion $version): bool
+    {
+        return $version->status === VersionStatus::Draft && $actor->can(Permission::DcsEdit);
+    }
+
     public function submit(User $actor, DocumentVersion $version): bool
     {
         return $version->status === VersionStatus::Draft && $version->currentRendition()?->kind !== RenditionKind::Signed;

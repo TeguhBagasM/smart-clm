@@ -120,7 +120,7 @@ class CreateDocument
         return User::query()
             ->where('tenant_id', $tenant->id)
             ->where('is_active', true)
-            ->where('legacy_id', $legacyId)
+            ->whereApiId([$legacyId])
             ->first() ?? throw DcsException::badRequest('Pemilik dokumen tidak ditemukan.');
     }
 }

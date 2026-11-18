@@ -11,10 +11,11 @@ use Inertia\Inertia;
  * Runs a DCS action for a page and goes back with a toast: the success message,
  * or the action's own explanation when it refuses (a stale page, a turn that
  * has passed, an engine that failed). Validation errors are left to Laravel.
+ * Afterwards it goes back, or to `$to` when given (after creating something).
  */
 trait RunsDcsActions
 {
-    protected function perform(Closure $work, string $success): RedirectResponse
+    protected function perform(Closure $work, string $success, ?string $to = null): RedirectResponse
     {
         try {
             $work();
@@ -23,6 +24,6 @@ trait RunsDcsActions
             Inertia::flash('toast', ['type' => 'error', 'message' => $e->getMessage()]);
         }
 
-        return back();
+        return $to === null ? back() : redirect($to);
     }
 }

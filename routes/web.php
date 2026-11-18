@@ -4,7 +4,13 @@ use App\Enums\Permission;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserStatusController;
+use App\Http\Controllers\Documents\Config\ClauseConfigController;
+use App\Http\Controllers\Documents\Config\DepartmentConfigController;
+use App\Http\Controllers\Documents\Config\DocTypeConfigController;
+use App\Http\Controllers\Documents\Config\NumberingConfigController;
 use App\Http\Controllers\Documents\DocumentController;
+use App\Http\Controllers\Documents\DocumentCreateController;
+use App\Http\Controllers\Documents\DocumentDraftController;
 use App\Http\Controllers\Documents\DocumentTimelineController;
 use App\Http\Controllers\Documents\TaskQueueController;
 use App\Http\Controllers\Documents\VersionCommentController;
@@ -21,6 +27,43 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
 
+    Route::prefix('documents/config')->name('documents.config.')->middleware('can:'.Permission::DcsConfig->value)->group(function () {
+        Route::redirect('/', '/documents/config/types');
+
+        Route::get('types', [DocTypeConfigController::class, 'index'])->name('types.index');
+        Route::get('types/create', [DocTypeConfigController::class, 'create'])->name('types.create');
+        Route::post('types', [DocTypeConfigController::class, 'store'])->name('types.store');
+        Route::get('types/{type}/edit', [DocTypeConfigController::class, 'edit'])->whereUuid('type')->name('types.edit');
+        Route::put('types/{type}', [DocTypeConfigController::class, 'update'])->whereUuid('type')->name('types.update');
+        Route::delete('types/{type}', [DocTypeConfigController::class, 'destroy'])->whereUuid('type')->name('types.destroy');
+        Route::post('types/{type}/restore', [DocTypeConfigController::class, 'restore'])->whereUuid('type')->name('types.restore');
+
+        Route::get('clauses', [ClauseConfigController::class, 'index'])->name('clauses.index');
+        Route::get('clauses/create', [ClauseConfigController::class, 'create'])->name('clauses.create');
+        Route::post('clauses', [ClauseConfigController::class, 'store'])->name('clauses.store');
+        Route::get('clauses/{clause}/edit', [ClauseConfigController::class, 'edit'])->whereUuid('clause')->name('clauses.edit');
+        Route::put('clauses/{clause}', [ClauseConfigController::class, 'update'])->whereUuid('clause')->name('clauses.update');
+        Route::delete('clauses/{clause}', [ClauseConfigController::class, 'destroy'])->whereUuid('clause')->name('clauses.destroy');
+        Route::post('clauses/{clause}/restore', [ClauseConfigController::class, 'restore'])->whereUuid('clause')->name('clauses.restore');
+
+        Route::get('departments', [DepartmentConfigController::class, 'index'])->name('departments.index');
+        Route::post('departments', [DepartmentConfigController::class, 'store'])->name('departments.store');
+        Route::put('departments/{department}', [DepartmentConfigController::class, 'update'])->whereUuid('department')->name('departments.update');
+
+        Route::get('numbering', [NumberingConfigController::class, 'index'])->name('numbering.index');
+        Route::get('numbering/preview', [NumberingConfigController::class, 'preview'])->name('numbering.preview');
+        Route::put('numbering', [NumberingConfigController::class, 'update'])->name('numbering.update');
+        Route::delete('numbering/{type}', [NumberingConfigController::class, 'destroy'])->whereUuid('type')->name('numbering.destroy');
+    });
+
+    Route::middleware('can:'.Permission::DcsEdit->value)->group(function () {
+        Route::get('documents/create', [DocumentCreateController::class, 'create'])->name('documents.create');
+        Route::post('documents', [DocumentCreateController::class, 'store'])->name('documents.store');
+        Route::get('documents/number-preview', [DocumentCreateController::class, 'numberPreview'])->name('documents.number-preview');
+        Route::post('documents/extract-metadata', [DocumentCreateController::class, 'extractMetadata'])->name('documents.extract-metadata');
+        Route::post('documents/appendix-upload', [DocumentCreateController::class, 'appendixUpload'])->name('documents.appendix-upload');
+    });
+
     Route::get('documents/queue', [TaskQueueController::class, 'index'])->name('documents.queue');
 
     Route::prefix('documents/{document:uuid}')->scopeBindings()->group(function () {
@@ -29,6 +72,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('versions/{version:uuid}/file', [VersionFileController::class, 'show'])->name('documents.versions.file');
 
         Route::prefix('versions/{version:uuid}')->name('documents.versions.')->group(function () {
+            Route::middleware('can:'.Permission::DcsEdit->value)->group(function () {
+                Route::get('edit', [DocumentDraftController::class, 'edit'])->name('edit');
+                Route::patch('draft', [DocumentDraftController::class, 'update'])->name('draft.update');
+                Route::post('render', [DocumentDraftController::class, 'render'])->name('render');
+                Route::post('file', [DocumentDraftController::class, 'uploadFile'])->name('upload');
+            });
+
             Route::post('submit', [VersionWorkflowController::class, 'submit'])->name('submit');
             Route::post('sign', [VersionWorkflowController::class, 'sign'])->name('sign');
             Route::post('request-changes', [VersionWorkflowController::class, 'requestChanges'])->name('request-changes');

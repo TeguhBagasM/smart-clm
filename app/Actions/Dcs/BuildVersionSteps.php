@@ -130,8 +130,9 @@ class BuildVersionSteps
         $users = User::query()
             ->where('tenant_id', $tenant->id)
             ->where('is_active', true)
-            ->whereIn('legacy_id', $legacyIds)
-            ->pluck('id', 'legacy_id')
+            ->whereApiId($legacyIds)
+            ->get(['id', 'legacy_id'])
+            ->mapWithKeys(fn (User $user): array => [$user->apiId() => $user->id])
             ->all();
 
         $unknown = array_diff($legacyIds, array_keys($users));

@@ -83,6 +83,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Users named by the id the screens use for them: the Node id when the
+     * account was imported, otherwise the Laravel id.
+     *
+     * @param  Builder<self>  $query
+     * @param  array<int, string>  $apiIds
+     */
+    #[Scope]
+    protected function whereApiId(Builder $query, array $apiIds): void
+    {
+        $numeric = array_values(array_filter($apiIds, fn (string $id): bool => ctype_digit($id)));
+
+        $query->where(fn (Builder $inner) => $inner
+            ->whereIn('legacy_id', $apiIds)
+            ->orWhere(fn (Builder $own) => $own->whereNull('legacy_id')->whereIn('id', $numeric)));
+    }
+
+    /**
      * Limit the query to users the given viewer is allowed to see.
      *
      * @param  Builder<self>  $query

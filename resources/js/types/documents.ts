@@ -104,6 +104,7 @@ export type ReceiptSummary = {
 
 /** What the signed-in person may do to the version now (DocumentVersionPolicy). */
 export type VersionAbilities = {
+    edit: boolean;
     submit: boolean;
     sign: boolean;
     request_changes: boolean;

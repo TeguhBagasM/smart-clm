@@ -11,7 +11,10 @@ export type NavItem = {
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
+    /** Set by the sidebar once it knows which item matches the page best. */
     isActive?: boolean;
+    /** A path prefix that also marks this item active (for a section with several pages). */
+    activePrefix?: string;
     /** Hide the item unless the user has this permission. */
     permission?: Permission;
 };

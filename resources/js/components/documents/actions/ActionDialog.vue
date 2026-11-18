@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import type { RouteFormDefinition } from '@/wayfinder';
 
-type Variant = 'default' | 'outline' | 'destructive' | 'secondary';
+type Variant = 'default' | 'outline' | 'destructive' | 'secondary' | 'ghost';
 
 withDefaults(
     defineProps<{

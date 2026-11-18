@@ -3,9 +3,9 @@ import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import TaskQueueController from '@/actions/App/Http/Controllers/Documents/TaskQueueController';
 import QueueTable from '@/components/documents/QueueTable.vue';
-import TaskTabs from '@/components/documents/TaskTabs.vue';
 import Heading from '@/components/Heading.vue';
 import ListPage from '@/components/list/ListPage.vue';
+import PageTabs from '@/components/PageTabs.vue';
 import type {
     ListMeta,
     Paginated,
@@ -49,7 +49,21 @@ const total = computed(() =>
             />
         </div>
 
-        <TaskTabs :kinds="kinds" :active="kind.value" />
+        <PageTabs
+            label="Jenis tugas"
+            :tabs="
+                kinds.map((each) => ({
+                    key: each.value,
+                    label: each.label,
+                    count: each.count,
+                    href: TaskQueueController.index({
+                        query: { kind: each.value },
+                    }),
+                }))
+            "
+            :active="kind.value"
+            :only="['items', 'list', 'kind', 'kinds']"
+        />
         <p class="-mt-2 text-sm text-muted-foreground">
             {{ kind.description }}
         </p>

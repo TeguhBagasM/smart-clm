@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Dcs;
 
+use App\Actions\Dcs\StoreAppendixFile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dcs\UploadAppendixRequest;
 use App\Support\Dcs\CurrentTenant;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  * Uploads a Word or PDF appendix and answers with its URL, which the client
@@ -18,15 +17,8 @@ class AppendixUploadController extends Controller
 {
     public function __construct(private CurrentTenant $currentTenant) {}
 
-    public function store(UploadAppendixRequest $request): JsonResponse
+    public function store(UploadAppendixRequest $request, StoreAppendixFile $storeAppendixFile): JsonResponse
     {
-        $file = $request->document();
-        $safeName = Str::limit(preg_replace('/[^\w.\-]/', '_', $file->getClientOriginalName()) ?? 'lampiran', 100, '');
-        $key = sprintf('dcs-appendix/tenant-%d/%s-%s', $this->currentTenant->get()->id, Str::lower((string) Str::ulid()), $safeName);
-
-        $disk = Storage::disk(config('dcs.public_disk'));
-        $disk->put($key, (string) file_get_contents($file->getRealPath()));
-
-        return response()->json(['url' => $disk->url($key), 'name' => $file->getClientOriginalName()]);
+        return response()->json($storeAppendixFile->handle($this->currentTenant->get(), $request->document()));
     }
 }
