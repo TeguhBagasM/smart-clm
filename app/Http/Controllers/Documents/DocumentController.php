@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Documents;
 use App\Actions\Dcs\SeedDcsTenantDefaults;
 use App\Enums\Dcs\RenditionKind;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Documents\DocumentDetailResource;
+use App\Http\Resources\Documents\DocumentEventListResource;
 use App\Http\Resources\Documents\DocumentListResource;
+use App\Http\Resources\Documents\VersionDetailResource;
 use App\Models\Dcs\Document;
 use App\Support\Listing\DocumentListSpec;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,6 +45,31 @@ class DocumentController extends Controller
         return Inertia::render('documents/Index', [
             'documents' => DocumentListResource::collection($documents),
             'list' => $spec->meta($list),
+        ]);
+    }
+
+    /**
+     * A document with its versions; `?version=` picks the one shown (default:
+     * the version in force, else the newest). The version's own data is only
+     * computed when asked for, so switching versions reloads just that prop.
+     */
+    public function show(Request $request, Document $document): Response
+    {
+        Gate::authorize('view', $document);
+
+        $document->load([
+            'type', 'department', 'owner',
+            'versions' => fn ($versions) => $versions->withExists(['renditions as has_file' => fn (Builder $file) => $file->whereIn('kind', RenditionKind::mainValues())]),
+        ]);
+
+        $selected = $document->versions->firstWhere('uuid', $request->query('version'))
+            ?? $document->versions->firstWhere('id', $document->current_version_id)
+            ?? $document->versions->first();
+
+        return Inertia::render('documents/Show', [
+            'document' => DocumentDetailResource::make($document)->resolve($request),
+            'version' => fn () => $selected === null ? null : VersionDetailResource::make($selected->load('creator'))->resolve($request),
+            'recent_events' => DocumentEventListResource::collection($document->events()->with('version')->orderByDesc('occurred_at')->orderByDesc('id')->limit(6)->get())->resolve($request),
         ]);
     }
 }

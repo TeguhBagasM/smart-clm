@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserStatusController;
 use App\Http\Controllers\Documents\DocumentController;
+use App\Http\Controllers\Documents\DocumentTimelineController;
+use App\Http\Controllers\Documents\VersionFileController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -13,6 +15,12 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+
+    Route::prefix('documents/{document:uuid}')->scopeBindings()->group(function () {
+        Route::get('/', [DocumentController::class, 'show'])->name('documents.show');
+        Route::get('timeline', [DocumentTimelineController::class, 'index'])->name('documents.timeline');
+        Route::get('versions/{version:uuid}/file', [VersionFileController::class, 'show'])->name('documents.versions.file');
+    });
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('can:'.Permission::SettingsManage->value)->group(function () {

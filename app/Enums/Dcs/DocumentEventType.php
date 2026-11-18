@@ -34,4 +34,39 @@ enum DocumentEventType: string
     case ExternalReviewDisabled = 'external_review.disabled';
     case ExternalReviewUnlocked = 'external_review.unlocked';
     case ExternalReviewApproved = 'external_review.approved';
+
+    /**
+     * The name shown to people (Indonesian, as in the interface).
+     */
+    public function label(): string
+    {
+        return match ($this) {
+            self::DocumentCreated => 'Dokumen dibuat',
+            self::NumberAllocated => 'Nomor diberikan',
+            self::NumberReleased => 'Nomor dilepas',
+            self::VersionCreated => 'Versi dibuat',
+            self::ContentComposed => 'Dokumen disusun',
+            self::FileUploaded => 'Berkas diunggah',
+            self::ReviewScheduleSet => 'Jadwal tinjau ulang diatur',
+            self::Submitted => 'Diajukan untuk tanda tangan',
+            self::Signed => 'Ditandatangani',
+            self::Approved => 'Disetujui penuh',
+            self::ChangesRequested => 'Diminta revisi',
+            self::ReturnedToDraft => 'Dikembalikan ke draft',
+            self::CommentAdded => 'Komentar ditambahkan',
+            self::CommentResolved => 'Komentar diselesaikan',
+            self::ReleaseScheduled => 'Rilis dijadwalkan',
+            self::ReleaseScheduleCancelled => 'Jadwal rilis dibatalkan',
+            self::Released => 'Diberlakukan',
+            self::Superseded => 'Digantikan versi baru',
+            self::Withdrawn => 'Ditarik',
+            self::Distributed => 'Didistribusikan',
+            self::Acknowledged => 'Dikonfirmasi dibaca',
+            self::Translated => 'Terjemahan dibuat',
+            self::ExternalReviewEnabled => 'Link review eksternal dibuka',
+            self::ExternalReviewDisabled => 'Link review eksternal ditutup',
+            self::ExternalReviewUnlocked => 'Review eksternal dibuka kembali',
+            self::ExternalReviewApproved => 'Pihak eksternal menyetujui',
+        };
+    }
 }

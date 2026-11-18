@@ -6,6 +6,7 @@ use App\Enums\Dcs\RenditionKind;
 use App\Enums\Dcs\VersionStatus;
 use App\Models\Concerns\HasUuid;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Support\Dcs\DcsException;
 use Database\Factories\Dcs\DocumentVersionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -158,6 +159,14 @@ class DocumentVersion extends Model
     public function latestSourceRendition(): ?Rendition
     {
         return $this->renditions()->whereIn('kind', [RenditionKind::Composed->value, RenditionKind::Uploaded->value])->reorder()->orderByDesc('id')->first();
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 
     /**

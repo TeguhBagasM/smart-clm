@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 import { MessageSquare } from '@lucide/vue';
+import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import VersionStatusBadge from '@/components/documents/VersionStatusBadge.vue';
 import DataTable from '@/components/list/DataTable.vue';
 import { Badge } from '@/components/ui/badge';
@@ -26,10 +28,20 @@ const columns: ListColumn[] = [
         :list="list"
     >
         <template #cell-number="{ row }">
-            <span class="font-mono text-xs">{{ row.number }}</span>
+            <Link
+                :href="DocumentController.show({ document: row.id })"
+                class="font-mono text-xs underline-offset-4 hover:underline"
+            >
+                {{ row.number }}
+            </Link>
         </template>
         <template #cell-title="{ row }">
-            <div class="font-medium">{{ row.title }}</div>
+            <Link
+                :href="DocumentController.show({ document: row.id })"
+                class="font-medium underline-offset-4 hover:underline"
+            >
+                {{ row.title }}
+            </Link>
             <div class="text-muted-foreground">
                 {{ row.type.code }} · {{ row.department }} · {{ row.owner }}
             </div>
