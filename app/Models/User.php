@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Permission;
-use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -24,7 +22,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property int|null $tenant_id
  * @property string $name
  * @property string $email
- * @property Role $role
+ * @property int $role_id
  * @property bool $is_active
  * @property Carbon|null $last_login_at
  * @property Carbon|null $email_verified_at
@@ -36,6 +34,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Tenant|null $tenant
+ * @property-read Role $role
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -52,14 +51,17 @@ class User extends Authenticatable
         return $this->belongsTo(Tenant::class);
     }
 
-    public function isSuperAdmin(): bool
+    /**
+     * @return BelongsTo<Role, $this>
+     */
+    public function role(): BelongsTo
     {
-        return $this->role === Role::SuperAdmin;
+        return $this->belongsTo(Role::class);
     }
 
-    public function hasPermission(Permission $permission): bool
+    public function isSuperAdmin(): bool
     {
-        return $this->role->hasPermission($permission);
+        return $this->role->is_super_admin;
     }
 
     /**
@@ -91,7 +93,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'role' => Role::class,
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
             'email_verified_at' => 'datetime',

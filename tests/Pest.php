@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\SystemRole;
+use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -47,4 +49,12 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Id of the seeded system role, for request payloads.
+ */
+function systemRoleId(SystemRole $role): int
+{
+    return Role::systemRole($role)->id;
 }

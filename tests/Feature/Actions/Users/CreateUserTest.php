@@ -1,7 +1,7 @@
 <?php
 
 use App\Actions\Users\CreateUser;
-use App\Enums\Role;
+use App\Enums\SystemRole;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\UserInvitation;
@@ -11,17 +11,17 @@ use Illuminate\Support\Str;
 
 it('creates the user in the actor tenant and sends an invitation', function () {
     Notification::fake();
-    $admin = User::factory()->role(Role::Admin)->create();
+    $admin = User::factory()->role(SystemRole::Admin)->create();
 
     $user = app(CreateUser::class)->handle($admin, [
         'name' => 'Rina',
         'email' => 'rina@example.com',
-        'role' => Role::Legal->value,
+        'role_id' => systemRoleId(SystemRole::Legal),
         'tenant_id' => null,
     ]);
 
     expect($user->tenant_id)->toBe($admin->tenant_id)
-        ->and($user->role)->toBe(Role::Legal)
+        ->and($user->role->key)->toBe('legal')
         ->and($user->is_active)->toBeTrue();
     Notification::assertSentTo($user, UserInvitation::class);
 });
@@ -33,7 +33,7 @@ it('places users created by a super admin in the chosen tenant', function () {
     $user = app(CreateUser::class)->handle(User::factory()->superAdmin()->create(), [
         'name' => 'Rina',
         'email' => 'rina@example.com',
-        'role' => Role::Admin->value,
+        'role_id' => systemRoleId(SystemRole::Admin),
         'tenant_id' => $tenant->id,
     ]);
 

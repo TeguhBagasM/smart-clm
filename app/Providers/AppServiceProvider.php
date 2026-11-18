@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Models\User;
+use App\Support\Rbac\PermissionResolver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(PermissionResolver::class);
     }
 
     /**
@@ -32,14 +33,14 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Register one gate ability per permission so routes and policies can call
-     * `can(Permission::X)`. The role matrix lives in the Role enum.
+     * `can(Permission::X)`. Grants are read from the database by the resolver.
      */
     protected function configureAuthorization(): void
     {
         foreach (Permission::cases() as $permission) {
             Gate::define(
                 $permission->value,
-                fn (User $user): bool => $user->hasPermission($permission),
+                fn (User $user): bool => $this->app->make(PermissionResolver::class)->allows($user, $permission),
             );
         }
     }

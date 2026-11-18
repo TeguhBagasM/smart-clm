@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => $this->role->toOption(),
+            'role' => RoleSummaryResource::make($this->role)->resolve($request),
             'tenant' => $this->whenLoaded('tenant', fn (): ?array => $this->tenant === null ? null : [
                 'id' => $this->tenant->id,
                 'name' => $this->tenant->name,

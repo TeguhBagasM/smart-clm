@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\Role;
+use App\Enums\SystemRole;
 use App\Models\User;
 
 it('deactivates a user of the same tenant', function () {
-    $admin = User::factory()->role(Role::Admin)->create();
+    $admin = User::factory()->role(SystemRole::Admin)->create();
     $user = User::factory()->for($admin->tenant)->create();
 
     $this->actingAs($admin)
@@ -16,7 +16,7 @@ it('deactivates a user of the same tenant', function () {
 });
 
 it('reactivates a user', function () {
-    $admin = User::factory()->role(Role::Admin)->create();
+    $admin = User::factory()->role(SystemRole::Admin)->create();
     $user = User::factory()->for($admin->tenant)->inactive()->create();
 
     $this->actingAs($admin)->patch(route('admin.users.status.update', $user), ['is_active' => true]);
@@ -27,7 +27,7 @@ it('reactivates a user', function () {
 it('returns 404 for a user of another tenant', function () {
     $user = User::factory()->create();
 
-    $this->actingAs(User::factory()->role(Role::Admin)->create())
+    $this->actingAs(User::factory()->role(SystemRole::Admin)->create())
         ->patch(route('admin.users.status.update', $user), ['is_active' => false])
         ->assertNotFound();
 
@@ -35,7 +35,7 @@ it('returns 404 for a user of another tenant', function () {
 });
 
 it('forbids deactivating your own account', function () {
-    $admin = User::factory()->role(Role::Admin)->create();
+    $admin = User::factory()->role(SystemRole::Admin)->create();
 
     $this->actingAs($admin)
         ->patch(route('admin.users.status.update', $admin), ['is_active' => false])
@@ -43,7 +43,7 @@ it('forbids deactivating your own account', function () {
 });
 
 it('requires a boolean status', function () {
-    $admin = User::factory()->role(Role::Admin)->create();
+    $admin = User::factory()->role(SystemRole::Admin)->create();
     $user = User::factory()->for($admin->tenant)->create();
 
     $this->actingAs($admin)

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Role;
+use App\Enums\SystemRole;
 use App\Models\User;
 use Database\Seeders\DemoUsersSeeder;
 use Illuminate\Support\Facades\Hash;
@@ -10,13 +10,13 @@ it('creates one active user per non-legacy role with the configured password', f
 
     $this->seed(DemoUsersSeeder::class);
 
-    $users = User::all();
-    $expectedRoles = array_values(array_filter(Role::cases(), fn (Role $role) => ! $role->isLegacy()));
+    $users = User::with('role')->get();
+    $expectedRoles = array_values(array_filter(SystemRole::cases(), fn (SystemRole $role) => ! $role->isLegacy()));
 
-    expect($users->pluck('role')->all())->toEqualCanonicalizing($expectedRoles)
+    expect($users->pluck('role.key')->all())->toEqualCanonicalizing(array_map(fn (SystemRole $role) => $role->value, $expectedRoles))
         ->and($users->every(fn (User $user) => $user->is_active && Hash::check('demo-secret-123', $user->password)))->toBeTrue()
-        ->and($users->firstWhere('role', Role::SuperAdmin)->tenant_id)->toBeNull()
-        ->and($users->firstWhere('role', Role::Admin)->tenant_id)->not->toBeNull();
+        ->and($users->firstWhere('role.key', 'super_admin')->tenant_id)->toBeNull()
+        ->and($users->firstWhere('role.key', 'admin')->tenant_id)->not->toBeNull();
 });
 
 it('can run twice without duplicating users', function () {

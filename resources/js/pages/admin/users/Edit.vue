@@ -4,7 +4,7 @@ import UserController from '@/actions/App/Http/Controllers/Admin/UserController'
 import UserForm from '@/components/admin/users/UserForm.vue';
 import UserStatusToggle from '@/components/admin/users/UserStatusToggle.vue';
 import Heading from '@/components/Heading.vue';
-import type { ManagedUser, Option } from '@/types';
+import type { ManagedUser, RoleOption } from '@/types';
 
 defineOptions({
     layout: {
@@ -14,7 +14,7 @@ defineOptions({
 
 defineProps<{
     user: { data: ManagedUser };
-    roleOptions: Option[];
+    roleOptions: RoleOption[];
 }>();
 </script>
 

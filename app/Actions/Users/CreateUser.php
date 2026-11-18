@@ -2,7 +2,8 @@
 
 namespace App\Actions\Users;
 
-use App\Enums\Role;
+use App\Actions\Audit\RecordAuditLog;
+use App\Models\Role;
 use App\Models\User;
 use App\Notifications\UserInvitation;
 use Illuminate\Support\Facades\DB;
@@ -16,22 +17,31 @@ use Illuminate\Support\Str;
  */
 class CreateUser
 {
+    public function __construct(private RecordAuditLog $recordAuditLog) {}
+
     /**
-     * @param  array{name: string, email: string, role: string, tenant_id: int|null}  $data
+     * @param  array{name: string, email: string, role_id: int, tenant_id: int|null}  $data
      */
     public function handle(User $actor, array $data): User
     {
         $user = DB::transaction(function () use ($actor, $data): User {
             $user = new User;
+            $role = Role::query()->findOrFail($data['role_id']);
 
             $user->forceFill([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Str::password(40),
-                'role' => Role::from($data['role']),
+                'role_id' => $role->id,
                 'tenant_id' => $actor->isSuperAdmin() ? $data['tenant_id'] : $actor->tenant_id,
                 'is_active' => true,
             ])->save();
+
+            $this->recordAuditLog->handle($actor, 'user.created', $user, null, [
+                'email' => $user->email,
+                'role_id' => $role->id,
+                'role' => $role->name,
+            ], $user->tenant_id);
 
             return $user;
         });

@@ -30,6 +30,8 @@ enum Permission: string
     case VendorsManage = 'vendors.manage';
     case SettingsManage = 'settings.manage';
     case SettingsEmploymentTypes = 'settings.employment_types';
+    case RolesView = 'roles.view';
+    case RolesManage = 'roles.manage';
 
     /**
      * Human readable description shown in the permission matrix.
@@ -59,6 +61,8 @@ enum Permission: string
             self::VendorsManage => 'Kelola data vendor',
             self::SettingsManage => 'Kelola pengguna, pengaturan & master data',
             self::SettingsEmploymentTypes => 'Ubah Kategori Dokumen Karyawan saja',
+            self::RolesView => 'Lihat peran & hak akses',
+            self::RolesManage => 'Buat, ubah & hapus peran serta hak aksesnya',
         };
     }
 
@@ -76,7 +80,47 @@ enum Permission: string
             self::DcsConfig, self::DcsEdit, self::DcsRelease => 'Dokumen Terkontrol (DCS)',
             self::LegalJobRequest, self::LegalJobProcess => 'Pekerjaan Legal',
             self::BudgetsManage, self::EmployeesManage, self::VendorsManage => 'Data & Anggaran',
-            self::SettingsManage, self::SettingsEmploymentTypes => 'Pengaturan Sistem',
+            self::SettingsManage, self::SettingsEmploymentTypes,
+            self::RolesView, self::RolesManage => 'Pengaturan Sistem',
         };
+    }
+
+    /**
+     * Permissions a tenant administrator role must always keep, so a tenant
+     * can never lock itself out of user and role management.
+     *
+     * @return list<self>
+     */
+    public static function requiredByTenantAdmin(): array
+    {
+        return [self::SettingsManage, self::RolesView, self::RolesManage];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function keys(): array
+    {
+        return array_map(fn (self $permission): string => $permission->value, self::cases());
+    }
+
+    /**
+     * The catalog grouped by section, shaped for the permission matrix UI.
+     *
+     * @return list<array{group: string, permissions: list<array{value: string, label: string}>}>
+     */
+    public static function grouped(): array
+    {
+        $groups = [];
+
+        foreach (self::cases() as $permission) {
+            $groups[$permission->group()][] = ['value' => $permission->value, 'label' => $permission->label()];
+        }
+
+        return array_map(
+            fn (string $group, array $permissions): array => ['group' => $group, 'permissions' => $permissions],
+            array_keys($groups),
+            array_values($groups),
+        );
     }
 }

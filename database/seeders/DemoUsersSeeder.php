@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Role;
+use App\Actions\Rbac\SyncRbacCatalog;
+use App\Enums\SystemRole;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -17,7 +19,7 @@ class DemoUsersSeeder extends Seeder
 {
     public const array ALLOWED_ENVIRONMENTS = ['local', 'testing'];
 
-    public function run(): void
+    public function run(SyncRbacCatalog $syncRbacCatalog): void
     {
         if (! app()->environment(self::ALLOWED_ENVIRONMENTS)) {
             throw new RuntimeException('DemoUsersSeeder only runs in local or testing environments.');
@@ -29,20 +31,22 @@ class DemoUsersSeeder extends Seeder
             throw new RuntimeException('Set SEED_DEMO_PASSWORD before seeding demo users.');
         }
 
+        $syncRbacCatalog->handle();
+
         $tenant = Tenant::query()->firstOrCreate(['code' => 'DEMO'], ['name' => 'Smart CLM Demo']);
 
-        foreach (Role::cases() as $role) {
-            if ($role->isLegacy()) {
+        foreach (SystemRole::cases() as $systemRole) {
+            if ($systemRole->isLegacy()) {
                 continue;
             }
 
-            $user = User::query()->firstOrNew(['email' => Str::replace('_', '-', $role->value).'@smart-clm.test']);
+            $user = User::query()->firstOrNew(['email' => Str::replace('_', '-', $systemRole->value).'@smart-clm.test']);
 
             $user->forceFill([
-                'name' => 'Demo '.$role->label(),
+                'name' => 'Demo '.$systemRole->label(),
                 'password' => $password,
-                'role' => $role,
-                'tenant_id' => $role === Role::SuperAdmin ? null : $tenant->id,
+                'role_id' => Role::systemRole($systemRole)->id,
+                'tenant_id' => $systemRole->isSuperAdmin() ? null : $tenant->id,
                 'is_active' => true,
                 'email_verified_at' => now(),
             ])->save();

@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\Role;
+use App\Enums\SystemRole;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,7 +29,7 @@ class UserFactory extends Factory
     {
         return [
             'tenant_id' => Tenant::factory(),
-            'role' => Role::Viewer,
+            'role_id' => fn (): int => Role::systemRole(SystemRole::Viewer)->id,
             'is_active' => true,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -54,14 +55,22 @@ class UserFactory extends Factory
     /**
      * Give the user the given role.
      */
-    public function role(Role $role): static
+    public function role(SystemRole $role): static
     {
-        if ($role === Role::SuperAdmin) {
+        if ($role === SystemRole::SuperAdmin) {
             return $this->superAdmin();
         }
 
+        return $this->forRole(Role::systemRole($role));
+    }
+
+    /**
+     * Give the user an existing role, including custom tenant roles.
+     */
+    public function forRole(Role $role): static
+    {
         return $this->state(fn (array $attributes) => [
-            'role' => $role,
+            'role_id' => $role->id,
         ]);
     }
 
@@ -71,7 +80,7 @@ class UserFactory extends Factory
     public function superAdmin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => Role::SuperAdmin,
+            'role_id' => Role::systemRole(SystemRole::SuperAdmin)->id,
             'tenant_id' => null,
         ]);
     }

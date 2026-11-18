@@ -54,7 +54,7 @@ function formatLastLogin(value: string | null): string {
                         </div>
                     </TableCell>
                     <TableCell>
-                        <Badge variant="outline">{{ user.role.label }}</Badge>
+                        <Badge variant="outline">{{ user.role.name }}</Badge>
                     </TableCell>
                     <TableCell v-if="showTenant" class="text-muted-foreground">
                         {{ user.tenant?.name ?? 'Semua perusahaan' }}

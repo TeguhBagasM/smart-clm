@@ -41,7 +41,7 @@ class UserPolicy
             return Response::deny(__('Ubah akun Anda sendiri melalui halaman Profil.'));
         }
 
-        if ($target->role->rank() > $actor->role->rank()) {
+        if ($target->role->level > $actor->role->level) {
             return Response::deny(__('Anda tidak dapat mengubah pengguna dengan peran lebih tinggi.'));
         }
 

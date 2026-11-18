@@ -16,7 +16,7 @@ class AuthenticateUser
     public function __invoke(Request $request): ?User
     {
         $user = User::query()
-            ->with('tenant')
+            ->with(['tenant', 'role'])
             ->where('email', $request->string(Fortify::username())->toString())
             ->first();
 

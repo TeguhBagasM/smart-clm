@@ -39,9 +39,9 @@ const configurationNavItems: NavItem[] = [
     },
     {
         title: 'Hak Akses',
-        href: RoleController(),
+        href: RoleController.index(),
         icon: KeyRound,
-        permission: 'settings.manage',
+        permission: 'roles.view',
     },
 ];
 

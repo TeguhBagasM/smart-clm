@@ -24,7 +24,9 @@ export type Permission =
     | 'employees.manage'
     | 'vendors.manage'
     | 'settings.manage'
-    | 'settings.employment_types';
+    | 'settings.employment_types'
+    | 'roles.view'
+    | 'roles.manage';
 
 export type Option<T = string> = {
     value: T;
@@ -36,12 +38,26 @@ export type TenantSummary = {
     name: string;
 };
 
+/** Shape of App\Http\Resources\RoleSummaryResource. */
+export type RoleSummary = {
+    id: number;
+    key: string;
+    name: string;
+    level: number;
+    is_system: boolean;
+};
+
+/** A selectable role; `tenant_id` is null for roles shared by all tenants. */
+export type RoleOption = Option & {
+    tenant_id: number | null;
+};
+
 /** Shape of App\Http\Resources\UserResource. */
 export type ManagedUser = {
     id: number;
     name: string;
     email: string;
-    role: Option;
+    role: RoleSummary;
     tenant: TenantSummary | null;
     is_active: boolean;
     last_login_at: string | null;
@@ -67,4 +83,35 @@ export type Paginated<T> = {
         to: number | null;
         total: number;
     };
+};
+
+export type PermissionGroup = {
+    group: string;
+    permissions: Option<Permission>[];
+};
+
+/** Shape of App\Http\Resources\RoleResource plus the role's permission keys. */
+export type RoleRecord = {
+    id: number;
+    key: string;
+    name: string;
+    description: string | null;
+    level: number;
+    is_system: boolean;
+    is_assignable: boolean;
+    is_super_admin: boolean;
+    tenant: TenantSummary | null;
+    users_count: number;
+    permissions: Permission[];
+    can: {
+        update: boolean;
+        delete: boolean;
+    };
+};
+
+/** An existing role whose permissions can pre-fill a new role. */
+export type RoleTemplate = {
+    id: number;
+    name: string;
+    permissions: Permission[];
 };

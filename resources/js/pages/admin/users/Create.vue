@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import UserForm from '@/components/admin/users/UserForm.vue';
 import Heading from '@/components/Heading.vue';
-import type { Option, TenantSummary } from '@/types';
+import type { RoleOption, TenantSummary } from '@/types';
 
 defineOptions({
     layout: {
@@ -15,7 +15,7 @@ defineOptions({
 });
 
 defineProps<{
-    roleOptions: Option[];
+    roleOptions: RoleOption[];
     tenantOptions: TenantSummary[] | null;
 }>();
 </script>

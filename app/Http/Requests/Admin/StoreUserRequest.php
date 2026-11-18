@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Concerns\ProfileValidationRules;
-use App\Enums\Role;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -40,24 +40,27 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $actor = $this->user();
+        $tenantId = $actor->isSuperAdmin() ? $this->integer('tenant_id') ?: null : $actor->tenant_id;
+
         return [
             ...$this->profileRules(),
-            'role' => ['required', Rule::enum(Role::class)->only($this->user()->role->assignableRoles())],
-            'tenant_id' => $this->user()->isSuperAdmin()
+            'role_id' => ['required', 'integer', Rule::in(Role::assignable($actor, $tenantId)->modelKeys())],
+            'tenant_id' => $actor->isSuperAdmin()
                 ? ['required', 'integer', Rule::exists(Tenant::class, 'id')->where('is_active', true)]
                 : ['prohibited'],
         ];
     }
 
     /**
-     * @return array{name: string, email: string, role: string, tenant_id: int|null}
+     * @return array{name: string, email: string, role_id: int, tenant_id: int|null}
      */
     public function userData(): array
     {
         return [
             'name' => $this->string('name')->toString(),
             'email' => $this->string('email')->toString(),
-            'role' => $this->string('role')->toString(),
+            'role_id' => $this->integer('role_id'),
             'tenant_id' => $this->filled('tenant_id') ? $this->integer('tenant_id') : null,
         ];
     }

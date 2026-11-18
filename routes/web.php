@@ -11,14 +11,16 @@ Route::redirect('/', '/dashboard')->name('home');
 Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
-    Route::prefix('admin')
-        ->name('admin.')
-        ->middleware('can:'.Permission::SettingsManage->value)
-        ->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::middleware('can:'.Permission::SettingsManage->value)->group(function () {
             Route::resource('users', UserController::class)->except(['show', 'destroy']);
             Route::patch('users/{user}/status', UserStatusController::class)->name('users.status.update');
-            Route::get('roles', RoleController::class)->name('roles.index');
         });
+
+        Route::middleware('can:'.Permission::RolesView->value)->group(function () {
+            Route::resource('roles', RoleController::class)->except(['show']);
+        });
+    });
 });
 
 require __DIR__.'/settings.php';

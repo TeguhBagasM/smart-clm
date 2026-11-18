@@ -17,7 +17,7 @@ class AuthUserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{id: int, name: string, email: string, role: array{value: string, label: string}, tenant: array{id: int, name: string}|null, two_factor_enabled: bool}
+     * @return array{id: int, name: string, email: string, role: array<string, mixed>, tenant: array{id: int, name: string}|null, two_factor_enabled: bool}
      */
     public function toArray(Request $request): array
     {
@@ -25,10 +25,7 @@ class AuthUserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => [
-                'value' => $this->role->value,
-                'label' => $this->role->label(),
-            ],
+            'role' => RoleSummaryResource::make($this->role)->resolve($request),
             'tenant' => $this->tenant === null ? null : [
                 'id' => $this->tenant->id,
                 'name' => $this->tenant->name,

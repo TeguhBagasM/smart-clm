@@ -22,6 +22,8 @@ class EnsureUserIsActive
     {
         $user = $request->user();
 
+        $user?->loadMissing(['role', 'tenant']);
+
         if ($user === null || ($user->is_active && ($user->isSuperAdmin() || $user->tenant?->is_active))) {
             return $next($request);
         }

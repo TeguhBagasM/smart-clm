@@ -3,10 +3,12 @@
 namespace App\Enums;
 
 /**
- * Every role in Smart CLM and its default permissions. This enum is the single
- * source of truth for the role/permission matrix (docs/data/role_permissions.csv).
+ * Definition of the roles that ship with Smart CLM. They are seeded into the
+ * `roles` table (as system roles) by the RBAC catalog sync; after that the
+ * database is the source of truth. The default matrix mirrors
+ * docs/data/role_permissions.csv plus the roles.* permissions.
  */
-enum Role: string
+enum SystemRole: string
 {
     case SuperAdmin = 'super_admin';
     case ItSystem = 'it_system';
@@ -48,94 +50,51 @@ enum Role: string
     }
 
     /**
-     * Legacy roles still exist on old accounts but can no longer be given out.
+     * Position in the management hierarchy (0-100, higher is more powerful).
+     */
+    public function level(): int
+    {
+        return match ($this) {
+            self::SuperAdmin => 100,
+            self::Admin => 80,
+            self::ItSystem => 50,
+            default => 10,
+        };
+    }
+
+    /**
+     * Legacy roles exist on old accounts but can no longer be given out.
      */
     public function isLegacy(): bool
     {
         return in_array($this, [self::Staff, self::Manager], true);
     }
 
-    /**
-     * Whether this role may be given to a user from the user management screen.
-     */
     public function isAssignable(): bool
     {
         return $this !== self::SuperAdmin && ! $this->isLegacy();
     }
 
+    public function isSuperAdmin(): bool
+    {
+        return $this === self::SuperAdmin;
+    }
+
     /**
-     * Position in the user management hierarchy. A user may only manage users
-     * whose rank is not higher than their own.
+     * The role whose holders keep a tenant manageable: every tenant must
+     * retain at least one active user with it.
      */
-    public function rank(): int
+    public function isTenantAdmin(): bool
     {
-        return match ($this) {
-            self::SuperAdmin => 3,
-            self::Admin => 2,
-            self::ItSystem => 1,
-            default => 0,
-        };
+        return $this === self::Admin;
     }
 
     /**
-     * Roles that a user holding this role may assign to other users.
-     *
-     * @return list<self>
-     */
-    public function assignableRoles(): array
-    {
-        $assignable = array_values(array_filter(self::cases(), fn (self $role): bool => $role->isAssignable()));
-
-        return match ($this) {
-            self::SuperAdmin, self::Admin => $assignable,
-            self::ItSystem => array_values(array_filter(
-                $assignable,
-                fn (self $role): bool => $role->rank() === 0,
-            )),
-            default => [],
-        };
-    }
-
-    /**
-     * Roles this role may choose when editing a user who currently holds
-     * $currentRole. The current role stays selectable so an account with a
-     * legacy role can be edited without changing it; a super admin keeps
-     * their role because they belong to no tenant.
-     *
-     * @return list<self>
-     */
-    public function assignableRolesWhenEditing(self $currentRole): array
-    {
-        if ($currentRole === self::SuperAdmin) {
-            return [self::SuperAdmin];
-        }
-
-        $assignable = $this->assignableRoles();
-
-        return in_array($currentRole, $assignable, true) ? $assignable : [...$assignable, $currentRole];
-    }
-
-    /**
-     * Shape used by select inputs on the frontend.
-     *
-     * @return array{value: string, label: string}
-     */
-    public function toOption(): array
-    {
-        return ['value' => $this->value, 'label' => $this->label()];
-    }
-
-    public function canAssign(self $role): bool
-    {
-        return in_array($role, $this->assignableRoles(), true);
-    }
-
-    /**
-     * Default permissions granted to this role.
+     * Default permissions of this role when it is first seeded.
      *
      * @return list<Permission>
      */
-    public function permissions(): array
+    public function defaultPermissions(): array
     {
         return match ($this) {
             self::SuperAdmin => Permission::cases(),
@@ -159,6 +118,8 @@ enum Role: string
                 Permission::EmployeesManage,
                 Permission::VendorsManage,
                 Permission::SettingsManage,
+                Permission::RolesView,
+                Permission::RolesManage,
             ],
             self::Legal => [
                 Permission::ContractEdit,
@@ -194,16 +155,11 @@ enum Role: string
                 Permission::DcsRelease,
                 Permission::BudgetsManage,
             ],
-            self::ItSystem => [Permission::SettingsManage],
+            self::ItSystem => [Permission::SettingsManage, Permission::RolesView],
             self::Marketing, self::BusinessPartnership, self::AccountExecutive, self::Operasional => [
                 Permission::LegalJobRequest,
             ],
             self::Direktur, self::Finance, self::Tax, self::Viewer, self::Staff => [],
         };
-    }
-
-    public function hasPermission(Permission $permission): bool
-    {
-        return in_array($permission, $this->permissions(), true);
     }
 }

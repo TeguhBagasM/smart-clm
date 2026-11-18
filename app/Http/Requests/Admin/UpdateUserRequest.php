@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Concerns\ProfileValidationRules;
-use App\Enums\Role;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -45,21 +45,21 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             ...$this->profileRules($this->targetUser()->id),
-            'role' => ['required', Rule::enum(Role::class)->only(
-                $this->user()->role->assignableRolesWhenEditing($this->targetUser()->role),
+            'role_id' => ['required', 'integer', Rule::in(
+                Role::assignable($this->user(), $this->targetUser()->tenant_id, $this->targetUser()->role)->modelKeys(),
             )],
         ];
     }
 
     /**
-     * @return array{name: string, email: string, role: string}
+     * @return array{name: string, email: string, role_id: int}
      */
     public function userData(): array
     {
         return [
             'name' => $this->string('name')->toString(),
             'email' => $this->string('email')->toString(),
-            'role' => $this->string('role')->toString(),
+            'role_id' => $this->integer('role_id'),
         ];
     }
 

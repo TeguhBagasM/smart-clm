@@ -2,13 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\Permission;
 use App\Http\Resources\AuthUserResource;
+use App\Support\Rbac\PermissionResolver;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private PermissionResolver $permissionResolver) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -44,10 +46,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => fn (): ?array => $request->user()
                     ? AuthUserResource::make($request->user())->resolve($request)
                     : null,
-                'permissions' => fn (): array => array_map(
-                    fn (Permission $permission): string => $permission->value,
-                    $request->user()?->role->permissions() ?? [],
-                ),
+                'permissions' => fn (): array => $request->user()
+                    ? $this->permissionResolver->permissionsFor($request->user())
+                    : [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
