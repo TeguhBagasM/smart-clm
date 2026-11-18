@@ -41,7 +41,7 @@ class SubmitVersionForReview
             }
 
             // After a reset the current file still carries the old signatures: it must be redrawn or replaced first.
-            if ($locked->currentRendition()?->kind === RenditionKind::Signed) {
+            if ($locked->currentRendition()->kind === RenditionKind::Signed) {
                 throw DcsException::conflict('Berkas masih membawa tanda tangan lama. Susun ulang atau unggah berkas baru sebelum mengajukan ulang.');
             }
 

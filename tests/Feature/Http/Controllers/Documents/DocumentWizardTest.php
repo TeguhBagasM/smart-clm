@@ -244,3 +244,16 @@ describe('the wizard', function () {
         expect(wzToast()['message'])->toBe('Berkas PDF diunggah.')->and(Rendition::query()->sole()->kind)->toBe(RenditionKind::Uploaded);
     });
 });
+
+it('accepts every flowchart symbol and refuses an unknown one', function () {
+    $created = wzCreate();
+    $steps = fn (string $type): array => [['id' => 'a', 'order' => 1, 'type' => $type, 'text' => 'Langkah']];
+
+    foreach (['start', 'process', 'decision', 'end', 'document', 'data', 'predefined', 'connector'] as $type) {
+        $draft = $created['version']->fresh('content')->content;
+        wzPatch($created, ['revision' => $draft->draft_revision, 'flowMode' => 'builder', 'flowSteps' => $steps($type)])->assertSessionHasNoErrors();
+    }
+
+    $draft = $created['version']->fresh('content')->content;
+    wzPatch($created, ['revision' => $draft->draft_revision, 'flowSteps' => $steps('hexagon')])->assertSessionHasErrors('flowSteps.0.type');
+});

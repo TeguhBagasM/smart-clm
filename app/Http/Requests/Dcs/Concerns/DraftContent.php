@@ -36,7 +36,7 @@ trait DraftContent
             'flowSteps' => ['nullable', 'array'],
             'flowSteps.*' => ['array'],
             'flowSteps.*.order' => ['nullable', 'integer'],
-            'flowSteps.*.type' => ['required', 'in:start,process,decision,end'],
+            'flowSteps.*.type' => ['required', 'in:start,process,decision,end,document,data,predefined,connector'],
             'flowSteps.*.text' => ['nullable', 'string'],
             'appendix' => ['nullable', 'array'],
             'appendix.*.label' => ['required', 'string', 'max:300'],

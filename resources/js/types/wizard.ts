@@ -6,7 +6,15 @@ export type DraftSection = {
     table?: DraftTable;
 };
 
-export type FlowStepType = 'start' | 'process' | 'decision' | 'end';
+export type FlowStepType =
+    | 'start'
+    | 'process'
+    | 'decision'
+    | 'end'
+    | 'document'
+    | 'data'
+    | 'predefined'
+    | 'connector';
 
 export type FlowStep = {
     id: string;

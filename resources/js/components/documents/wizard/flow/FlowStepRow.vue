@@ -28,6 +28,10 @@ const types: { value: FlowStepType; label: string }[] = [
     { value: 'process', label: 'Proses' },
     { value: 'decision', label: 'Keputusan' },
     { value: 'end', label: 'Selesai' },
+    { value: 'document', label: 'Dokumen' },
+    { value: 'data', label: 'Input / output' },
+    { value: 'predefined', label: 'Proses terdefinisi (SOP lain)' },
+    { value: 'connector', label: 'Konektor' },
 ];
 const NONE = '__none';
 

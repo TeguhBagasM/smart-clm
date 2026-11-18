@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import FlowShape from '@/components/documents/wizard/flow/FlowShape.vue';
 import { BOX, layoutFlow } from '@/components/documents/wizard/flow/flowLayout';
 import type { FlowStep } from '@/types';
 
@@ -92,28 +93,7 @@ function lines(text: string | null): string[] {
                 </text>
             </g>
             <g v-for="step in layout.placed" :key="step.id">
-                <polygon
-                    v-if="step.type === 'decision'"
-                    :points="`${step.x + BOX.w / 2},${step.y} ${step.x + BOX.w},${step.y + BOX.h / 2} ${step.x + BOX.w / 2},${step.y + BOX.h} ${step.x},${step.y + BOX.h / 2}`"
-                    fill="var(--card)"
-                    stroke="var(--primary)"
-                    stroke-width="2"
-                />
-                <rect
-                    v-else
-                    :x="step.x"
-                    :y="step.y"
-                    :width="BOX.w"
-                    :height="BOX.h"
-                    :rx="step.type === 'process' ? 6 : BOX.h / 2"
-                    :fill="
-                        step.type === 'process'
-                            ? 'var(--card)'
-                            : 'var(--primary)'
-                    "
-                    stroke="var(--primary)"
-                    stroke-width="2"
-                />
+                <FlowShape :type="step.type" :x="step.x" :y="step.y" />
                 <text
                     :x="step.x + BOX.w / 2"
                     :y="
