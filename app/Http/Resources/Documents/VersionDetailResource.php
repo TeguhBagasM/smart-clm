@@ -27,6 +27,8 @@ class VersionDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         $externalReview = $this->externalReviews()->whereNull('disabled_at')->first();
+        $user = $request->user();
+        $acknowledged = ReadReceipt::query()->where('version_id', $this->id)->where('user_id', $user->id)->where('status', ReceiptStatus::Acknowledged->value)->exists();
 
         return [
             'id' => $this->uuid,
@@ -58,6 +60,19 @@ class VersionDetailResource extends JsonResource
                 'created_at' => ApiDate::format($comment->created_at),
             ])->all(),
             'receipts' => $this->receipts(),
+            'can' => [
+                'submit' => $user->can('submit', $this->resource),
+                'sign' => $user->can('sign', $this->resource),
+                'request_changes' => $user->can('requestChanges', $this->resource),
+                'return_to_draft' => $user->can('returnToDraft', $this->resource),
+                'comment' => $user->can('comment', $this->resource),
+                'resolve_comment' => $user->can('resolveComment', $this->resource),
+                'release' => $user->can('release', $this->resource),
+                'cancel_release' => $user->can('cancelRelease', $this->resource),
+                'withdraw' => $user->can('withdraw', $this->resource),
+                'distribute' => $user->can('distribute', $this->resource),
+                'acknowledge' => ! $acknowledged && $user->can('acknowledge', $this->resource),
+            ],
             'external_review' => $externalReview === null ? null : ['locked' => $externalReview->locked, 'expires_at' => ApiDate::format($externalReview->expires_at)],
         ];
     }

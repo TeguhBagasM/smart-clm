@@ -9,6 +9,7 @@ use App\Models\Dcs\DocumentVersion;
 use App\Models\Dcs\ReadReceipt;
 use App\Models\User;
 use App\Support\Dcs\DcsException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,6 +36,16 @@ class DistributeVersion
             throw DcsException::badRequest('Penerima tidak ditemukan: '.implode(', ', $unknown).'.');
         }
 
+        return $this->toUsers($actor, $version, $users, $mandatory);
+    }
+
+    /**
+     * Sends the version to users of its tenant that are already loaded.
+     *
+     * @param  Collection<int, User>  $users
+     */
+    public function toUsers(User $actor, DocumentVersion $version, Collection $users, bool $mandatory): Distribution
+    {
         return DB::transaction(function () use ($actor, $version, $users, $mandatory): Distribution {
             $distribution = new Distribution;
             $distribution->forceFill([

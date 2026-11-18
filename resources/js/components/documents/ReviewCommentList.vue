@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import CommentForm from '@/components/documents/actions/CommentForm.vue';
+import ResolveCommentButton from '@/components/documents/actions/ResolveCommentButton.vue';
 import Panel from '@/components/documents/Panel.vue';
 import { Badge } from '@/components/ui/badge';
 import { formatDateTime } from '@/lib/format';
 import type { CommentAnchor, ReviewComment } from '@/types';
 
-const props = defineProps<{ comments: ReviewComment[] }>();
+const props = defineProps<{
+    documentId: string;
+    versionId: string;
+    comments: ReviewComment[];
+    canComment: boolean;
+    canResolve: boolean;
+}>();
 
 const open = computed(
     () => props.comments.filter((comment) => comment.status === 'open').length,
@@ -75,6 +83,13 @@ function where(anchor: CommentAnchor): string {
                         {{ comment.anchor.quote }}
                     </blockquote>
                     <p class="whitespace-pre-line">{{ comment.body }}</p>
+                    <ResolveCommentButton
+                        v-if="canResolve && comment.status === 'open'"
+                        class="self-start"
+                        :document-id="documentId"
+                        :version-id="versionId"
+                        :comment-id="comment.id"
+                    />
                     <p
                         v-if="comment.resolved_by"
                         class="text-xs text-muted-foreground"
@@ -84,5 +99,11 @@ function where(anchor: CommentAnchor): string {
                 </li>
             </ul>
         </template>
+        <CommentForm
+            v-if="canComment"
+            class="mt-4"
+            :document-id="documentId"
+            :version-id="versionId"
+        />
     </Panel>
 </template>

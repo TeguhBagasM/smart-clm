@@ -102,6 +102,23 @@ export type ReceiptSummary = {
     }[];
 };
 
+/** What the signed-in person may do to the version now (DocumentVersionPolicy). */
+export type VersionAbilities = {
+    submit: boolean;
+    sign: boolean;
+    request_changes: boolean;
+    return_to_draft: boolean;
+    comment: boolean;
+    resolve_comment: boolean;
+    release: boolean;
+    cancel_release: boolean;
+    withdraw: boolean;
+    distribute: boolean;
+    acknowledge: boolean;
+};
+
+export type RecipientOption = { id: number; name: string; role: string };
+
 /** Shape of App\Http\Resources\Documents\VersionDetailResource. */
 export type VersionDetail = {
     id: string;
@@ -121,6 +138,7 @@ export type VersionDetail = {
     roster: RosterEntry[];
     comments: ReviewComment[];
     receipts: ReceiptSummary;
+    can: VersionAbilities;
     external_review: { locked: boolean; expires_at: string | null } | null;
 };
 

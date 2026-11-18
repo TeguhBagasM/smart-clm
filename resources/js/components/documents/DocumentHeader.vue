@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ArrowLeft, History } from '@lucide/vue';
+import { computed } from 'vue';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import DocumentTimelineController from '@/actions/App/Http/Controllers/Documents/DocumentTimelineController';
 import VersionStatusBadge from '@/components/documents/VersionStatusBadge.vue';
@@ -14,7 +15,9 @@ const props = defineProps<{
     showHistoryLink?: boolean;
 }>();
 
-const latest = props.document.versions.find((version) => version.is_latest);
+const latest = computed(() =>
+    props.document.versions.find((version) => version.is_latest),
+);
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
+import VersionActions from '@/components/documents/actions/VersionActions.vue';
 import DocumentHeader from '@/components/documents/DocumentHeader.vue';
 import ReceiptSummary from '@/components/documents/ReceiptSummary.vue';
 import ReviewCommentList from '@/components/documents/ReviewCommentList.vue';
@@ -9,7 +10,12 @@ import TimelinePreview from '@/components/documents/TimelinePreview.vue';
 import VersionFacts from '@/components/documents/VersionFacts.vue';
 import VersionList from '@/components/documents/VersionList.vue';
 import VersionPreview from '@/components/documents/VersionPreview.vue';
-import type { DocumentDetail, EventRow, VersionDetail } from '@/types';
+import type {
+    DocumentDetail,
+    EventRow,
+    RecipientOption,
+    VersionDetail,
+} from '@/types';
 
 defineOptions({
     layout: {
@@ -23,6 +29,7 @@ defineProps<{
     document: DocumentDetail;
     version: VersionDetail | null;
     recent_events: EventRow[];
+    recipient_options?: RecipientOption[];
 }>();
 </script>
 
@@ -34,8 +41,19 @@ defineProps<{
 
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div v-if="version" class="flex min-w-0 flex-col gap-6">
+                <VersionActions
+                    :document-id="document.id"
+                    :version="version"
+                    :recipient-options="recipient_options"
+                />
                 <VersionPreview :document-id="document.id" :version="version" />
-                <ReviewCommentList :comments="version.comments" />
+                <ReviewCommentList
+                    :document-id="document.id"
+                    :version-id="version.id"
+                    :comments="version.comments"
+                    :can-comment="version.can.comment"
+                    :can-resolve="version.can.resolve_comment"
+                />
             </div>
             <p v-else class="text-muted-foreground">
                 Dokumen ini belum memiliki versi.

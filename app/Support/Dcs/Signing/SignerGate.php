@@ -56,4 +56,32 @@ class SignerGate
             throw new DcsException(403, $wrongRole);
         }
     }
+
+    /**
+     * Whether the user may sign this column now, without raising.
+     */
+    public function maySign(User $user, SignatureColumn $column): bool
+    {
+        try {
+            $this->assertMaySign($user, $column);
+
+            return true;
+        } catch (DcsException) {
+            return false;
+        }
+    }
+
+    /**
+     * Whether the user may ask for changes at this column, without raising.
+     */
+    public function mayRequestChanges(User $user, SignatureColumn $column): bool
+    {
+        try {
+            $this->assertMayRequestChanges($user, $column);
+
+            return true;
+        } catch (DcsException) {
+            return false;
+        }
+    }
 }

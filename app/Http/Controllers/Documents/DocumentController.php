@@ -10,6 +10,7 @@ use App\Http\Resources\Documents\DocumentEventListResource;
 use App\Http\Resources\Documents\DocumentListResource;
 use App\Http\Resources\Documents\VersionDetailResource;
 use App\Models\Dcs\Document;
+use App\Models\User;
 use App\Support\Listing\DocumentListSpec;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -69,6 +70,8 @@ class DocumentController extends Controller
         return Inertia::render('documents/Show', [
             'document' => DocumentDetailResource::make($document)->resolve($request),
             'version' => fn () => $selected === null ? null : VersionDetailResource::make($selected->load('creator'))->resolve($request),
+            'recipient_options' => Inertia::optional(fn () => User::query()->where('tenant_id', $document->tenant_id)->where('is_active', true)->with('role')->orderBy('name')->limit(500)->get()
+                ->map(fn (User $person): array => ['id' => $person->id, 'name' => $person->name, 'role' => $person->role->name])->all()),
             'recent_events' => DocumentEventListResource::collection($document->events()->with('version')->orderByDesc('occurred_at')->orderByDesc('id')->limit(6)->get())->resolve($request),
         ]);
     }
