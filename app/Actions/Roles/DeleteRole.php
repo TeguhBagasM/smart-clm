@@ -35,6 +35,12 @@ class DeleteRole
                 ]);
             }
 
+            if (DB::table('dcs_document_type_steps')->where('role_id', $locked->id)->exists()) {
+                throw ValidationException::withMessages([
+                    'role' => __('Peran masih dipakai oleh template tanda tangan jenis dokumen DCS.'),
+                ]);
+            }
+
             $snapshot = [
                 'name' => $locked->name,
                 'level' => $locked->level,

@@ -20,6 +20,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  *
  * @property int $id
  * @property int|null $tenant_id
+ * @property string|null $legacy_id
  * @property string $name
  * @property string $email
  * @property int $role_id
@@ -57,6 +58,15 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * The id the legacy API reports for this user: the Node id when the user
+     * was imported, otherwise the Laravel id.
+     */
+    public function apiId(): string
+    {
+        return $this->legacy_id ?? (string) $this->id;
     }
 
     public function isSuperAdmin(): bool

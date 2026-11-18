@@ -97,6 +97,23 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'timezone' => env('DB_TIMEZONE', 'UTC'),
+        ],
+
+        // The Node application's PostgreSQL database, read by `dcs:import-legacy`. Never written.
+        'legacy' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_LEGACY_HOST', '127.0.0.1'),
+            'port' => env('DB_LEGACY_PORT', '5432'),
+            'database' => env('DB_LEGACY_DATABASE'),
+            'username' => env('DB_LEGACY_USERNAME'),
+            'password' => env('DB_LEGACY_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => env('DB_LEGACY_SSLMODE', 'prefer'),
+            'timezone' => 'UTC',
         ],
 
         'sqlsrv' => [

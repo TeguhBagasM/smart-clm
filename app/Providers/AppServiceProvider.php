@@ -4,6 +4,13 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Models\User;
+use App\Support\Dcs\Ai\DcsAi;
+use App\Support\Dcs\Ai\NodeDcsAi;
+use App\Support\Dcs\CurrentTenant;
+use App\Support\Dcs\Notifications\DcsNotifier;
+use App\Support\Dcs\Notifications\NullDcsNotifier;
+use App\Support\Dcs\Pdf\NodePdfEngine;
+use App\Support\Dcs\Pdf\PdfEngine;
 use App\Support\Rbac\PermissionResolver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -20,6 +27,18 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(PermissionResolver::class);
+        $this->app->scoped(CurrentTenant::class);
+        $this->app->bind(DcsAi::class, fn (): DcsAi => new NodeDcsAi(
+            config('dcs.ai.url'),
+            config('dcs.ai.secret'),
+            (int) config('dcs.ai.timeout'),
+        ));
+        $this->app->bind(DcsNotifier::class, NullDcsNotifier::class);
+        $this->app->bind(PdfEngine::class, fn (): PdfEngine => new NodePdfEngine(
+            config('dcs.pdf.url'),
+            config('dcs.pdf.secret'),
+            (int) config('dcs.pdf.timeout'),
+        ));
     }
 
     /**

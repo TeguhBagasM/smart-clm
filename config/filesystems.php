@@ -38,6 +38,23 @@ return [
             'report' => false,
         ],
 
+        'dcs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/dcs'),
+            'visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+
+        // Where the Node application kept its uploaded and generated files (its uploads
+        // folder, or an S3 bucket configured here instead). Read by `dcs:import-legacy` only.
+        'legacy' => [
+            'driver' => 'local',
+            'root' => env('DCS_LEGACY_FILES_PATH', storage_path('app/legacy')),
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -26,7 +26,7 @@ class RoleFactory extends Factory
 
         return [
             'tenant_id' => Tenant::factory(),
-            'key' => Str::slug($name, '_').'_'.Str::lower(Str::random(4)),
+            'key' => Str::limit(Str::slug($name, '_'), 50, '').'_'.Str::lower(Str::random(4)),
             'name' => $name,
             'level' => 10,
             'is_system' => false,
