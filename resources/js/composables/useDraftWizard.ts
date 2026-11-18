@@ -106,6 +106,7 @@ export function useDraftWizard(initial: Draft, url: string) {
             router.patch(url, payload, {
                 preserveState: true,
                 preserveScroll: true,
+                preserveUrl: true,
                 only: ['draft'],
                 onSuccess: (page) => {
                     const next = (page.props.draft as Draft).revision;

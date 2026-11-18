@@ -9,8 +9,8 @@ const svg = defineModel<SVGSVGElement | null>('svg', { default: null });
 const layout = computed(() => layoutFlow(props.lanes, props.steps));
 const colWidth = BOX.w + BOX.gapX;
 
-function lines(text: string): string[] {
-    const words = text.split(/\s+/).filter(Boolean);
+function lines(text: string | null): string[] {
+    const words = (text ?? '').split(/\s+/).filter(Boolean);
     const out: string[] = [];
 
     for (const word of words) {
@@ -119,7 +119,7 @@ function lines(text: string): string[] {
                     :y="
                         step.y +
                         BOX.h / 2 -
-                        (lines(step.text).length - 1) * 7 +
+                        (lines(step.text || '…').length - 1) * 7 +
                         4
                     "
                     text-anchor="middle"

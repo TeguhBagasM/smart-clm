@@ -47,7 +47,7 @@ function pick(key: 'nextId' | 'yesId' | 'noId', value: unknown): void {
                 >{{ index + 1 }}.</span
             >
             <Input
-                :model-value="model.text"
+                :model-value="model.text ?? ''"
                 placeholder="Teks langkah"
                 :aria-label="`Teks langkah ${index + 1}`"
                 @update:model-value="patch({ text: String($event) })"
@@ -79,12 +79,12 @@ function pick(key: 'nextId' | 'yesId' | 'noId', value: unknown): void {
                 ><Trash2 class="text-destructive"
             /></Button>
         </div>
-        <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-2 sm:grid-cols-2 2xl:grid-cols-4">
             <Select
                 :model-value="model.type"
                 @update:model-value="patch({ type: $event as FlowStepType })"
             >
-                <SelectTrigger aria-label="Jenis langkah"
+                <SelectTrigger class="w-full" aria-label="Jenis langkah"
                     ><SelectValue
                 /></SelectTrigger>
                 <SelectContent>
@@ -105,7 +105,7 @@ function pick(key: 'nextId' | 'yesId' | 'noId', value: unknown): void {
                     })
                 "
             >
-                <SelectTrigger aria-label="Pelaksana"
+                <SelectTrigger class="w-full" aria-label="Pelaksana"
                     ><SelectValue placeholder="Pelaksana"
                 /></SelectTrigger>
                 <SelectContent>
@@ -133,7 +133,7 @@ function pick(key: 'nextId' | 'yesId' | 'noId', value: unknown): void {
                     :model-value="model[link[0]] || NONE"
                     @update:model-value="pick(link[0], $event)"
                 >
-                    <SelectTrigger :aria-label="link[1]"
+                    <SelectTrigger class="w-full" :aria-label="link[1]"
                         ><SelectValue :placeholder="link[1]"
                     /></SelectTrigger>
                     <SelectContent>

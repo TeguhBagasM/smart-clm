@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import { Check } from '@lucide/vue';
+import { nextTick, ref, watchEffect } from 'vue';
 import type { StepInfo, StepKey } from '@/components/documents/wizard/steps';
 import type { Draft } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     steps: StepInfo[];
     current: StepKey;
     completeness: Draft['completeness'];
 }>();
 
 defineEmits<{ go: [step: StepKey] }>();
+
+const nav = ref<HTMLElement | null>(null);
+
+/** On a phone the list scrolls sideways; keep the current step visible. */
+watchEffect(() => {
+    void props.current;
+    void nextTick(() =>
+        nav.value
+            ?.querySelector('[aria-current="step"]')
+            ?.scrollIntoView({ inline: 'center', block: 'nearest' }),
+    );
+});
 </script>
 
 <template>
     <nav
+        ref="nav"
         aria-label="Langkah menyusun dokumen"
         class="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0"
     >

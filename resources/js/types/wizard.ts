@@ -12,7 +12,7 @@ export type FlowStep = {
     id: string;
     order: number;
     type: FlowStepType;
-    text: string;
+    text: string | null;
     /** The lane (actor) the step belongs to. */
     actor?: string;
     color?: string;
