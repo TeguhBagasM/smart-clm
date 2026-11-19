@@ -18,6 +18,9 @@ use App\Http\Controllers\Documents\VersionDistributionController;
 use App\Http\Controllers\Documents\VersionFileController;
 use App\Http\Controllers\Documents\VersionReleaseController;
 use App\Http\Controllers\Documents\VersionWorkflowController;
+use App\Http\Controllers\ModulePlaceholderController;
+use App\Models\Dcs\Document;
+use App\Support\Navigation\NavigationMenu;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard')->name('home');
@@ -25,9 +28,14 @@ Route::redirect('/', '/dashboard')->name('home');
 Route::middleware(['auth'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
+    Route::get('modules/{module}/{page}', ModulePlaceholderController::class)
+        ->middleware('can:'.NavigationMenu::InDevelopmentAbility)
+        ->where(['module' => '[a-z0-9-]+', 'page' => '[a-z0-9-]+'])
+        ->name('modules.show');
+
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
 
-    Route::prefix('documents/config')->name('documents.config.')->middleware('can:'.Permission::DcsConfig->value)->group(function () {
+    Route::prefix('documents/config')->name('documents.config.')->middleware('can:configure,'.Document::class)->group(function () {
         Route::redirect('/', '/documents/config/types');
 
         Route::get('types', [DocTypeConfigController::class, 'index'])->name('types.index');
@@ -56,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('numbering/{type}', [NumberingConfigController::class, 'destroy'])->whereUuid('type')->name('numbering.destroy');
     });
 
-    Route::middleware('can:'.Permission::DcsEdit->value)->group(function () {
+    Route::middleware('can:create,'.Document::class)->group(function () {
         Route::get('documents/create', [DocumentCreateController::class, 'create'])->name('documents.create');
         Route::post('documents', [DocumentCreateController::class, 'store'])->name('documents.store');
         Route::get('documents/number-preview', [DocumentCreateController::class, 'numberPreview'])->name('documents.number-preview');
@@ -64,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('documents/appendix-upload', [DocumentCreateController::class, 'appendixUpload'])->name('documents.appendix-upload');
     });
 
-    Route::get('documents/queue', [TaskQueueController::class, 'index'])->name('documents.queue');
+    Route::get('documents/queue', [TaskQueueController::class, 'index'])->middleware('can:viewQueue,'.Document::class)->name('documents.queue');
 
     Route::prefix('documents/{document:uuid}')->scopeBindings()->group(function () {
         Route::get('/', [DocumentController::class, 'show'])->name('documents.show');

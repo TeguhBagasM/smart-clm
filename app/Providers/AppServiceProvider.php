@@ -11,6 +11,7 @@ use App\Support\Dcs\Notifications\DcsNotifier;
 use App\Support\Dcs\Notifications\NullDcsNotifier;
 use App\Support\Dcs\Pdf\NodePdfEngine;
 use App\Support\Dcs\Pdf\PdfEngine;
+use App\Support\Navigation\NavigationMenu;
 use App\Support\Rbac\PermissionResolver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -62,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
                 fn (User $user): bool => $this->app->make(PermissionResolver::class)->allows($user, $permission),
             );
         }
+
+        // Temporary: modules still being migrated are shown to super admins only,
+        // until each one ships with a permission of its own.
+        Gate::define(NavigationMenu::InDevelopmentAbility, fn (User $user): bool => $user->isSuperAdmin());
     }
 
     /**

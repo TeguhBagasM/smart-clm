@@ -16,6 +16,11 @@ export type FlowStepType =
     | 'predefined'
     | 'connector';
 
+export type FlowSide = 'top' | 'right' | 'bottom' | 'left';
+
+/** Sides a line leaves its step and enters the next one; absent = chosen automatically. */
+export type FlowPorts = { exit?: FlowSide; entry?: FlowSide };
+
 export type FlowStep = {
     id: string;
     order: number;
@@ -23,6 +28,10 @@ export type FlowStep = {
     text: string | null;
     /** The lane (actor) the step belongs to. */
     actor?: string;
+    /** Grid row on the canvas (0 = first); absent on drafts made before the canvas. */
+    row?: number;
+    /** Line sides chosen by the author, per line (next, Ya, Tidak). */
+    ports?: Partial<Record<'next' | 'yes' | 'no', FlowPorts>>;
     color?: string;
     textColor?: string;
     nextId?: string;

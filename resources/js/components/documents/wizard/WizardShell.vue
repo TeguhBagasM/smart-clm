@@ -54,41 +54,39 @@ function move(by: -1 | 1): void {
             </div>
         </header>
 
-        <div class="grid gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
-            <WizardStepper
-                :steps="steps"
-                :current="step"
-                :completeness="draft.completeness"
-                @go="emit('go', $event)"
-            />
-            <section
-                class="flex min-w-0 flex-col gap-5"
-                :aria-label="current.label"
+        <WizardStepper
+            :steps="steps"
+            :current="step"
+            :completeness="draft.completeness"
+            @go="emit('go', $event)"
+        />
+        <section
+            class="flex min-w-0 flex-col gap-5"
+            :aria-label="current.label"
+        >
+            <div>
+                <h2 class="text-lg font-semibold">
+                    {{ index + 1 }}. {{ current.label }}
+                </h2>
+                <p class="text-sm text-muted-foreground">
+                    {{ current.hint }}
+                </p>
+            </div>
+            <slot />
+            <div
+                class="sticky bottom-0 z-10 -mx-4 flex justify-between gap-2 border-t bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6"
             >
-                <div>
-                    <h2 class="text-lg font-semibold">
-                        {{ index + 1 }}. {{ current.label }}
-                    </h2>
-                    <p class="text-sm text-muted-foreground">
-                        {{ current.hint }}
-                    </p>
-                </div>
-                <slot />
-                <div
-                    class="sticky bottom-0 z-10 -mx-4 flex justify-between gap-2 border-t bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6 lg:mx-0 lg:px-0"
+                <Button
+                    variant="outline"
+                    :disabled="index === 0"
+                    @click="move(-1)"
                 >
-                    <Button
-                        variant="outline"
-                        :disabled="index === 0"
-                        @click="move(-1)"
-                    >
-                        <ArrowLeft /> Sebelumnya
-                    </Button>
-                    <Button v-if="index < steps.length - 1" @click="move(1)">
-                        Berikutnya <ArrowRight />
-                    </Button>
-                </div>
-            </section>
-        </div>
+                    <ArrowLeft /> Sebelumnya
+                </Button>
+                <Button v-if="index < steps.length - 1" @click="move(1)">
+                    Berikutnya <ArrowRight />
+                </Button>
+            </div>
+        </section>
     </div>
 </template>

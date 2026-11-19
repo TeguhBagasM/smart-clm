@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { BOX } from '@/components/documents/wizard/flow/flowLayout';
+import type { Rect } from '@/components/documents/wizard/flow/flowGeometry';
 import type { FlowStepType } from '@/types';
 
-const props = defineProps<{ type: FlowStepType; x: number; y: number }>();
+const props = defineProps<{
+    type: FlowStepType;
+    box: Pick<Rect, 'x' | 'y' | 'w' | 'h'>;
+    /** The step's own fill colour, chosen in the old builder. */
+    fill?: string;
+}>();
 
-const { w, h } = BOX;
-const filled = computed(() => props.type === 'start' || props.type === 'end');
+const terminator = computed(
+    () => props.type === 'start' || props.type === 'end',
+);
+const background = computed(
+    () => props.fill ?? (terminator.value ? 'var(--primary)' : 'var(--card)'),
+);
 
-/** Outline of the shapes that are not a plain box, in the step's own box. */
+/** Outline of the shapes that are not a plain box. */
 const path = computed(() => {
-    const { x, y } = props;
+    const { x, y, w, h } = props.box;
     const k = h * 0.35;
     const a = h * 0.12;
 
@@ -29,26 +38,36 @@ const path = computed(() => {
 
 <template>
     <g stroke="var(--primary)" stroke-width="2">
-        <path v-if="path" :d="path" fill="var(--card)" />
+        <path v-if="path" :d="path" :fill="background" />
         <circle
             v-else-if="type === 'connector'"
-            :cx="x + w / 2"
-            :cy="y + h / 2"
-            :r="h / 2"
-            fill="var(--card)"
+            :cx="box.x + box.w / 2"
+            :cy="box.y + box.h / 2"
+            :r="box.h / 2"
+            :fill="background"
         />
         <template v-else>
             <rect
-                :x="x"
-                :y="y"
-                :width="w"
-                :height="h"
-                :rx="filled ? h / 2 : type === 'process' ? 6 : 0"
-                :fill="filled ? 'var(--primary)' : 'var(--card)'"
+                :x="box.x"
+                :y="box.y"
+                :width="box.w"
+                :height="box.h"
+                :rx="terminator ? box.h / 2 : type === 'process' ? 6 : 0"
+                :fill="background"
             />
             <template v-if="type === 'predefined'">
-                <line :x1="x + 8" :y1="y" :x2="x + 8" :y2="y + h" />
-                <line :x1="x + w - 8" :y1="y" :x2="x + w - 8" :y2="y + h" />
+                <line
+                    :x1="box.x + 8"
+                    :y1="box.y"
+                    :x2="box.x + 8"
+                    :y2="box.y + box.h"
+                />
+                <line
+                    :x1="box.x + box.w - 8"
+                    :y1="box.y"
+                    :x2="box.x + box.w - 8"
+                    :y2="box.y + box.h"
+                />
             </template>
         </template>
     </g>

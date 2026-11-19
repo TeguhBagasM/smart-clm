@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Plus } from '@lucide/vue';
 import DocumentCreateController from '@/actions/App/Http/Controllers/Documents/DocumentCreateController';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
@@ -7,7 +7,6 @@ import DocumentTable from '@/components/documents/DocumentTable.vue';
 import Heading from '@/components/Heading.vue';
 import ListPage from '@/components/list/ListPage.vue';
 import { Button } from '@/components/ui/button';
-import { usePermissions } from '@/composables/usePermissions';
 import type { DocumentRow, ListMeta, Paginated } from '@/types';
 
 defineOptions({
@@ -18,7 +17,7 @@ defineOptions({
     },
 });
 
-const { can } = usePermissions();
+const page = usePage();
 
 defineProps<{
     documents: Paginated<DocumentRow>;
@@ -37,7 +36,7 @@ defineProps<{
                 title="Dokumen Terkontrol"
                 description="SOP, instruksi kerja, kebijakan, dan memo: cari, saring, dan urutkan seluruh dokumen perusahaan."
             />
-            <Button v-if="can('dcs.edit')" as-child>
+            <Button v-if="page.props.auth.user.can.create_documents" as-child>
                 <Link :href="DocumentCreateController.create()">
                     <Plus /> Dokumen baru
                 </Link>

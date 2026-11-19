@@ -1,68 +1,87 @@
+import {
+    canvasSize,
+    cellBox,
+    GRID,
+} from '@/components/documents/wizard/flow/flowGeometry';
+import type { Rect } from '@/components/documents/wizard/flow/flowGeometry';
+import {
+    flowLinks,
+    laneIndex,
+    placeSteps,
+} from '@/components/documents/wizard/flow/flowGraph';
+import type { FlowLink } from '@/components/documents/wizard/flow/flowGraph';
+import { routeEdges } from '@/components/documents/wizard/flow/flowRoute';
+import type { FlowBox } from '@/components/documents/wizard/flow/flowRoute';
 import type { FlowStep } from '@/types';
 
-export const BOX = { w: 150, h: 54, gapY: 34, gapX: 40, pad: 16, head: 34 };
+export type PlacedStep = FlowStep & { lane: number; row: number; box: Rect };
 
-export type Placed = FlowStep & { x: number; y: number };
-export type Edge = { path: string; label?: string; lx: number; ly: number };
-
-export type Layout = {
-    width: number;
-    height: number;
-    lanes: string[];
-    placed: Placed[];
-    edges: Edge[];
+export type DrawnEdge = Omit<FlowLink, 'label'> & {
+    path: string;
+    label?: { text: string; x: number; y: number };
 };
 
-/** Places steps top to bottom in their order, one column per lane. */
-export function layoutFlow(lanes: string[], steps: FlowStep[]): Layout {
+export type Layout = {
+    lanes: string[];
+    rows: number;
+    width: number;
+    height: number;
+    steps: PlacedStep[];
+    edges: DrawnEdge[];
+};
+
+/**
+ * Where every step and line goes. Lines come from the PDF engine's router,
+ * which works with y growing upwards, so y is negated going in and out.
+ */
+export function layoutFlow(
+    lanes: string[],
+    steps: FlowStep[],
+    spareRows = 1,
+): Layout {
     const columns = lanes.length ? lanes : [''];
-    const sorted = [...steps].sort((a, b) => a.order - b.order);
-    const colWidth = BOX.w + BOX.gapX;
-    const placed: Placed[] = sorted.map((step, index) => ({
-        ...step,
-        x: BOX.pad + Math.max(0, columns.indexOf(step.actor ?? '')) * colWidth,
-        y: BOX.pad + BOX.head + index * (BOX.h + BOX.gapY),
+    const placed: PlacedStep[] = placeSteps(lanes, steps).map((step) => {
+        const cell = { lane: laneIndex(lanes, step.actor), row: step.row ?? 0 };
+
+        return { ...step, ...cell, box: cellBox(cell) };
+    });
+    const boxes: FlowBox[] = placed.map((step) => ({
+        id: step.id,
+        cx: step.box.cx,
+        top: -step.box.y,
+        w: step.box.w,
+        h: step.box.h,
+        lane: step.lane,
+        row: step.row,
     }));
-    const byId = new Map(placed.map((step) => [step.id, step]));
-    const edges: Edge[] = [];
-
-    for (const from of placed) {
-        const links: [string | undefined, string?][] =
-            from.type === 'decision'
-                ? [
-                      [from.yesId, 'Ya'],
-                      [from.noId, 'Tidak'],
-                  ]
-                : [[from.nextId]];
-
-        for (const [id, label] of links) {
-            const to = id ? byId.get(id) : undefined;
-
-            if (!to) continue;
-
-            const ax = from.x + BOX.w / 2;
-            const ay = from.y + BOX.h;
-            const bx = to.x + BOX.w / 2;
-            const by = to.y;
-            const mid = ay + BOX.gapY / 2;
-            const forward = by > ay;
-
-            edges.push({
-                path: forward
-                    ? `M${ax},${ay} V${mid} H${bx} V${by}`
-                    : `M${from.x + BOX.w},${from.y + BOX.h / 2} h14 V${to.y + BOX.h / 2} H${to.x + BOX.w}`,
-                label,
-                lx: ax + 6,
-                ly: forward ? ay + 14 : from.y + BOX.h / 2 - 4,
-            });
-        }
-    }
+    // Same order as the engine: lines going down first, then lines going back up.
+    const rowOf = new Map(placed.map((step) => [step.id, step.row]));
+    const all = flowLinks(placed);
+    const down = (link: FlowLink) =>
+        (rowOf.get(link.to) ?? 0) > (rowOf.get(link.from) ?? 0);
+    const links = [...all.filter(down), ...all.filter((link) => !down(link))];
+    const routed = routeEdges(boxes, links, {
+        laneLeft: (lane) => GRID.pad + lane * GRID.laneW,
+        laneW: GRID.laneW,
+        gap: GRID.gap,
+    });
+    const rows = Math.max(0, ...placed.map((step) => step.row + 1)) + spareRows;
 
     return {
-        width: BOX.pad * 2 + columns.length * colWidth - BOX.gapX,
-        height: BOX.pad * 2 + BOX.head + placed.length * (BOX.h + BOX.gapY),
         lanes: columns,
-        placed,
-        edges,
+        rows,
+        ...canvasSize(columns.length, rows),
+        steps: placed,
+        edges: links.map((link, i) => ({
+            ...link,
+            path: routed[i].points
+                .map((p, j) => `${j ? 'L' : 'M'}${p.x},${-p.y}`)
+                .join(' '),
+            label: routed[i].label && {
+                text: routed[i].label.text,
+                x: routed[i].label.x,
+                y: -routed[i].label.y,
+            },
+        })),
     };
 }

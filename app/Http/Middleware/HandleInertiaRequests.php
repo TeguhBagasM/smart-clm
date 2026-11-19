@@ -3,13 +3,14 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\AuthUserResource;
+use App\Support\Navigation\NavigationMenu;
 use App\Support\Rbac\PermissionResolver;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private PermissionResolver $permissionResolver) {}
+    public function __construct(private PermissionResolver $permissionResolver, private NavigationMenu $navigationMenu) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -50,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                     ? $this->permissionResolver->permissionsFor($request->user())
                     : [],
             ],
+            'navigation' => fn (): array => $request->user() ? $this->navigationMenu->for($request->user()) : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

@@ -174,14 +174,17 @@ describe('page', function () {
         expect(queuePage($this->viewer)['kind']['value'])->toBe('sign');
     });
 
-    it('has no tasks for a super admin, and does not leak other companies', function () {
+    it('does not leak other companies', function () {
         $other = User::factory()->for(Tenant::factory()->create())->role(SystemRole::Admin)->create();
         $foreign = Document::factory()->for($other->tenant)->create(['owner_user_id' => $other->id, 'created_by_id' => $other->id]);
         DocumentVersion::factory()->for($foreign)->create(['status' => VersionStatus::Approved, 'created_by_id' => $other->id]);
         queueVersion(VersionStatus::Approved, ['document_number' => 'MINE']);
 
         expect(queueNumbers(queuePage($this->admin, ['kind' => 'release'])))->toBe(['MINE']);
-        expect(array_sum(collect(queuePage(User::factory()->superAdmin()->create())['kinds'])->pluck('count')->all()))->toBe(0);
+    });
+
+    it('refuses a super admin, who has no company and so no tasks', function () {
+        $this->actingAs(User::factory()->superAdmin()->create())->get(route('documents.queue'))->assertForbidden();
     });
 
     it('redirects guests to the login page', function () {

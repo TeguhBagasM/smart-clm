@@ -14,7 +14,12 @@ defineEmits<{ go: [step: StepKey] }>();
 
 const nav = ref<HTMLElement | null>(null);
 
-/** On a phone the list scrolls sideways; keep the current step visible. */
+const done = (step: StepInfo): boolean =>
+    Boolean(step.done && props.completeness[step.done]);
+const passed = (index: number): boolean =>
+    index < props.steps.findIndex((step) => step.key === props.current);
+
+/** On a phone the timeline scrolls sideways; keep the current step visible. */
 watchEffect(() => {
     void props.current;
     void nextTick(() =>
@@ -29,47 +34,50 @@ watchEffect(() => {
     <nav
         ref="nav"
         aria-label="Langkah menyusun dokumen"
-        class="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0"
+        class="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0"
     >
-        <ol class="flex w-max gap-2 lg:w-auto lg:flex-col">
-            <li v-for="(step, index) in steps" :key="step.key">
-                <button
-                    type="button"
-                    :aria-current="step.key === current ? 'step' : undefined"
+        <ol class="flex min-w-max items-center gap-2 md:min-w-0">
+            <template v-for="(step, index) in steps" :key="step.key">
+                <li
+                    v-if="index > 0"
+                    aria-hidden="true"
                     :class="[
-                        'flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors',
-                        step.key === current
-                            ? 'border-primary bg-accent'
-                            : 'border-transparent hover:bg-accent/60',
+                        'h-px min-w-4 flex-1',
+                        passed(index) ? 'bg-primary' : 'bg-border',
                     ]"
-                    @click="$emit('go', step.key)"
-                >
-                    <span
+                />
+                <li class="shrink-0">
+                    <button
+                        type="button"
+                        :aria-current="
+                            step.key === current ? 'step' : undefined
+                        "
+                        :title="step.hint"
                         :class="[
-                            'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
-                            step.done && completeness[step.done]
-                                ? 'border-success bg-success text-success-foreground'
+                            'flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-sm transition-colors hover:bg-accent',
+                            step.key === current
+                                ? 'font-medium text-primary'
                                 : 'text-muted-foreground',
                         ]"
+                        @click="$emit('go', step.key)"
                     >
-                        <Check
-                            v-if="step.done && completeness[step.done]"
-                            class="size-3.5"
-                        />
-                        <template v-else>{{ index + 1 }}</template>
-                    </span>
-                    <span class="flex flex-col">
-                        <span class="font-medium whitespace-nowrap">{{
-                            step.label
-                        }}</span>
                         <span
-                            class="hidden text-xs text-muted-foreground lg:block"
+                            :class="[
+                                'flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
+                                done(step)
+                                    ? 'border-success bg-success text-success-foreground'
+                                    : step.key === current
+                                      ? 'border-primary ring-2 ring-ring/70'
+                                      : '',
+                            ]"
                         >
-                            {{ step.hint }}
+                            <Check v-if="done(step)" class="size-3.5" />
+                            <template v-else>{{ index + 1 }}</template>
                         </span>
-                    </span>
-                </button>
-            </li>
+                        <span class="whitespace-nowrap">{{ step.label }}</span>
+                    </button>
+                </li>
+            </template>
         </ol>
     </nav>
 </template>

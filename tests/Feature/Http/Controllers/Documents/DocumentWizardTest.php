@@ -221,6 +221,42 @@ describe('the wizard', function () {
         expect($created['version']->fresh('content')->content->purpose)->toBeNull();
     });
 
+    it('keeps where each flow step sits on the grid and sends it to the engine', function () {
+        $created = wzCreate();
+        wzPatch($created, ['revision' => 1, 'flowMode' => 'builder', 'flowLanes' => ['HR', 'Legal'], 'flowSteps' => [
+            ['id' => 's1', 'order' => 1, 'type' => 'start', 'text' => 'Mulai', 'actor' => 'HR', 'row' => 0, 'nextId' => 's2'],
+            ['id' => 's2', 'order' => 2, 'type' => 'process', 'text' => 'Periksa', 'actor' => 'Legal', 'row' => 2],
+        ]])->assertRedirect();
+
+        expect(array_column($created['version']->fresh('content')->content->flow_steps, 'row'))->toBe([0, 2]);
+
+        $this->actingAs($this->admin)->post(route('documents.versions.render', [$created['document'], $created['version']]))->assertRedirect();
+        expect(array_column($this->engine->composed[0]['flow']['steps'], 'row'))->toBe([0, 2]);
+    });
+
+    it('keeps the line sides the author picked and refuses unknown ones', function () {
+        $created = wzCreate();
+        $steps = [
+            ['id' => 's1', 'type' => 'decision', 'row' => 0, 'yesId' => 's2', 'noId' => 's2', 'ports' => ['no' => ['exit' => 'left', 'entry' => 'left']]],
+            ['id' => 's2', 'type' => 'process', 'row' => 1],
+        ];
+
+        wzPatch($created, ['revision' => 1, 'flowMode' => 'builder', 'flowSteps' => $steps])->assertRedirect();
+        expect($created['version']->fresh('content')->content->flow_steps[0]['ports'])->toBe(['no' => ['exit' => 'left', 'entry' => 'left']]);
+
+        $steps[0]['ports'] = ['no' => ['exit' => 'diagonal']];
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.ports.no.exit');
+        $steps[0]['ports'] = ['maybe' => ['exit' => 'left']];
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.ports');
+    });
+
+    it('refuses a flow step outside the grid', function (mixed $row) {
+        $created = wzCreate();
+
+        wzPatch($created, ['revision' => 1, 'flowMode' => 'builder', 'flowSteps' => [['id' => 's1', 'type' => 'start', 'row' => $row]]])
+            ->assertSessionHasErrors('flowSteps.0.row');
+    })->with([-1, 200, 'atas']);
+
     it('draws the PDF from the saved content, and explains an engine failure', function () {
         $created = wzCreate();
         wzPatch($created, ['revision' => 1, 'purpose' => 'Tujuan']);

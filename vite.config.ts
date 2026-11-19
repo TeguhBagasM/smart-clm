@@ -71,6 +71,8 @@ export default defineConfig({
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',
+            // Verbatim copy of the PDF engine's router (management-contract/dcs/pdf-flow-route.ts).
+            'resources/js/components/documents/wizard/flow/flowRoute.ts',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],
