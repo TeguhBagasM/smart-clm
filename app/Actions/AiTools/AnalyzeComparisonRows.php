@@ -3,6 +3,7 @@
 namespace App\Actions\AiTools;
 
 use App\Enums\AiTools\ChangeKind;
+use App\Enums\AiTools\ComparisonStage;
 use App\Models\AiTools\ComparisonRow;
 use App\Models\AiTools\DocumentComparison;
 use App\Support\Ai\LlmRequest;
@@ -27,8 +28,14 @@ class AnalyzeComparisonRows
     {
         $rows = $comparison->rows()->with(['articleA', 'articleB'])->whereIn('change_kind', [ChangeKind::Changed, ChangeKind::Added, ChangeKind::Removed])->orderBy('ordinal')->get();
 
-        foreach ($this->batches(array_values($rows->all())) as $batch) {
+        $batches = $this->batches(array_values($rows->all()));
+
+        foreach ($batches as $index => $batch) {
             $this->analyze($comparison, $batch);
+
+            $from = ComparisonStage::Diffing->progressAfter();
+            $to = ComparisonStage::Analyzing->progressAfter();
+            $comparison->forceFill(['progress' => $from + intdiv(($to - $from) * ($index + 1), count($batches))])->save();
         }
     }
 

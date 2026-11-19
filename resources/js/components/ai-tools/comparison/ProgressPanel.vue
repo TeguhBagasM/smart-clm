@@ -1,8 +1,21 @@
 <script setup lang="ts">
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { Spinner } from '@/components/ui/spinner';
 import type { ComparisonDetail } from '@/types';
 
-defineProps<{ comparison: ComparisonDetail }>();
+const props = defineProps<{ comparison: ComparisonDetail }>();
+
+const now = ref(Date.now());
+const timer = setInterval(() => (now.value = Date.now()), 5000);
+onBeforeUnmount(() => clearInterval(timer));
+
+/** Still waiting for a worker to pick it up after half a minute. */
+const stuckInQueue = computed(
+    () =>
+        props.comparison.status.value === 'queued' &&
+        props.comparison.created_at !== null &&
+        now.value - new Date(props.comparison.created_at).getTime() > 30_000,
+);
 </script>
 
 <template>
@@ -25,6 +38,15 @@ defineProps<{ comparison: ComparisonDetail }>();
                 </p>
             </div>
         </div>
+        <p
+            v-if="stuckInQueue"
+            class="rounded-lg border border-warning/50 bg-warning/10 px-3 py-2 text-sm"
+            role="status"
+        >
+            Menunggu lebih lama dari biasanya. Proses belum diambil oleh
+            antrean; minta administrator memastikan worker antrean (queue)
+            berjalan.
+        </p>
         <div
             class="h-2 overflow-hidden rounded-full bg-muted"
             role="progressbar"
