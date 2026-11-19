@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { UserRoundCog } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import VersionSignerController from '@/actions/App/Http/Controllers/Documents/VersionSignerController';
 import ActionDialog from '@/components/documents/actions/ActionDialog.vue';
 import InputError from '@/components/InputError.vue';
+import SearchSelect from '@/components/SearchSelect.vue';
 import { Label } from '@/components/ui/label';
 import {
     Select,
@@ -17,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { RecipientOption } from '@/types';
 
 /** Replaces the person of one signature column on a running document (company administrators). */
-defineProps<{
+const props = defineProps<{
     documentId: string;
     versionId: string;
     order: number;
@@ -25,8 +26,28 @@ defineProps<{
     options?: RecipientOption[];
 }>();
 
-const userId = ref('');
+const userId = ref<string | null>(null);
 const reason = ref('');
+
+/**
+ * The list arrives only when the dialog opens (a partial reload). A refused form
+ * comes back without it, so what was loaded is kept for the rest of the visit.
+ */
+const loaded = ref<RecipientOption[]>([]);
+watch(
+    () => props.options,
+    (next) => {
+        if (next?.length) loaded.value = next;
+    },
+    { immediate: true },
+);
+const people = computed(() =>
+    loaded.value.map((p) => ({
+        value: String(p.id),
+        label: p.name,
+        description: p.role,
+    })),
+);
 
 function load(): void {
     router.reload({ only: ['recipient_options'] });
@@ -42,7 +63,7 @@ function load(): void {
                 order,
             })
         "
-        :transform="() => ({ user_id: userId, reason })"
+        :transform="() => ({ user_id: userId ?? '', reason })"
         trigger-label="Ganti penandatangan"
         trigger-variant="ghost"
         :trigger-icon="UserRoundCog"
@@ -55,20 +76,14 @@ function load(): void {
     >
         <div class="flex flex-col gap-1.5">
             <Label for="signer-user">Penandatangan baru</Label>
-            <Select v-model="userId">
-                <SelectTrigger id="signer-user" class="w-full"
-                    ><SelectValue placeholder="Pilih orang…"
-                /></SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="person in options ?? []"
-                        :key="person.id"
-                        :value="String(person.id)"
-                    >
-                        {{ person.name }} · {{ person.role }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+            <SearchSelect
+                id="signer-user"
+                v-model="userId"
+                :options="people"
+                label="Penandatangan baru"
+                placeholder="Pilih orang…"
+                search-placeholder="Cari nama atau jabatan…"
+            />
             <InputError :message="errors.user_id" />
         </div>
         <div class="flex flex-col gap-1.5">

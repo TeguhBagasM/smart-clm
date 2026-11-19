@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SearchSelect from '@/components/SearchSelect.vue';
 import {
     Select,
     SelectContent,
@@ -20,24 +21,16 @@ defineEmits<{ 'update:modelValue': [value: string | null] }>();
 </script>
 
 <template>
-    <Select
+    <SearchSelect
         :model-value="modelValue ?? ALL"
+        :options="[
+            { value: ALL, label: 'Semua' },
+            ...options.map((o) => ({ value: String(o.value), label: o.label })),
+        ]"
+        :label="label"
+        :search-placeholder="`Cari ${label.toLowerCase()}…`"
         @update:model-value="
-            $emit('update:modelValue', $event === ALL ? null : String($event))
+            $emit('update:modelValue', $event === ALL ? null : $event)
         "
-    >
-        <SelectTrigger class="w-full" :aria-label="label">
-            <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-            <SelectItem :value="ALL">Semua</SelectItem>
-            <SelectItem
-                v-for="option in options"
-                :key="option.value"
-                :value="option.value"
-            >
-                {{ option.label }}
-            </SelectItem>
-        </SelectContent>
-    </Select>
+    />
 </template>

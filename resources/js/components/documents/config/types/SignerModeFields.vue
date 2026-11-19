@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TriangleAlert } from '@lucide/vue';
-import PersonCombobox from '@/components/documents/config/types/PersonCombobox.vue';
+import SearchSelect from '@/components/SearchSelect.vue';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { SignatureColumn, SignerOption } from '@/types';
@@ -73,10 +73,18 @@ const modes = [
             </Label>
         </fieldset>
         <div v-if="column.fillMode === 'person'" class="max-w-sm">
-            <PersonCombobox
+            <SearchSelect
                 :model-value="column.defaultUserId ?? null"
-                :options="signerOptions"
+                :options="
+                    signerOptions.map((o) => ({
+                        value: o.value,
+                        label: o.label,
+                        description: o.role || 'tanpa jabatan',
+                    }))
+                "
                 :label="`Penandatangan kolom ${index + 1}`"
+                placeholder="Pilih orang…"
+                search-placeholder="Cari nama atau jabatan…"
                 @update:model-value="$emit('change', { defaultUserId: $event })"
             />
         </div>

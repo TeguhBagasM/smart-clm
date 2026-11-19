@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SearchSelect from '@/components/SearchSelect.vue';
 import { ArrowDown, ArrowUp, Trash2 } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -41,31 +42,23 @@ defineEmits<{
                 :aria-label="`Nama kolom ${index + 1}`"
                 @update:model-value="$emit('change', { label: String($event) })"
             />
-            <Select
+            <SearchSelect
                 :model-value="column.role || ANYONE"
+                :options="[
+                    { value: ANYONE, label: 'Siapa pun' },
+                    ...roleOptions.map((r) => ({
+                        value: r.value,
+                        label: r.label,
+                    })),
+                ]"
+                label="Peran penandatangan (kandidat)"
+                search-placeholder="Cari peran…"
                 @update:model-value="
                     $emit('change', {
                         role: $event === ANYONE ? '' : String($event),
                     })
                 "
-            >
-                <SelectTrigger
-                    class="w-full"
-                    aria-label="Peran penandatangan (kandidat)"
-                >
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem :value="ANYONE">Siapa pun</SelectItem>
-                    <SelectItem
-                        v-for="role in roleOptions"
-                        :key="role.value"
-                        :value="role.value"
-                    >
-                        {{ role.label }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+            />
             <Input
                 :model-value="column.roleName ?? ''"
                 placeholder="Jabatan di lembar (opsional)"
