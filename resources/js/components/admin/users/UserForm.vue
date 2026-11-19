@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SearchSelect from '@/components/SearchSelect.vue';
 import { Form, Link } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
@@ -87,39 +88,39 @@ watch(tenantId, () => {
 
         <div class="grid gap-2">
             <Label for="role">Peran</Label>
-            <Select v-model="roleId" name="role_id" required>
-                <SelectTrigger id="role" class="w-full">
-                    <SelectValue placeholder="Pilih peran" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="option in visibleRoleOptions"
-                        :key="option.value"
-                        :value="option.value"
-                    >
-                        {{ option.label }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+            <SearchSelect
+                id="role"
+                v-model="roleId"
+                name="role_id"
+                :options="
+                    visibleRoleOptions.map((o) => ({
+                        value: String(o.value),
+                        label: o.label,
+                    }))
+                "
+                label="Peran"
+                placeholder="Pilih peran"
+                search-placeholder="Cari peran…"
+            />
             <InputError :message="errors.role_id" />
         </div>
 
         <div v-if="tenantOptions" class="grid gap-2">
             <Label for="tenant_id">Perusahaan</Label>
-            <Select v-model="tenantId" name="tenant_id" required>
-                <SelectTrigger id="tenant_id" class="w-full">
-                    <SelectValue placeholder="Pilih perusahaan" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="tenant in tenantOptions"
-                        :key="tenant.id"
-                        :value="String(tenant.id)"
-                    >
-                        {{ tenant.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+            <SearchSelect
+                id="tenant_id"
+                v-model="tenantId"
+                name="tenant_id"
+                :options="
+                    tenantOptions.map((t) => ({
+                        value: String(t.id),
+                        label: t.name,
+                    }))
+                "
+                label="Perusahaan"
+                placeholder="Pilih perusahaan"
+                search-placeholder="Cari perusahaan…"
+            />
             <InputError :message="errors.tenant_id" />
         </div>
 

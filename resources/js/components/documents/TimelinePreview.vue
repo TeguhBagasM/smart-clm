@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import DocumentTimelineController from '@/actions/App/Http/Controllers/Documents/DocumentTimelineController';
 import Panel from '@/components/documents/Panel.vue';
 import { Button } from '@/components/ui/button';
+import { eventSentence } from '@/lib/eventText';
 import { formatDateTime, versionLabel } from '@/lib/format';
 import type { EventRow } from '@/types';
 
@@ -10,7 +11,7 @@ defineProps<{ documentId: string; events: EventRow[] }>();
 </script>
 
 <template>
-    <Panel title="Riwayat terbaru">
+    <Panel title="Yang sudah terjadi">
         <template #action>
             <Button variant="link" size="sm" as-child>
                 <Link
@@ -30,7 +31,7 @@ defineProps<{ documentId: string; events: EventRow[] }>();
         <ol v-else class="flex flex-col gap-3 text-sm">
             <li v-for="event in events" :key="event.id" class="flex flex-col">
                 <span class="font-medium">
-                    {{ event.label }}
+                    {{ eventSentence(event) }}
                     <span
                         v-if="event.version"
                         class="font-normal text-muted-foreground"
@@ -42,7 +43,6 @@ defineProps<{ documentId: string; events: EventRow[] }>();
                     {{ event.summary }}
                 </span>
                 <span class="text-xs text-muted-foreground">
-                    {{ event.actor ?? 'Sistem' }} ·
                     {{ formatDateTime(event.occurred_at) }}
                 </span>
             </li>

@@ -46,8 +46,9 @@ class NumberingConfigController extends Controller
         return Inertia::render('documents/config/numbering/Index', [
             'types' => NumberingRowResource::collection($spec->paginate(DocumentType::query()->where('tenant_id', $tenant->id)->where('is_active', true)->with('numberingRules'), $list)),
             'list' => $spec->meta($list),
+            'suggested_mask' => NumberingMask::SUGGESTED_MASK,
             'default_rule' => ['mask' => $mask, 'example' => NumberingRowResource::example($mask, 'SOP', $department)],
-            'tokens' => [...array_map(fn (string $token): string => '{'.$token.'}', NumberingMask::TOKENS), '{Sequence:4}'],
+            'tokens' => [...array_map(fn (string $token): string => '{'.$token.'}', NumberingMask::TOKENS), '{Seq:2}', '{Rev:2}', '{Sequence:4}'],
         ]);
     }
 

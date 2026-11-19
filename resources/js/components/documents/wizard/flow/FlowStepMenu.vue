@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { Link2, Pencil, Trash2, X } from '@lucide/vue';
+import { Link2, Maximize2, Pencil, Trash2, X } from '@lucide/vue';
 import FlowNextStep from '@/components/documents/wizard/flow/FlowNextStep.vue';
 import type { PlacedStep } from '@/components/documents/wizard/flow/flowLayout';
 import { setType } from '@/components/documents/wizard/flow/flowLinkOps';
-import { removeStep } from '@/components/documents/wizard/flow/flowOps';
+import {
+    removeStep,
+    updateStep,
+} from '@/components/documents/wizard/flow/flowOps';
 import {
     TYPE_LABELS,
     typeOptions,
@@ -80,6 +83,18 @@ function remove(): void {
                 @click="linking = step.id"
             >
                 <Link2 />
+            </Button>
+            <Button
+                v-if="step.size"
+                type="button"
+                variant="ghost"
+                size="icon"
+                class="size-8"
+                title="Kembalikan ke ukuran normal"
+                aria-label="Kembalikan ke ukuran normal"
+                @click="apply(updateStep(step.id, { size: undefined }))"
+            >
+                <Maximize2 />
             </Button>
             <Button
                 type="button"

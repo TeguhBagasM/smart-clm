@@ -84,7 +84,7 @@ describe('update', function () {
         'missing' => [null, 'Format nomor tidak boleh kosong.'],
         'blank' => ['   ', 'Format nomor tidak boleh kosong.'],
         'no sequence' => ['{DocType}/{Year}', 'Format nomor wajib memuat token {Sequence} atau {Sequence:N}.'],
-        'unknown token' => ['{Nope}/{Sequence}', 'Token "{Nope}" tidak dikenal. Token yang tersedia: {DocType}, {Department}, {Year}, {Month}, {MonthRoman}, {Day}, {Sequence}.'],
+        'unknown token' => ['{Nope}/{Sequence}', 'Token "{Nope}" tidak dikenal. Token yang tersedia: {DocType}, {Department}, {Dept}, {Year}, {YYYY}, {YY}, {Month}, {MM}, {MonthRoman}, {Day}, {Seq}, {Rev}.'],
     ]);
 
     it('answers 404 for a type of another tenant', function () {

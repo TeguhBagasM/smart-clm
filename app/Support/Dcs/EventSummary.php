@@ -23,6 +23,7 @@ class EventSummary
             DocumentEventType::Distributed => ($payload['recipients'] ?? 0).' penerima'.(($payload['mandatory'] ?? true) ? ' (wajib)' : ''),
             DocumentEventType::ChangesRequested, DocumentEventType::ReturnedToDraft => isset($payload['signatures_voided']) ? $payload['signatures_voided'].' tanda tangan direset' : '',
             DocumentEventType::ExternalReviewApproved => (string) ($payload['name'] ?? ''),
+            DocumentEventType::SignerReassigned => "{$payload['column']}: {$payload['from']} → {$payload['to']} ({$payload['reason']})",
             DocumentEventType::Superseded => 'Digantikan versi yang lebih baru',
             default => '',
         };

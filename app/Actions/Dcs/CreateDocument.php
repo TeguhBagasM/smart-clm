@@ -51,14 +51,20 @@ class CreateDocument
 
                 $manual = mb_substr(trim((string) $data['manualNumber']), 0, 80);
                 $allocation = null;
+                $base = null;
+                $snapshot = ['number_mask' => null, 'number_tokens' => null];
+                $revision = (int) ($data['initialMinor'] ?? 0);
 
                 if ($manual !== '') {
                     $number = $manual;
+                    $base = $manual;
                 } else {
                     $rule = NumberingRule::effectiveFor($tenant, $type) ?? throw DcsException::badRequest('Aturan penomoran belum tersedia untuk perusahaan ini.');
                     $tokens = ['DocType' => $type->code, 'Department' => $department->code, ...$this->numberAllocator->clockTokens()];
                     $allocation = $this->numberAllocator->allocate($rule, $tokens);
-                    $number = NumberingMask::render($rule->mask, $tokens, $allocation->seq);
+                    $number = NumberingMask::render($rule->mask, $tokens, $allocation->seq, $revision);
+                    $base = NumberingMask::renderBase($rule->mask, $tokens, $allocation->seq);
+                    $snapshot = ['number_mask' => $rule->mask, 'number_tokens' => [...$tokens, 'Seq' => $allocation->seq]];
                 }
 
                 $document = new Document;
@@ -66,6 +72,8 @@ class CreateDocument
                 $document->forceFill([
                     'tenant_id' => $tenant->id,
                     'document_number' => $number,
+                    'base_number' => $base,
+                    ...$snapshot,
                     'doc_type_id' => $type->id,
                     'department_id' => $department->id,
                     'title' => $data['title'],
@@ -84,6 +92,7 @@ class CreateDocument
                     'document_id' => $document->id,
                     'major' => $data['initialMajor'] ?? 1,
                     'minor' => $data['initialMinor'] ?? 0,
+                    'number_label' => $number,
                     'status' => VersionStatus::Draft,
                     'created_by_id' => $actor->id,
                 ])->save();

@@ -34,6 +34,7 @@ enum DocumentEventType: string
     case ExternalReviewDisabled = 'external_review.disabled';
     case ExternalReviewUnlocked = 'external_review.unlocked';
     case ExternalReviewApproved = 'external_review.approved';
+    case SignerReassigned = 'version.signer_reassigned';
 
     /**
      * The name shown to people (Indonesian, as in the interface).
@@ -67,6 +68,7 @@ enum DocumentEventType: string
             self::ExternalReviewDisabled => 'Link review eksternal ditutup',
             self::ExternalReviewUnlocked => 'Review eksternal dibuka kembali',
             self::ExternalReviewApproved => 'Pihak eksternal menyetujui',
+            self::SignerReassigned => 'Penandatangan diganti',
         };
     }
 }

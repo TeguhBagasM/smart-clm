@@ -1,25 +1,15 @@
-// Copy of management-contract/dcs/pdf-flow-route.ts, the router the PDF engine
-// uses, so the canvas draws the same lines that get printed. Keep both files
-// identical (not reformatted). It works in PDF coordinates (y grows upwards):
-// flowLayout.ts flips y on the way in and out.
+// Copy of management-contract/dcs/pdf-flow-route.ts (with pdf-flow-route-util.ts as flowRouteUtil.ts),
+// the router the PDF engine uses, so the canvas draws the same lines that get printed. Keep the files
+// identical except for the import path (not reformatted). It works in PDF coordinates (y grows
+// upwards): flowLayout.ts flips y on the way in and out.
 // Penentu jalur garis diagram alir (swimlane): garis siku-siku yang menghindari kotak langkah,
 // tidak menumpuk satu sama lain, dan bisa diarahkan penyusun lewat sisi keluar/masuk.
 // Murni geometri (tanpa pdf-lib) supaya mudah diuji. Koordinat PDF: y bertambah ke atas.
 
-export type Side = "top" | "right" | "bottom" | "left";
-export interface FlowBox { id: string; cx: number; top: number; w: number; h: number; lane: number; row: number }
-export interface FlowEdge { from: string; to: string; kind: "next" | "yes" | "no"; label?: string; exit?: Side; entry?: Side }
-export interface Pt { x: number; y: number }
-export interface RoutedEdge { points: Pt[]; label?: { text: string; x: number; y: number } }
-export interface RouteCtx { laneLeft: (lane: number) => number; laneW: number; gap: number }
+import { crossingCount, FLIP, orthogonal, OUT, overlapCount, PAD, STEP, tidy, TRIES } from "./flowRouteUtil";
+import type { FlowBox, FlowEdge, Pt, RouteCtx, RoutedEdge, Seg, Side } from "./flowRouteUtil";
 
-interface Seg { x1: number; y1: number; x2: number; y2: number; owner: string }
-
-const PAD = 3;          // jarak aman dari kotak
-const STEP = 4;         // geser per percobaan agar dua garis tidak berhimpit
-const TRIES = [0, 1, -1, 2, -2, 3, -3];
-const OUT: Record<Side, Pt> = { top: { x: 0, y: 1 }, bottom: { x: 0, y: -1 }, right: { x: 1, y: 0 }, left: { x: -1, y: 0 } };
-const FLIP: Record<Side, Side> = { top: "bottom", bottom: "top", left: "right", right: "left" };
+export type { FlowBox, FlowEdge, Pt, RouteCtx, RoutedEdge, Side } from "./flowRouteUtil";
 
 export function routeEdges(boxes: FlowBox[], edges: FlowEdge[], ctx: RouteCtx): RoutedEdge[] {
   const byId = new Map(boxes.map((b) => [b.id, b]));
@@ -90,37 +80,8 @@ export function routeEdges(boxes: FlowBox[], edges: FlowEdge[], ctx: RouteCtx): 
     return boxes.some((b) => !skip.includes(b.id)
       && x2 > b.cx - b.w / 2 - PAD && x1 < b.cx + b.w / 2 + PAD && y2 > bottom(b) - PAD && y1 < b.top + PAD);
   };
-  const overlaps = (p: Pt, q: Pt, owner: string): number => used.filter((s) => {
-    if (s.owner === owner) return false;
-    if (p.y === q.y && s.y1 === s.y2) return Math.abs(s.y1 - p.y) < 2.5 && Math.min(s.x1, s.x2) < Math.max(p.x, q.x) - 1 && Math.max(s.x1, s.x2) > Math.min(p.x, q.x) + 1;
-    if (p.x === q.x && s.x1 === s.x2) return Math.abs(s.x1 - p.x) < 2.5 && Math.min(s.y1, s.y2) < Math.max(p.y, q.y) - 1 && Math.max(s.y1, s.y2) > Math.min(p.y, q.y) + 1;
-    return false;
-  }).length;
-
-  const crossings = (p: Pt, q: Pt, owner: string): number => used.filter((s) => {
-    if (s.owner === owner) return false;
-    const h = p.y === q.y ? { y: p.y, x1: Math.min(p.x, q.x), x2: Math.max(p.x, q.x) } : s.y1 === s.y2 ? { y: s.y1, x1: Math.min(s.x1, s.x2), x2: Math.max(s.x1, s.x2) } : null;
-    const v = p.x === q.x ? { x: p.x, y1: Math.min(p.y, q.y), y2: Math.max(p.y, q.y) } : s.x1 === s.x2 ? { x: s.x1, y1: Math.min(s.y1, s.y2), y2: Math.max(s.y1, s.y2) } : null;
-    if (!h || !v || (p.y === q.y) === (s.y1 === s.y2)) return false;
-    return v.x > h.x1 + 1 && v.x < h.x2 - 1 && h.y > v.y1 + 1 && h.y < v.y2 - 1;
-  }).length;
-
-  // Rapikan: buang titik kembar dan titik di tengah ruas lurus; null bila jalur berbalik arah.
-  const tidy = (pts: Pt[]): Pt[] | null => {
-    const out: Pt[] = [];
-    for (const p of pts) {
-      if (out.length && out[out.length - 1].x === p.x && out[out.length - 1].y === p.y) continue;
-      out.push(p);
-      while (out.length >= 3) {
-        const [a, b, c] = out.slice(-3);
-        if (!((a.x === b.x && b.x === c.x) || (a.y === b.y && b.y === c.y))) break;
-        const between = (b.x - a.x) * (c.x - b.x) >= 0 && (b.y - a.y) * (c.y - b.y) >= 0;
-        if (!between) return null;
-        out.splice(out.length - 2, 1);
-      }
-    }
-    return out;
-  };
+  const overlaps = (p: Pt, q: Pt, owner: string) => overlapCount(used, p, q, owner);
+  const crossings = (p: Pt, q: Pt, owner: string) => crossingCount(used, p, q, owner);
 
   // Satu jalur untuk pasangan sisi tertentu: keluar lurus, lalu lewat koridor/celah, lalu masuk lurus.
   const route = (a: FlowBox, b: FlowBox, exit: Side, entry: Side, owner: string): { pts: Pt[]; score: number } | null => {
@@ -156,7 +117,41 @@ export function routeEdges(boxes: FlowBox[], edges: FlowEdge[], ctx: RouteCtx): 
   });
   const busy = (id: string, side: Side, edge: number) => taken(id, side) || (reserved.get(`${id}:${side}`) ?? []).some((i) => i !== edge);
 
+  const claim = (pts: Pt[], owner: string) => pts.forEach((v, i) => { if (i > 0) used.push({ x1: pts[i - 1].x, y1: pts[i - 1].y, x2: v.x, y2: v.y, owner }); });
+
+  // Garis yang tekukannya diatur penyusun digambar persis lebih dulu, supaya garis otomatis menghindarinya.
+  // Titik pertama/terakhir diluruskan ke titik sisi (kotak bisa sudah dipindah atau diubah ukurannya)
+  // dan sudut ditambahkan bila dua titik tidak segaris, sehingga garis tetap siku-siku.
+  const manual = new Map<number, Pt[]>();
+  edges.forEach((e, index) => {
+    const a = byId.get(e.from), b = byId.get(e.to);
+    if (!a || !b || !e.points?.length || !ctx.place) return;
+    const exit = e.exit ?? "bottom", entry = e.entry ?? "top";
+    const p = port(a, exit), q = port(b, entry);
+    take(a.id, exit);
+    take(b.id, entry);
+    const mids = e.points.map((v) => ctx.place!(v));
+    // Tekukan penyusun tidak digeser; hanya ditambah siku dari titik sisi (kotak bisa sudah dipindah
+    // atau diubah ukurannya) supaya garis keluar dan masuk tegak lurus terhadap sisinya.
+    const exitVertical = exit === "top" || exit === "bottom", entryVertical = entry === "top" || entry === "bottom";
+    const first = mids[0], last = mids[mids.length - 1];
+    const out = exitVertical ? { x: p.x, y: first.y } : { x: first.x, y: p.y };
+    const into = entryVertical ? { x: q.x, y: last.y } : { x: last.x, y: q.y };
+    const pts = orthogonal([p, out, ...mids, into, q], exitVertical);
+    const clean = tidy(pts) ?? pts;
+    claim(clean, `${e.from}>${e.to}#${index}`);
+    manual.set(index, clean);
+  });
+
+  const labelFor = (e: FlowEdge, points: Pt[]) => {
+    const first = points[0], second = points[1] ?? points[0];
+    const down = second.x === first.x;
+    return e.label ? { text: e.label, x: down ? first.x + 5 : first.x + (second.x > first.x ? 4 : -22), y: down ? first.y - 11 : first.y + 3 } : undefined;
+  };
+
   return edges.flatMap((e, index): RoutedEdge[] => {
+    const fixed = manual.get(index);
+    if (fixed) return [{ points: fixed, label: labelFor(e, fixed) }];
     const a = byId.get(e.from), b = byId.get(e.to);
     if (!a || !b || !options[index].length) return [];
     const owner = `${e.from}>${e.to}#${index}`;
@@ -173,12 +168,7 @@ export function routeEdges(boxes: FlowBox[], edges: FlowEdge[], ctx: RouteCtx): 
     if (!pick) return [];
     take(a.id, pick.exit);
     take(b.id, pick.entry);
-    const points = pick.pts;
-
-    points.forEach((v, i) => { if (i > 0) used.push({ x1: points[i - 1].x, y1: points[i - 1].y, x2: v.x, y2: v.y, owner }); });
-    const first = points[0], second = points[1];
-    const down = second.x === first.x;
-    const label = e.label ? { text: e.label, x: down ? first.x + 5 : first.x + (second.x > first.x ? 4 : -22), y: down ? first.y - 11 : first.y + 3 } : undefined;
-    return [{ points, label }];
+    claim(pick.pts, owner);
+    return [{ points: pick.pts, label: labelFor(e, pick.pts) }];
   });
 }

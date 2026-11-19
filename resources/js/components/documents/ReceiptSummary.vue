@@ -14,7 +14,7 @@ const labels = {
 </script>
 
 <template>
-    <Panel title="Tanda terima baca">
+    <Panel title="Sudah dibaca oleh">
         <p
             v-if="receipts.recipients.length === 0"
             class="text-sm text-muted-foreground"

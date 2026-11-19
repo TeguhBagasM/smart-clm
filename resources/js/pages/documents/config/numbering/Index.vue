@@ -23,6 +23,7 @@ defineProps<{
     list: ListMeta;
     default_rule: { mask: string; example: string };
     tokens: string[];
+    suggested_mask: string;
 }>();
 </script>
 
@@ -49,7 +50,11 @@ defineProps<{
                     <span class="font-mono">{{ default_rule.example }}</span>
                 </p>
             </div>
-            <MaskDialog :mask="default_rule.mask" :tokens="tokens" />
+            <MaskDialog
+                :mask="default_rule.mask"
+                :tokens="tokens"
+                :suggested="suggested_mask"
+            />
         </section>
 
         <ListPage
@@ -59,7 +64,12 @@ defineProps<{
             search-placeholder="Cari kode atau nama jenis dokumen..."
             empty-text="Belum ada jenis dokumen."
         >
-            <NumberingTable :rows="types.data" :list="list" :tokens="tokens" />
+            <NumberingTable
+                :rows="types.data"
+                :list="list"
+                :tokens="tokens"
+                :suggested="suggested_mask"
+            />
         </ListPage>
     </div>
 </template>

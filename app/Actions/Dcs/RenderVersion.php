@@ -7,6 +7,7 @@ use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\RenditionKind;
 use App\Models\Dcs\Document;
 use App\Models\Dcs\DocumentVersion;
+use App\Models\Dcs\HeaderAsset;
 use App\Models\Dcs\Rendition;
 use App\Models\Dcs\TenantSetting;
 use App\Models\Dcs\VersionContent;
@@ -47,7 +48,8 @@ class RenderVersion
         $content = $version->content()->first() ?? throw DcsException::conflict('Konten dokumen belum disusun.');
 
         try {
-            $composed = $this->pdfEngine->compose($this->engineInput($version, $content));
+            $input = $this->engineInput($version, $content);
+            $composed = $this->pdfEngine->compose($input);
         } catch (PdfEngineException $e) {
             report($e);
 
@@ -56,13 +58,14 @@ class RenderVersion
                 : 'Gagal menyusun dokumen.');
         }
 
-        return DB::transaction(function () use ($actor, $version, $content, $composed): Rendition {
+        return DB::transaction(function () use ($actor, $version, $content, $composed, $input): Rendition {
             $rendition = $this->storeRendition->handle($actor, $version, RenditionKind::Composed, $composed['pdf']);
 
             $content->forceFill(['render_layout' => [
                 'signatureSheetPageIndex' => $composed['signatureSheetPageIndex'],
                 'sigLayout' => $composed['sigLayout'],
                 'headerLayout' => $composed['headerLayout'],
+                'header' => $this->headerSnapshot($input),
             ]])->save();
 
             $this->recordDocumentEvent->handle($version->document, DocumentEventType::ContentComposed, $actor, $version, [
@@ -83,10 +86,11 @@ class RenderVersion
         $document = $version->document;
         $type = $document->type;
         $settings = $document->tenant->dcsSettings ?? new TenantSetting;
+        $headerLayout = HeaderLayout::effective($type->header_layout);
         $history = $this->revisionHistory($document, $version);
 
         return [
-            'documentNumber' => $document->document_number,
+            'documentNumber' => $version->number_label ?? $document->document_number,
             'title' => $document->title,
             'docTypeCode' => $type->code,
             'department' => $document->department->code,
@@ -100,7 +104,7 @@ class RenderVersion
                 ...($section->table_data === null ? [] : ['table' => $section->table_data]),
             ])->all(),
             'flow' => $this->flow($content),
-            'letterhead' => $type->header_style === HeaderStyle::Iso || $type->letterhead ? $this->letterhead($settings) : null,
+            'letterhead' => $type->header_style === HeaderStyle::Iso || $type->letterhead ? $this->letterhead($settings, $headerLayout, $document->tenant_id) : null,
             'signatureGroups' => $this->signatureGroups($version),
             'revisionHistory' => $history,
             'appendix' => $version->attachments()->get()->map(fn ($attachment): array => ['label' => $attachment->label, 'url' => $attachment->url])->all(),
@@ -112,7 +116,7 @@ class RenderVersion
             'processOwner' => $type->process_owner !== '' ? $type->process_owner : $document->department->code,
             'language' => $content->language_mode === 'multi' ? 'Indonesia / English' : 'Indonesia',
             'issuedDateIso' => collect($history)->firstWhere('effectiveAt', '!=', null)['effectiveAt'] ?? null,
-            'header' => ['layout' => HeaderLayout::effective($type->header_layout), 'values' => $this->headerValues($version, $content)],
+            'header' => ['layout' => $headerLayout, 'values' => $this->headerValues($version, $content)],
             'statusLabel' => 'Draft',
             'confidentialityNotice' => $settings->confidentiality_notice ?: null,
         ];
@@ -151,7 +155,7 @@ class RenderVersion
         $type = $document->type;
 
         return [
-            HeaderField::DocumentNumber->value => $document->document_number,
+            HeaderField::DocumentNumber->value => $version->number_label ?? $document->document_number,
             HeaderField::Title->value => $document->title,
             HeaderField::DocTypeName->value => $type->name,
             HeaderField::DocTypeCode->value => $type->code,
@@ -167,22 +171,53 @@ class RenderVersion
     }
 
     /**
+     * The company's name and address, and the logo the letterhead asks for: the
+     * type's own image when it chose one of its company's uploads, else the company logo.
+     *
+     * @param  array<string, mixed>  $headerLayout
      * @return array{companyName: string, companyAddress: string, logo?: string, logoMimeType?: string}
      */
-    private function letterhead(TenantSetting $settings): array
+    private function letterhead(TenantSetting $settings, array $headerLayout, int $tenantId): array
     {
         $letterhead = ['companyName' => (string) $settings->company_name, 'companyAddress' => (string) $settings->company_address];
+        $key = $settings->company_logo_key;
+        $mime = $settings->company_logo_mime;
+        $logo = $headerLayout['logo'];
 
-        if ($settings->company_logo_key !== null && $settings->company_logo_mime !== null) {
+        if ($logo['enabled'] && $logo['source'] === 'custom' && $logo['assetId'] !== null) {
+            $asset = HeaderAsset::query()->where('tenant_id', $tenantId)->where('uuid', $logo['assetId'])->first();
+
+            if ($asset !== null) {
+                [$key, $mime] = [$asset->disk_key, $asset->mime];
+            } else {
+                Log::warning('The letterhead logo of a document type is gone; composing with the company logo.', ['asset' => $logo['assetId']]);
+            }
+        }
+
+        if ($key !== null && $mime !== null) {
             try {
-                $letterhead['logo'] = Storage::disk(config('dcs.disk'))->get($settings->company_logo_key);
-                $letterhead['logoMimeType'] = $settings->company_logo_mime;
+                $letterhead['logo'] = Storage::disk(config('dcs.disk'))->get($key);
+                $letterhead['logoMimeType'] = $mime;
             } catch (Throwable $e) {
-                Log::warning('Company logo could not be read for the letterhead; composing without it.', ['exception' => $e->getMessage()]);
+                Log::warning('The letterhead logo could not be read; composing without it.', ['exception' => $e->getMessage()]);
             }
         }
 
         return $letterhead;
+    }
+
+    /**
+     * What printed the kop, kept with the version: the layout in force and the
+     * logo's hash. Editing the document type later does not touch it.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array{layout: array<string, mixed>, logoSha256: string|null}
+     */
+    private function headerSnapshot(array $input): array
+    {
+        $logo = $input['letterhead']['logo'] ?? null;
+
+        return ['layout' => $input['header']['layout'], 'logoSha256' => is_string($logo) ? hash('sha256', $logo) : null];
     }
 
     /**

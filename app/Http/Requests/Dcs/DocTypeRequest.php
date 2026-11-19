@@ -5,10 +5,13 @@ namespace App\Http\Requests\Dcs;
 use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
+use App\Enums\Dcs\SignerFillMode;
+use App\Models\Dcs\HeaderAsset;
 use App\Support\Dcs\Header\HeaderLayout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
  * Shared input rules of creating and updating a document type: its attributes
@@ -39,6 +42,9 @@ abstract class DocTypeRequest extends FormRequest
             'signatureGroups.*.columns.*.label' => ['required', 'string', 'max:100'],
             'signatureGroups.*.columns.*.role' => ['nullable', 'string', 'max:60'],
             'signatureGroups.*.columns.*.roleName' => ['nullable', 'string', 'max:100'],
+            'signatureGroups.*.columns.*.fillMode' => ['nullable', Rule::enum(SignerFillMode::class)],
+            'signatureGroups.*.columns.*.defaultUserId' => ['nullable', 'string', 'max:100'],
+            'signatureGroups.*.columns.*.allowCreator' => ['nullable', 'boolean'],
             'signatureColumns' => ['nullable', 'array'],
             'signatureColumns.*.label' => ['required', 'string', 'max:100'],
             'signatureColumns.*.role' => ['nullable', 'string', 'max:60'],
@@ -48,6 +54,38 @@ abstract class DocTypeRequest extends FormRequest
             'defaultClauseIds' => ['nullable', 'array'],
             'defaultClauseIds.*' => ['uuid'],
         ];
+    }
+
+    /**
+     * What a letterhead rule cannot say: placeholders and widths, and that a custom
+     * logo is an image of the user's own company.
+     *
+     * @return list<callable(Validator): void>
+     */
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            $layout = $this->input('headerLayout');
+
+            if (! is_array($layout) || $validator->errors()->hasAny(['headerLayout', 'headerLayout.*'])) {
+                return;
+            }
+
+            foreach (HeaderLayout::problems($layout) as $key => $message) {
+                $validator->errors()->add("headerLayout.$key", $message);
+            }
+
+            $logo = (array) ($layout['logo'] ?? []);
+
+            if (($logo['enabled'] ?? false) && ($logo['source'] ?? '') === 'custom') {
+                $owned = filled($logo['assetId'] ?? null)
+                    && HeaderAsset::query()->where('tenant_id', $this->user()->tenant_id)->where('uuid', $logo['assetId'])->exists();
+
+                if (! $owned) {
+                    $validator->errors()->add('headerLayout.logo.assetId', 'Unggah logo khusus, atau pilih logo perusahaan.');
+                }
+            }
+        }];
     }
 
     /**
@@ -99,6 +137,9 @@ abstract class DocTypeRequest extends FormRequest
             'label' => $column['label'],
             'role' => $column['role'] ?? null,
             'roleName' => $column['roleName'] ?? null,
+            'fillMode' => $column['fillMode'] ?? 'legacy',
+            'defaultUserId' => isset($column['defaultUserId']) && $column['defaultUserId'] !== '' ? (string) $column['defaultUserId'] : null,
+            'allowCreator' => (bool) ($column['allowCreator'] ?? false),
         ];
 
         if (is_array($this->input('signatureGroups'))) {

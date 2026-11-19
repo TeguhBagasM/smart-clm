@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { reactive } from 'vue';
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import DocTypeConfigController from '@/actions/App/Http/Controllers/Documents/Config/DocTypeConfigController';
 import Panel from '@/components/documents/Panel.vue';
 import BasicFields from '@/components/documents/config/types/BasicFields.vue';
@@ -9,12 +10,18 @@ import SectionsEditor from '@/components/documents/config/types/SectionsEditor.v
 import SignatureGroupsEditor from '@/components/documents/config/types/SignatureGroupsEditor.vue';
 import FormActions from '@/components/documents/config/FormActions.vue';
 import StringListEditor from '@/components/documents/config/StringListEditor.vue';
+import NumberFormatHint from '@/components/documents/config/types/NumberFormatHint.vue';
 import HeaderLayoutEditor from '@/components/documents/config/header/HeaderLayoutEditor.vue';
 import type {
     ChoiceOption,
     DocTypeForm,
+    BrandColor,
     HeaderFieldOption,
     HeaderLayout,
+    HeaderPalette,
+    HeaderPreset,
+    NumberFormat,
+    SignerOption,
 } from '@/types';
 import type { RouteFormDefinition } from '@/wayfinder';
 
@@ -24,8 +31,14 @@ const props = defineProps<{
     type?: DocTypeForm;
     roleOptions: ChoiceOption[];
     clauseOptions: ChoiceOption[];
+    signerOptions: SignerOption[];
+    numberFormat: NumberFormat;
     headerFields: HeaderFieldOption[];
     headerDefault: HeaderLayout;
+    headerPresets: HeaderPreset[];
+    headerPalette: HeaderPalette;
+    brandColors: BrandColor[];
+    hasCompanyLogo: boolean;
 }>();
 
 const source = props.type;
@@ -43,7 +56,18 @@ const state = reactive({
     },
     sections: source?.defaultSections ?? [],
     groups: source?.signatureGroups ?? [
-        { heading: '', columns: [{ label: 'Disetujui oleh', role: '' }] },
+        {
+            heading: '',
+            columns: [
+                {
+                    label: 'Disetujui oleh',
+                    role: '',
+                    fillMode: 'at_creation',
+                    defaultUserId: null,
+                    allowCreator: false,
+                },
+            ],
+        },
     ],
     header: JSON.parse(
         JSON.stringify(source?.headerLayout ?? props.headerDefault),
@@ -51,6 +75,8 @@ const state = reactive({
     lanes: source?.defaultLanes ?? [],
     clauses: source?.defaultClauseIds ?? [],
 });
+
+useUnsavedGuard(() => state);
 
 /** What the server expects: the form's pieces under the names of the API. */
 function payload(): Record<string, never> {
@@ -85,16 +111,22 @@ function payload(): Record<string, never> {
                 :errors="errors"
                 :code-locked="!!type"
             />
+            <NumberFormatHint :format="numberFormat" class="mt-4" />
         </Panel>
         <HeaderLayoutEditor
             v-model="state.header"
             :fields="headerFields"
             :default-layout="headerDefault"
+            :presets="headerPresets"
+            :palette="headerPalette"
+            :brand-colors="brandColors"
+            :has-company-logo="hasCompanyLogo"
         />
         <SectionsEditor v-model="state.sections" :errors="errors" />
         <SignatureGroupsEditor
             v-model="state.groups"
             :role-options="roleOptions"
+            :signer-options="signerOptions"
             :errors="errors"
         />
         <Panel title="Lane diagram alir" :count="state.lanes.length">

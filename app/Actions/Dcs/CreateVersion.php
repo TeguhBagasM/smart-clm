@@ -43,6 +43,7 @@ class CreateVersion
                 'document_id' => $document->id,
                 'major' => $major,
                 'minor' => $minor,
+                'number_label' => $document->numberFor($minor),
                 'status' => VersionStatus::Draft,
                 'change_summary' => $changeSummary,
                 'created_by_id' => $actor->id,

@@ -7,6 +7,7 @@ export type FlowLink = {
     label?: string;
     exit?: FlowSide;
     entry?: FlowSide;
+    points?: { x: number; y: number }[];
 };
 
 /** Lane index of a step; a step without a known lane sits in the first. */
@@ -36,6 +37,7 @@ export function flowLinks(steps: FlowStep[]): FlowLink[] {
                     label,
                     exit: ports?.exit,
                     entry: ports?.entry,
+                    points: ports?.points,
                 });
             }
         };

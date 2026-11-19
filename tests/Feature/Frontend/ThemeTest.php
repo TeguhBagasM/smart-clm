@@ -120,3 +120,13 @@ it('keeps literal colours out of the frontend components', function () {
 
     expect($offenders)->toBe([]);
 });
+
+it('keeps the letterhead geometry identical to the PDF engine copy', function () {
+    $node = base_path('../management-contract/dcs/pdf-header-geometry.ts');
+
+    if (! is_file($node)) {
+        $this->markTestSkipped('The Node engine checkout is not next to this repository.');
+    }
+
+    expect(file_get_contents(resource_path('js/lib/headerGeometry.ts')))->toBe(file_get_contents($node));
+});

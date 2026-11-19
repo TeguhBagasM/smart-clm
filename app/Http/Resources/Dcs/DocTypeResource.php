@@ -30,6 +30,7 @@ class DocTypeResource extends JsonResource
                     'label' => $step->label,
                     'role' => $step->role->key ?? '',
                     ...($step->role_name === null ? [] : ['roleName' => $step->role_name]),
+                    ...($step->relationLoaded('defaultUser') ? ['fillMode' => $step->fill_mode, 'defaultUserId' => $step->defaultUser?->apiId(), 'allowCreator' => $step->allow_creator] : []),
                 ])->values()->all(),
             ];
         })->values();

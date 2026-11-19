@@ -8,6 +8,7 @@ import DocumentCreateController from '@/actions/App/Http/Controllers/Documents/D
 import DepartmentField from '@/components/documents/create/DepartmentField.vue';
 import NumberPreview from '@/components/documents/create/NumberPreview.vue';
 import UploadFields from '@/components/documents/create/UploadFields.vue';
+import SearchSelect from '@/components/SearchSelect.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,18 +67,18 @@ function transform(
 
         <div class="flex flex-col gap-1.5">
             <Label>Jenis dokumen</Label>
-            <Select v-model="state.docTypeCode">
-                <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                    <SelectItem
-                        v-for="type in types"
-                        :key="type.code"
-                        :value="type.code"
-                    >
-                        {{ type.code }} — {{ type.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+            <SearchSelect
+                v-model="state.docTypeCode"
+                :options="
+                    types.map((t) => ({
+                        value: t.code,
+                        label: t.code,
+                        description: t.name,
+                    }))
+                "
+                label="Jenis dokumen"
+                search-placeholder="Cari jenis dokumen…"
+            />
             <InputError :message="errors.docTypeCode" />
             <p class="text-xs text-muted-foreground">
                 Nomor terbitan dan revisi diatur otomatis oleh sistem.
@@ -124,20 +125,17 @@ function transform(
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="flex flex-col gap-1.5">
                     <Label>Pemilik dokumen</Label>
-                    <Select v-model="state.ownerUserId">
-                        <SelectTrigger class="w-full"
-                            ><SelectValue
-                        /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="owner in owners"
-                                :key="owner.value"
-                                :value="owner.value"
-                            >
-                                {{ owner.label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <SearchSelect
+                        v-model="state.ownerUserId"
+                        :options="
+                            owners.map((o) => ({
+                                value: o.value,
+                                label: o.label,
+                            }))
+                        "
+                        label="Pemilik dokumen"
+                        search-placeholder="Cari nama…"
+                    />
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <Label>Bahasa dokumen</Label>

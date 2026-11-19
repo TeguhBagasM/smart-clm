@@ -1,5 +1,12 @@
-/** Wraps step text into at most three lines that fit a box. */
-export function wrapText(text: string | null, width = 22): string[] {
+import type { Rect } from '@/components/documents/wizard/flow/flowGeometry';
+
+/** Wraps step text into the lines that fit a box (about 6.8 units per character, 14 per line). */
+export function wrapText(
+    text: string | null,
+    box?: Pick<Rect, 'w' | 'h'>,
+): string[] {
+    const width = box ? Math.max(6, Math.floor((box.w - 10) / 6.8)) : 22;
+    const max = box ? Math.max(1, Math.floor((box.h - 10) / 14)) : 3;
     const words = (text ?? '').split(/\s+/).filter(Boolean);
     const lines: string[] = [];
 
@@ -13,9 +20,9 @@ export function wrapText(text: string | null, width = 22): string[] {
         }
     }
 
-    if (lines.length > 3) {
-        lines.length = 3;
-        lines[2] = `${lines[2].slice(0, width - 1)}…`;
+    if (lines.length > max) {
+        lines.length = max;
+        lines[max - 1] = `${lines[max - 1].slice(0, width - 1)}…`;
     }
 
     return lines;

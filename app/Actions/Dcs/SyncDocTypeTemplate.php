@@ -2,11 +2,13 @@
 
 namespace App\Actions\Dcs;
 
+use App\Enums\Dcs\SignerFillMode;
 use App\Models\Dcs\Clause;
 use App\Models\Dcs\DocumentType;
 use App\Models\Dcs\DocumentTypeSection;
 use App\Models\Dcs\DocumentTypeStep;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Support\Dcs\DocumentTypeDefaults;
 use App\Support\Dcs\RoleKeyResolver;
 use Illuminate\Support\Facades\DB;
@@ -84,11 +86,18 @@ class SyncDocTypeTemplate
         }
 
         $roles = $this->roleKeyResolver->resolve($tenant, $keys, 'signatureGroups');
+        $people = $this->people($tenant, $groups);
 
         DocumentTypeStep::query()->where('doc_type_id', $type->id)->delete();
 
         foreach ($groups as $groupPosition => $group) {
             foreach ($group['columns'] as $position => $column) {
+                $mode = SignerFillMode::tryFrom((string) ($column['fillMode'] ?? 'legacy')) ?? SignerFillMode::Legacy;
+
+                if ($mode === SignerFillMode::Person && ($column['defaultUserId'] ?? null) === null) {
+                    throw ValidationException::withMessages(['signatureGroups' => "Kolom \"{$column['label']}\" bermode orang tertentu: pilih orangnya."]);
+                }
+
                 DocumentTypeStep::query()->forceCreate([
                     'doc_type_id' => $type->id,
                     'group_position' => $groupPosition + 1,
@@ -97,9 +106,44 @@ class SyncDocTypeTemplate
                     'label' => $column['label'],
                     'role_id' => $column['role'] === null ? null : $roles[$column['role']],
                     'role_name' => $column['roleName'],
+                    'fill_mode' => $mode->value,
+                    'default_user_id' => $mode === SignerFillMode::Person ? $people[$column['defaultUserId']] : null,
+                    'allow_creator' => (bool) ($column['allowCreator'] ?? false),
                 ]);
             }
         }
+    }
+
+    /**
+     * The people named in the template, by the id the client uses: they must be
+     * active users of this company, nobody else's.
+     *
+     * @param  list<array<string, mixed>>  $groups
+     * @return array<string, int>
+     *
+     * @throws ValidationException
+     */
+    private function people(Tenant $tenant, array $groups): array
+    {
+        $wanted = [];
+
+        foreach ($groups as $group) {
+            foreach ($group['columns'] as $column) {
+                if (($column['fillMode'] ?? 'legacy') === SignerFillMode::Person->value && ($column['defaultUserId'] ?? null) !== null) {
+                    $wanted[] = (string) $column['defaultUserId'];
+                }
+            }
+        }
+
+        $wanted = array_values(array_unique($wanted));
+        $found = User::query()->where('tenant_id', $tenant->id)->where('is_active', true)->whereApiId($wanted)->get()
+            ->mapWithKeys(fn (User $user): array => [$user->apiId() => $user->id])->all();
+
+        if (array_diff($wanted, array_keys($found)) !== []) {
+            throw ValidationException::withMessages(['signatureGroups' => 'Penandatangan harus pengguna aktif di perusahaan ini.']);
+        }
+
+        return $found;
     }
 
     /**

@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
  * @property string $uuid
  * @property int $tenant_id
  * @property int $document_id
+ * @property string|null $number_label
  * @property int $major
  * @property int $minor
  * @property VersionStatus $status

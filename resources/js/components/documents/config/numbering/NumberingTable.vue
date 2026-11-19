@@ -7,7 +7,12 @@ import DataTable from '@/components/list/DataTable.vue';
 import { Badge } from '@/components/ui/badge';
 import type { ListColumn, ListMeta, NumberingRow } from '@/types';
 
-defineProps<{ rows: NumberingRow[]; list: ListMeta; tokens: string[] }>();
+defineProps<{
+    rows: NumberingRow[];
+    list: ListMeta;
+    tokens: string[];
+    suggested?: string;
+}>();
 
 const columns: ListColumn[] = [
     { key: 'code', label: 'Jenis dokumen', sort: 'code' },
@@ -47,6 +52,7 @@ const columns: ListColumn[] = [
                     :tokens="tokens"
                     :type-id="row.id"
                     :type-code="row.code"
+                    :suggested="suggested"
                 />
                 <ActionDialog
                     v-if="row.custom"

@@ -22,7 +22,15 @@ export type SignatureColumn = {
     /** A role key; empty means anyone may sign. */
     role: string;
     roleName?: string;
+    /** How the column gets its person (see App\Enums\Dcs\SignerFillMode). */
+    fillMode?: 'legacy' | 'person' | 'at_creation';
+    defaultUserId?: string | null;
+    allowCreator?: boolean;
 };
+
+export type NumberFormat = { mask: string; example: string; custom: boolean };
+
+export type SignerOption = { value: string; label: string; role: string };
 
 export type SignatureGroup = { heading?: string; columns: SignatureColumn[] };
 
@@ -89,24 +97,56 @@ export type NumberingRow = {
     example: string;
 };
 
+/** Schema version 2 of App\Support\Dcs\Header\HeaderLayout: colours are hex, a cell is one text with {field} placeholders. */
 export type HeaderCell = {
-    span: number;
-    label: string;
-    field: string;
+    width: number;
+    text: string;
     bold: boolean;
     italic: boolean;
     uppercase: boolean;
     align: 'left' | 'center' | 'right';
-    fill: 'none' | 'muted' | 'dark';
+    fontSize: number | null;
+    background: string | null;
+    color: string;
 };
 
 export type HeaderRow = { height: number; cells: HeaderCell[] };
 
-/** App\Support\Dcs\Header\HeaderLayout. */
+export type HeaderLogo = {
+    enabled: boolean;
+    source: 'company' | 'custom';
+    assetId: string | null;
+    side: 'left' | 'right';
+    rows: number;
+    width: number;
+    valign: 'top' | 'middle' | 'bottom';
+    padding: number;
+};
+
 export type HeaderLayout = {
-    logo: { enabled: boolean; rows: number; width: number };
+    version: number;
+    border: string;
+    logo: HeaderLogo;
     rows: HeaderRow[];
 };
+
+/** App\Support\Dcs\Header\HeaderPalette::forEditor(). */
+export type HeaderPalette = {
+    swatches: string[];
+    border: string;
+    text: string;
+    light: string;
+    dark: string;
+};
+
+export type HeaderPreset = {
+    key: string;
+    name: string;
+    description: string;
+    layout: HeaderLayout;
+};
+
+export type BrandColor = { hex: string; name: string };
 
 export type HeaderFieldOption = {
     value: string;

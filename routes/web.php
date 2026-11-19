@@ -8,6 +8,7 @@ use App\Http\Controllers\AiTools\DocumentComparisonController;
 use App\Http\Controllers\Documents\Config\ClauseConfigController;
 use App\Http\Controllers\Documents\Config\DepartmentConfigController;
 use App\Http\Controllers\Documents\Config\DocTypeConfigController;
+use App\Http\Controllers\Documents\Config\HeaderAssetController;
 use App\Http\Controllers\Documents\Config\NumberingConfigController;
 use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Documents\DocumentCreateController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Documents\VersionCommentController;
 use App\Http\Controllers\Documents\VersionDistributionController;
 use App\Http\Controllers\Documents\VersionFileController;
 use App\Http\Controllers\Documents\VersionReleaseController;
+use App\Http\Controllers\Documents\VersionSignerController;
 use App\Http\Controllers\Documents\VersionWorkflowController;
 use App\Http\Controllers\ModulePlaceholderController;
 use App\Models\AiTools\DocumentComparison;
@@ -56,6 +58,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('types/{type}', [DocTypeConfigController::class, 'update'])->whereUuid('type')->name('types.update');
         Route::delete('types/{type}', [DocTypeConfigController::class, 'destroy'])->whereUuid('type')->name('types.destroy');
         Route::post('types/{type}/restore', [DocTypeConfigController::class, 'restore'])->whereUuid('type')->name('types.restore');
+
+        Route::post('header-assets', [HeaderAssetController::class, 'store'])->middleware('throttle:20,1')->name('header-assets.store');
+        Route::get('header-assets/company-logo', [HeaderAssetController::class, 'company'])->name('header-assets.company');
+        Route::get('header-assets/{asset}', [HeaderAssetController::class, 'show'])->whereUuid('asset')->name('header-assets.show');
+        Route::put('brand-colors', [HeaderAssetController::class, 'colors'])->name('brand-colors.update');
 
         Route::get('clauses', [ClauseConfigController::class, 'index'])->name('clauses.index');
         Route::get('clauses/create', [ClauseConfigController::class, 'create'])->name('clauses.create');
@@ -102,6 +109,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('sign', [VersionWorkflowController::class, 'sign'])->name('sign');
             Route::post('request-changes', [VersionWorkflowController::class, 'requestChanges'])->name('request-changes');
             Route::post('return-to-draft', [VersionWorkflowController::class, 'returnToDraft'])->name('return-to-draft');
+            Route::post('signers/{order}', [VersionSignerController::class, 'reassign'])->whereNumber('order')->name('signers.reassign');
             Route::post('comments', [VersionCommentController::class, 'store'])->name('comments.store');
             Route::post('comments/{comment}/resolve', [VersionCommentController::class, 'resolve'])->whereUuid('comment')->name('comments.resolve');
             Route::post('acknowledge', [VersionDistributionController::class, 'acknowledge'])->name('acknowledge');

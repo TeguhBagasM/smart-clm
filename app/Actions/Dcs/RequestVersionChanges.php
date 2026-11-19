@@ -47,7 +47,7 @@ class RequestVersionChanges
             $current = $columns->get($locked->liveApprovals()->count());
 
             if ($current !== null) {
-                $this->signerGate->assertMayRequestChanges($actor, $current);
+                $this->signerGate->assertMayRequestChanges($actor, $current, SignerGate::creatorIds($locked));
             }
 
             $comment = $this->addReviewCommentRecord->handle($actor, $locked, $note, $anchor);

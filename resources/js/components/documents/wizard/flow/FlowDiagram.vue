@@ -3,7 +3,6 @@ import FlowShape from '@/components/documents/wizard/flow/FlowShape.vue';
 import {
     GRID,
     laneLeft,
-    ROW_PITCH,
 } from '@/components/documents/wizard/flow/flowGeometry';
 import type { Layout } from '@/components/documents/wizard/flow/flowLayout';
 import { wrapText } from '@/components/documents/wizard/flow/flowText';
@@ -85,12 +84,12 @@ function textFill(type: string, color?: string): string {
         </g>
         <g v-if="grid" stroke="var(--border)" stroke-dasharray="3 4">
             <line
-                v-for="row in layout.rows"
+                v-for="(top, row) in layout.grid.tops"
                 :key="row"
                 :x1="GRID.pad"
                 :x2="layout.width - GRID.pad"
-                :y1="GRID.pad + GRID.head + row * ROW_PITCH"
-                :y2="GRID.pad + GRID.head + row * ROW_PITCH"
+                :y1="top + layout.grid.heights[row]"
+                :y2="top + layout.grid.heights[row]"
             />
         </g>
         <slot name="under" />
@@ -99,9 +98,11 @@ function textFill(type: string, color?: string): string {
                 :d="edge.path"
                 fill="none"
                 :stroke="
-                    selectedEdge === `${edge.from}|${edge.kind}`
-                        ? 'var(--primary)'
-                        : 'var(--foreground)'
+                    grid && edge.blocked
+                        ? 'var(--destructive)'
+                        : selectedEdge === `${edge.from}|${edge.kind}`
+                          ? 'var(--primary)'
+                          : 'var(--foreground)'
                 "
                 :stroke-width="
                     selectedEdge === `${edge.from}|${edge.kind}` ? 2.5 : 1.5
@@ -154,7 +155,7 @@ function textFill(type: string, color?: string): string {
                 :y="
                     step.box.y +
                     step.box.h / 2 -
-                    (wrapText(step.text || '…').length - 1) * 7 +
+                    (wrapText(step.text || '…', step.box).length - 1) * 7 +
                     4
                 "
                 text-anchor="middle"
@@ -162,7 +163,7 @@ function textFill(type: string, color?: string): string {
                 pointer-events="none"
             >
                 <tspan
-                    v-for="(line, i) in wrapText(step.text || '…')"
+                    v-for="(line, i) in wrapText(step.text || '…', step.box)"
                     :key="i"
                     :x="step.box.cx"
                     :dy="i ? 14 : 0"

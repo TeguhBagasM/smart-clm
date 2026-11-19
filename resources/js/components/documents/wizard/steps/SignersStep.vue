@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SearchSelect from '@/components/SearchSelect.vue';
 import { Plus, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,19 @@ import type { DraftSigner } from '@/types';
 
 const { state, touch, options } = useWizard();
 const NONE = '__none';
+
+const people = computed(() => [
+    { value: NONE, label: 'Siapa pun dengan peran ini' },
+    ...options.users.map((u) => ({
+        value: u.value,
+        label: u.label,
+        description: u.group ?? undefined,
+    })),
+]);
+const roles = computed(() => [
+    { value: NONE, label: 'Tanpa peran' },
+    ...options.roles.map((r) => ({ value: r.value, label: r.label })),
+]);
 const groups = computed(() => [
     { title: 'Kolom tanda tangan', list: state.signers, extra: false },
 ]);
@@ -63,30 +77,13 @@ function addReviewer(): void {
                         class="text-xs text-muted-foreground"
                         >{{ signer.role_name }}</span
                     >
-                    <Select
+                    <SearchSelect
                         :model-value="signer.assigned ?? NONE"
+                        :options="people"
+                        :label="`Penandatangan ${signer.label}`"
+                        search-placeholder="Cari nama atau jabatan…"
                         @update:model-value="assign(signer, $event)"
-                    >
-                        <SelectTrigger
-                            :aria-label="`Penandatangan ${signer.label}`"
-                            ><SelectValue
-                        /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem :value="NONE"
-                                >Siapa pun dengan peran ini</SelectItem
-                            >
-                            <SelectItem
-                                v-for="user in options.users"
-                                :key="user.value"
-                                :value="user.value"
-                            >
-                                {{ user.label
-                                }}<template v-if="user.group">
-                                    · {{ user.group }}</template
-                                >
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    />
                 </li>
             </ul>
         </section>
@@ -105,48 +102,25 @@ function addReviewer(): void {
                         :aria-label="`Jabatan reviewer ${index + 1}`"
                         @update:model-value="touch('signers')"
                     />
-                    <Select
+                    <SearchSelect
                         :model-value="reviewer.role || NONE"
+                        :options="roles"
+                        :label="`Peran reviewer ${index + 1}`"
+                        placeholder="Peran"
+                        search-placeholder="Cari peran…"
                         @update:model-value="
                             reviewer.role =
                                 $event === NONE ? '' : String($event);
                             touch('signers');
                         "
-                    >
-                        <SelectTrigger
-                            :aria-label="`Peran reviewer ${index + 1}`"
-                            ><SelectValue placeholder="Peran"
-                        /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem :value="NONE">Tanpa peran</SelectItem>
-                            <SelectItem
-                                v-for="role in options.roles"
-                                :key="role.value"
-                                :value="role.value"
-                                >{{ role.label }}</SelectItem
-                            >
-                        </SelectContent>
-                    </Select>
-                    <Select
+                    />
+                    <SearchSelect
                         :model-value="reviewer.assigned ?? NONE"
+                        :options="people"
+                        :label="`Penandatangan reviewer ${index + 1}`"
+                        search-placeholder="Cari nama atau jabatan…"
                         @update:model-value="assign(reviewer, $event)"
-                    >
-                        <SelectTrigger
-                            :aria-label="`Orang reviewer ${index + 1}`"
-                            ><SelectValue
-                        /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem :value="NONE"
-                                >Siapa pun dengan peran ini</SelectItem
-                            >
-                            <SelectItem
-                                v-for="user in options.users"
-                                :key="user.value"
-                                :value="user.value"
-                                >{{ user.label }}</SelectItem
-                            >
-                        </SelectContent>
-                    </Select>
+                    />
                     <Button
                         type="button"
                         variant="ghost"

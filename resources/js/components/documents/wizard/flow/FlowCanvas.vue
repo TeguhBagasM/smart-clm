@@ -3,7 +3,9 @@ import { Play } from '@lucide/vue';
 import { useMediaQuery } from '@vueuse/core';
 import { computed, ref } from 'vue';
 import FlowDiagram from '@/components/documents/wizard/flow/FlowDiagram.vue';
+import FlowEdgeHandles from '@/components/documents/wizard/flow/FlowEdgeHandles.vue';
 import FlowEdgeMenu from '@/components/documents/wizard/flow/FlowEdgeMenu.vue';
+import FlowHandles from '@/components/documents/wizard/flow/FlowHandles.vue';
 import {
     edgeMenuStyle,
     stepMenuStyle,
@@ -22,7 +24,10 @@ const svg = ref<SVGSVGElement | null>(null);
 const wide = useMediaQuery('(min-width: 768px)');
 const { layout, selection, selectedStep, editing, linking, apply } =
     props.editor;
-const { drag, target, handlers } = useCanvasPointer(props.editor, svg);
+const { drag, lineDrag, target, hovered, handlers } = useCanvasPointer(
+    props.editor,
+    svg,
+);
 const key = useCanvasKeys(props.editor);
 
 const editingStep = computed(() =>
@@ -40,14 +45,6 @@ const edge = computed(() => {
 const showStepMenu = computed(
     () => selectedStep.value && !editing.value && !linking.value && !drag.value,
 );
-const handle = computed(() => {
-    const step = selectedStep.value;
-
-    return step && step.type !== 'end' && !editing.value
-        ? { x: step.box.cx, y: step.box.y + step.box.h + 2 }
-        : null;
-});
-
 function begin(): void {
     const id = crypto.randomUUID();
 
@@ -112,41 +109,20 @@ function begin(): void {
                             stroke-dasharray="5 4"
                         />
                     </template>
-                    <line
-                        v-if="drag?.mode === 'link' && handle"
-                        :x1="handle.x"
-                        :y1="handle.y"
-                        :x2="drag.x"
-                        :y2="drag.y"
-                        stroke="var(--primary)"
-                        stroke-width="2"
-                        stroke-dasharray="5 4"
-                        pointer-events="none"
+                    <FlowHandles
+                        :layout="layout"
+                        :selected="selectedStep?.id"
+                        :hovered="hovered"
+                        :drawing="drag?.mode === 'link' ? drag : undefined"
+                        :busy="Boolean(editing || linking || drag)"
                     />
-                    <g
-                        v-if="handle"
-                        data-handle
-                        class="cursor-crosshair touch-none"
-                    >
-                        <circle
-                            :cx="handle.x"
-                            :cy="handle.y"
-                            r="14"
-                            fill="transparent"
-                        />
-                        <circle
-                            :cx="handle.x"
-                            :cy="handle.y"
-                            r="6"
-                            fill="var(--primary)"
-                            stroke="var(--card)"
-                            stroke-width="2"
-                        >
-                            <title>
-                                Tarik ke simbol lain untuk menghubungkan
-                            </title>
-                        </circle>
-                    </g>
+                    <FlowEdgeHandles
+                        v-if="edge"
+                        :edge="edge"
+                        :dragging="
+                            lineDrag?.mode === 'end' ? lineDrag : undefined
+                        "
+                    />
                 </FlowDiagram>
                 <div
                     v-if="!layout.steps.length"
@@ -171,7 +147,7 @@ function begin(): void {
                     <FlowStepMenu :editor="editor" :step="selectedStep" />
                 </div>
                 <div
-                    v-if="wide && edge"
+                    v-if="wide && edge && !lineDrag"
                     class="absolute z-10"
                     :style="edgeMenuStyle(edge, zoom)"
                 >
@@ -187,6 +163,10 @@ function begin(): void {
             :editor="editor"
             :step="selectedStep"
         />
-        <FlowEdgeMenu v-if="!wide && edge" :editor="editor" :edge="edge" />
+        <FlowEdgeMenu
+            v-if="!wide && edge && !lineDrag"
+            :editor="editor"
+            :edge="edge"
+        />
     </div>
 </template>

@@ -16,5 +16,7 @@ final class SignatureColumn
         public readonly ?int $assignedUserId,
         public readonly ?string $groupHeading,
         public readonly int $groupPosition,
+        public readonly string $fillMode = 'legacy',
+        public readonly bool $allowCreator = false,
     ) {}
 }

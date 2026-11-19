@@ -22,11 +22,11 @@ defineProps<{ version: VersionDetail }>();
                 <dt class="text-muted-foreground">Rilis terjadwal</dt>
                 <dd>{{ formatDate(version.scheduled_effective_at) }}</dd>
             </template>
-            <dt class="text-muted-foreground">Tinjau ulang</dt>
+            <dt class="text-muted-foreground">Perlu ditinjau ulang pada</dt>
             <dd>{{ formatDate(version.review_due_at) }}</dd>
-            <dt class="text-muted-foreground">Putaran review</dt>
+            <dt class="text-muted-foreground">Tinjauan ke-</dt>
             <dd>{{ version.review_round }}</dd>
-            <dt class="text-muted-foreground">Review eksternal</dt>
+            <dt class="text-muted-foreground">Tinjauan pihak luar</dt>
             <dd>
                 <template v-if="version.external_review">
                     <Badge variant="outline">
@@ -37,7 +37,7 @@ defineProps<{ version: VersionDetail }>();
                         }}
                     </Badge>
                 </template>
-                <template v-else>Tidak aktif</template>
+                <template v-else>Tidak dipakai</template>
             </dd>
         </dl>
         <p v-if="version.change_summary" class="mt-3 border-t pt-3 text-sm">

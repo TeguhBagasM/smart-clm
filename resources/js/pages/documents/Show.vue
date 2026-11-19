@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePoll } from '@inertiajs/vue3';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import VersionActions from '@/components/documents/actions/VersionActions.vue';
 import DocumentHeader from '@/components/documents/DocumentHeader.vue';
@@ -31,6 +31,11 @@ defineProps<{
     recent_events: EventRow[];
     recipient_options?: RecipientOption[];
 }>();
+
+// The watermark and the status in the letterhead follow the document's live
+// status, so the page re-reads it now and then (only while the tab is open and
+// visible): a signature or a release by someone else shows up without a refresh.
+usePoll(15000, { only: ['document', 'version', 'recent_events'] });
 </script>
 
 <template>
@@ -67,7 +72,15 @@ defineProps<{
                 />
                 <template v-if="version">
                     <VersionFacts :version="version" />
-                    <SignatureRoster :roster="version.roster" />
+                    <SignatureRoster
+                        :roster="version.roster"
+                        :status="version.status"
+                        :can-sign="version.can.sign"
+                        :document-id="document.id"
+                        :version-id="version.id"
+                        :can-reassign="version.can.reassign_signer"
+                        :options="recipient_options"
+                    />
                     <ReceiptSummary :receipts="version.receipts" />
                 </template>
                 <TimelinePreview

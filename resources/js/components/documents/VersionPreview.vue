@@ -9,11 +9,32 @@ const props = defineProps<{ documentId: string; version: VersionDetail }>();
 
 const english = ref(false);
 
+/**
+ * Changes whenever the version's status moves on (a signature, an approval, a
+ * release). It is part of the address, so the PDF is fetched again and its
+ * watermark and status cell show the new state.
+ */
+function stamp(): string {
+    const v = props.version;
+    const signed = v.roster.filter(
+        (entry) => entry.status === 'approved',
+    ).length;
+
+    return [
+        v.status,
+        signed,
+        v.review_round,
+        v.effective_at,
+        v.scheduled_effective_at,
+    ].join('.');
+}
+
 function url(download = false): string {
     return VersionFileController.show(
         { document: props.documentId, version: props.version.id },
         {
             query: {
+                v: stamp(),
                 ...(english.value ? { lang: 'en' } : {}),
                 ...(download ? { download: '1' } : {}),
             },

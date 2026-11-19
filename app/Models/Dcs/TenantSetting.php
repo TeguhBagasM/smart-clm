@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $company_logo_key
  * @property string|null $company_logo_mime
  * @property string|null $confidentiality_notice
+ * @property list<array{hex: string, name: string}>|null $brand_colors
  * @property string|null $page_margin_top_mm
  * @property string|null $page_margin_right_mm
  * @property string|null $page_margin_bottom_mm
@@ -30,6 +31,11 @@ class TenantSetting extends Model
     private const DEFAULT_MARGIN_PT = 56.0;
 
     protected $table = 'dcs_tenant_settings';
+
+    protected function casts(): array
+    {
+        return ['brand_colors' => 'array'];
+    }
 
     /**
      * @return BelongsTo<Tenant, $this>

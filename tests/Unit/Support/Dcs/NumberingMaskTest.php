@@ -17,5 +17,5 @@ it('explains why a mask is rejected', function (?string $mask, string $message) 
     'null' => [null, 'Format nomor tidak boleh kosong.'],
     'blank' => [' ', 'Format nomor tidak boleh kosong.'],
     'without sequence' => ['{DocType}', 'Format nomor wajib memuat token {Sequence} atau {Sequence:N}.'],
-    'unknown token' => ['{Sequence}/{Bogus}', 'Token "{Bogus}" tidak dikenal. Token yang tersedia: {DocType}, {Department}, {Year}, {Month}, {MonthRoman}, {Day}, {Sequence}.'],
+    'unknown token' => ['{Sequence}/{Bogus}', 'Token "{Bogus}" tidak dikenal. Token yang tersedia: {DocType}, {Department}, {Dept}, {Year}, {YYYY}, {YY}, {Month}, {MM}, {MonthRoman}, {Day}, {Seq}, {Rev}.'],
 ]);

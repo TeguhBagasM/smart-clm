@@ -35,7 +35,7 @@ class DocumentListSpec extends ListSpec
         $pattern = $this->like(mb_strtolower($term));
 
         $query->where(fn (Builder $inner) => $inner
-            ->whereRaw("lower(dcs_documents.document_number) like ? escape '\\'", [$pattern])
+            ->whereRaw("(lower(dcs_documents.document_number) like ? escape '\\' or lower(coalesce(dcs_documents.base_number, '')) like ? escape '\\')", [$pattern, $pattern])
             ->orWhereRaw("lower(dcs_documents.title) like ? escape '\\'", [$pattern]));
     }
 
