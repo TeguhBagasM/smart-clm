@@ -4,6 +4,11 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Models\User;
+use App\Support\Ai\LlmManager;
+use App\Support\Comparison\Extraction\LlmOcrEngine;
+use App\Support\Comparison\Extraction\OcrEngine;
+use App\Support\Comparison\Extraction\PdfReader;
+use App\Support\Comparison\Extraction\PopplerPdfReader;
 use App\Support\Dcs\Ai\DcsAi;
 use App\Support\Dcs\Ai\NodeDcsAi;
 use App\Support\Dcs\CurrentTenant;
@@ -29,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(PermissionResolver::class);
         $this->app->scoped(CurrentTenant::class);
+        $this->app->singleton(LlmManager::class);
+        $this->app->bind(PdfReader::class, PopplerPdfReader::class);
+        $this->app->bind(OcrEngine::class, LlmOcrEngine::class);
         $this->app->bind(DcsAi::class, fn (): DcsAi => new NodeDcsAi(
             config('dcs.ai.url'),
             config('dcs.ai.secret'),

@@ -21,6 +21,7 @@ test('a super admin sees every module, placeholders included, but no company scr
     expect(array_keys($menu))->toBe(['Dokumen Eksternal', 'Dokumen Internal', 'Arsip & Daftar', 'Master Data', 'AI Tools Hukum', 'Pengaturan Sistem'])
         ->and($menu['Dokumen Internal'])->toBe(['Dashboard', 'Dokumen Terkontrol', 'Dokumen Karyawan'])
         ->and($menu['Master Data'])->not->toContain('Pengaturan Dokumen')
+        ->and($menu['AI Tools Hukum'])->not->toContain('Bandingkan 2 Dokumen')
         ->and($menu['Pengaturan Sistem'])->toContain('Pengguna', 'Hak Akses', 'Kelola Perusahaan');
 
     foreach ($menu as $items) {
@@ -38,6 +39,7 @@ test('a company user sees only finished menus they may open', function (SystemRo
     'admin' => [SystemRole::Admin, [
         'Dokumen Internal' => ['Tugas saya', 'Dokumen Terkontrol'],
         'Master Data' => ['Pengaturan Dokumen'],
+        'AI Tools Hukum' => ['Bandingkan 2 Dokumen'],
         'Pengaturan Sistem' => ['Pengguna', 'Hak Akses'],
     ]],
     'viewer' => [SystemRole::Viewer, [

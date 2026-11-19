@@ -4,6 +4,7 @@ use App\Enums\Permission;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserStatusController;
+use App\Http\Controllers\AiTools\DocumentComparisonController;
 use App\Http\Controllers\Documents\Config\ClauseConfigController;
 use App\Http\Controllers\Documents\Config\DepartmentConfigController;
 use App\Http\Controllers\Documents\Config\DocTypeConfigController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Documents\VersionFileController;
 use App\Http\Controllers\Documents\VersionReleaseController;
 use App\Http\Controllers\Documents\VersionWorkflowController;
 use App\Http\Controllers\ModulePlaceholderController;
+use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
 use App\Support\Navigation\NavigationMenu;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +34,15 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:'.NavigationMenu::InDevelopmentAbility)
         ->where(['module' => '[a-z0-9-]+', 'page' => '[a-z0-9-]+'])
         ->name('modules.show');
+
+    Route::prefix('ai-tools/comparisons')->name('ai-tools.comparisons.')->middleware('can:viewAny,'.DocumentComparison::class)->group(function () {
+        Route::get('/', [DocumentComparisonController::class, 'index'])->name('index');
+        Route::get('create', [DocumentComparisonController::class, 'create'])->name('create');
+        Route::get('archive', [DocumentComparisonController::class, 'archive'])->name('archive');
+        Route::post('/', [DocumentComparisonController::class, 'store'])->middleware('throttle:20,1')->name('store');
+        Route::get('{comparison:uuid}', [DocumentComparisonController::class, 'show'])->whereUuid('comparison')->name('show');
+        Route::delete('{comparison:uuid}', [DocumentComparisonController::class, 'destroy'])->whereUuid('comparison')->name('destroy');
+    });
 
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
 

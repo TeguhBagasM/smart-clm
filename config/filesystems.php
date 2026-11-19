@@ -38,6 +38,14 @@ return [
             'report' => false,
         ],
 
+        'comparison' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/comparison'),
+            'visibility' => 'private',
+            'throw' => true,
+            'report' => true,
+        ],
+
         'dcs' => [
             'driver' => 'local',
             'root' => storage_path('app/private/dcs'),

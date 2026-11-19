@@ -120,6 +120,7 @@ enum SystemRole: string
                 Permission::SettingsManage,
                 Permission::RolesView,
                 Permission::RolesManage,
+                Permission::AiCompare,
             ],
             self::Legal => [
                 Permission::ContractEdit,
@@ -141,6 +142,7 @@ enum SystemRole: string
                 Permission::LegalJobProcess,
                 Permission::BudgetsManage,
                 Permission::VendorsManage,
+                Permission::AiCompare,
             ],
             self::HrGa => [
                 Permission::ContractEdit,

@@ -1,4 +1,5 @@
 export * from './auth';
+export * from './comparison';
 export * from './config';
 export * from './documents';
 export * from './list';

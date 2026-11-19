@@ -32,6 +32,7 @@ enum Permission: string
     case SettingsEmploymentTypes = 'settings.employment_types';
     case RolesView = 'roles.view';
     case RolesManage = 'roles.manage';
+    case AiCompare = 'ai.compare';
 
     /**
      * Human readable description shown in the permission matrix.
@@ -63,6 +64,7 @@ enum Permission: string
             self::SettingsEmploymentTypes => 'Ubah Kategori Dokumen Karyawan saja',
             self::RolesView => 'Lihat peran & hak akses',
             self::RolesManage => 'Buat, ubah & hapus peran serta hak aksesnya',
+            self::AiCompare => 'Bandingkan 2 dokumen dengan AI',
         };
     }
 
@@ -82,6 +84,7 @@ enum Permission: string
             self::BudgetsManage, self::EmployeesManage, self::VendorsManage => 'Data & Anggaran',
             self::SettingsManage, self::SettingsEmploymentTypes,
             self::RolesView, self::RolesManage => 'Pengaturan Sistem',
+            self::AiCompare => 'AI Tools Hukum',
         };
     }
 

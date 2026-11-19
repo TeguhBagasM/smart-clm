@@ -3,6 +3,7 @@
 namespace App\Support\Navigation;
 
 use App\Enums\Permission;
+use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
 use App\Models\User;
 use Closure;
@@ -150,7 +151,7 @@ class NavigationMenu
                     $this->soon('opini-hukum', 'Opini Hukum', 'message-square'),
                     $this->soon('terjemah-dokumen', 'Terjemah Dokumen', 'languages'),
                     $this->soon('audit-risiko-naskah', 'Audit Risiko Naskah', 'search'),
-                    $this->soon('bandingkan-dokumen', 'Bandingkan 2 Dokumen', 'arrow-left-right'),
+                    ['title' => 'Bandingkan 2 Dokumen', 'icon' => 'arrow-left-right', 'route' => 'ai-tools.comparisons.create', 'active_prefix' => '/ai-tools/comparisons', 'visible' => fn (User $user): bool => $user->can('viewAny', DocumentComparison::class)],
                     $this->soon('buat-draft', 'Buat Draft AI', 'pen-line'),
                     $this->soon('analisis-tabular', 'Analisis Tabular', 'table'),
                     $this->soon('analytics-risk', 'Analytics & Risk', 'line-chart'),
