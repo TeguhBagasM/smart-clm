@@ -69,6 +69,8 @@ defineProps<{
                     <VersionFacts :version="version" />
                     <SignatureRoster
                         :roster="version.roster"
+                        :status="version.status"
+                        :can-sign="version.can.sign"
                         :document-id="document.id"
                         :version-id="version.id"
                         :can-reassign="version.can.reassign_signer"

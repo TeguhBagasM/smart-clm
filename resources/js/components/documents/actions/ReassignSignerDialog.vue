@@ -43,7 +43,8 @@ function load(): void {
             })
         "
         :transform="() => ({ user_id: userId, reason })"
-        trigger-label="Ganti"
+        trigger-label="Ganti penandatangan"
+        trigger-variant="ghost"
         :trigger-icon="UserRoundCog"
         :title="`Ganti penandatangan: ${label}`"
         description="Tugas dan hak menandatangani pindah ke orang baru. Penggantian dicatat di riwayat dokumen beserta alasannya."
