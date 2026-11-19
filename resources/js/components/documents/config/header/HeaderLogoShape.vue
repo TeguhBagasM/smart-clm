@@ -31,6 +31,7 @@ defineEmits<{ select: []; hover: [] }>();
             fill="none"
             :stroke="safeColor(border)"
             stroke-width="0.5"
+            pointer-events="all"
         />
         <image
             v-if="url && image"

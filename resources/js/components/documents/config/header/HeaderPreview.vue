@@ -125,6 +125,7 @@ function textFill(
                 :fill="safeColor(box.cell.background) ?? 'none'"
                 :stroke="safeColor(layout.border)"
                 stroke-width="0.5"
+                pointer-events="all"
             />
             <text
                 :x="

@@ -28,7 +28,7 @@ defineEmits<{
 </script>
 
 <template>
-    <div class="flex flex-wrap items-center justify-between gap-2">
+    <div class="flex min-h-11 flex-wrap items-center justify-between gap-2">
         <CellToolbar
             v-if="cell"
             :cell="cell"
