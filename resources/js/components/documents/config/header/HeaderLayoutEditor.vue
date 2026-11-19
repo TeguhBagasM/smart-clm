@@ -1,161 +1,126 @@
 <script setup lang="ts">
-import { Plus, RotateCcw } from '@lucide/vue';
-import HeaderPreview from '@/components/documents/config/header/HeaderPreview.vue';
-import HeaderRowEditor from '@/components/documents/config/header/HeaderRowEditor.vue';
+import { provide, ref } from 'vue';
+import { headerContextKey } from '@/components/documents/config/header/headerContext';
+import FormatBar from '@/components/documents/config/header/FormatBar.vue';
+import HeaderCanvas from '@/components/documents/config/header/HeaderCanvas.vue';
+import HeaderSidePanel from '@/components/documents/config/header/HeaderSidePanel.vue';
+import type { Zoom } from '@/components/documents/config/header/ZoomControl.vue';
+import { useHeaderHistory } from '@/components/documents/config/header/useHeaderHistory';
+import { useHeaderEditor } from '@/components/documents/config/header/useHeaderEditor';
 import Panel from '@/components/documents/Panel.vue';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { moveItem, removeItem } from '@/lib/arrays';
-import type { HeaderFieldOption, HeaderLayout, HeaderRow } from '@/types';
+import type {
+    BrandColor,
+    HeaderFieldOption,
+    HeaderLayout,
+    HeaderPalette,
+    HeaderPreset,
+} from '@/types';
 
 const model = defineModel<HeaderLayout>({ required: true });
 
 const props = defineProps<{
     fields: HeaderFieldOption[];
     defaultLayout: HeaderLayout;
+    presets: HeaderPreset[];
+    palette: HeaderPalette;
+    brandColors: BrandColor[];
+    hasCompanyLogo: boolean;
 }>();
 
-const MAX_ROWS = 12;
+provide(headerContextKey, {
+    fields: props.fields,
+    palette: props.palette,
+    brandColors: ref(props.brandColors),
+    hasCompanyLogo: props.hasCompanyLogo,
+});
 
-function setRows(rows: HeaderRow[]): void {
-    model.value = { ...model.value, rows };
+const editor = useHeaderEditor(model);
+const history = useHeaderHistory(model);
+const zoom = ref<Zoom>('fit');
+
+/** Replaces the whole letterhead with a copy of a preset (the shipped default for "reset"). */
+function applyLayout(layout: HeaderLayout): void {
+    model.value = JSON.parse(JSON.stringify(layout));
+    editor.select({ kind: 'header' });
 }
 
-/** A copy, so editing never touches the shipped default. */
-function reset(): void {
-    model.value = JSON.parse(JSON.stringify(props.defaultLayout));
-}
+const isTyping = (target: EventTarget | null): boolean =>
+    target instanceof HTMLElement &&
+    target.closest('input, textarea, select, [contenteditable="true"]') !==
+        null;
 
-function addRow(): void {
-    setRows([
-        ...model.value.rows,
-        {
-            height: 18,
-            cells: [
-                {
-                    span: 12,
-                    label: '',
-                    field: 'text',
-                    bold: false,
-                    italic: false,
-                    uppercase: false,
-                    align: 'left',
-                    fill: 'none',
-                },
-            ],
-        },
-    ]);
+/** Ctrl/Cmd+Z and Shift+Z (or Ctrl+Y) outside text fields; Delete removes the focused cell; Esc leaves the selection. */
+function onKeydown(event: KeyboardEvent): void {
+    const key = event.key.toLowerCase();
+
+    if (
+        (event.metaKey || event.ctrlKey) &&
+        (key === 'z' || key === 'y') &&
+        !isTyping(event.target)
+    ) {
+        event.preventDefault();
+        if (key === 'y' || event.shiftKey) history.redo();
+        else history.undo();
+
+        return;
+    }
+
+    const cell = (event.target as Element).closest?.('[data-cell]');
+
+    if (!cell) return;
+
+    if (event.key === 'Escape') editor.select({ kind: 'header' });
+    else if (event.key === 'Delete' || event.key === 'Backspace') {
+        const [row, index] = (cell.getAttribute('data-cell') ?? '')
+            .split('-')
+            .map(Number);
+
+        event.preventDefault();
+        editor.select({ kind: 'cell', row, cell: index });
+        editor.deleteCell();
+    }
 }
 </script>
 
 <template>
     <Panel title="Kop surat">
-        <p class="mb-3 text-sm text-muted-foreground">
-            Atur baris dan kolom kop yang tercetak di setiap halaman. Nomor
-            revisi, tanggal terbit, status, dan halaman diisi otomatis oleh
-            sistem.
-        </p>
-        <div class="sticky top-0 z-10 mb-4 bg-card pb-2">
-            <HeaderPreview :layout="model" :fields="fields" />
-        </div>
-
-        <div class="mb-4 flex flex-wrap items-end gap-4">
-            <Label class="flex items-center gap-2 font-normal">
-                <Checkbox
-                    :model-value="model.logo.enabled"
-                    @update:model-value="
-                        model = {
-                            ...model,
-                            logo: { ...model.logo, enabled: $event === true },
-                        }
-                    "
-                />
-                Tampilkan logo perusahaan
-            </Label>
-            <template v-if="model.logo.enabled">
-                <Label class="flex items-center gap-2 font-normal">
-                    Di samping
-                    <Input
-                        type="number"
-                        min="1"
-                        :max="model.rows.length"
-                        class="h-8 w-16"
-                        :model-value="model.logo.rows"
-                        @update:model-value="
-                            model = {
-                                ...model,
-                                logo: {
-                                    ...model.logo,
-                                    rows: Math.min(
-                                        model.rows.length,
-                                        Math.max(1, Number($event) || 1),
-                                    ),
-                                },
-                            }
-                        "
-                    />
-                    baris pertama
-                </Label>
-                <Label class="flex items-center gap-2 font-normal">
-                    Lebar logo
-                    <Input
-                        type="number"
-                        min="10"
-                        max="40"
-                        class="h-8 w-16"
-                        :model-value="model.logo.width"
-                        @update:model-value="
-                            model = {
-                                ...model,
-                                logo: {
-                                    ...model.logo,
-                                    width: Math.min(
-                                        40,
-                                        Math.max(10, Number($event) || 22),
-                                    ),
-                                },
-                            }
-                        "
-                    />
-                    %
-                </Label>
-            </template>
-        </div>
-
-        <ol class="flex flex-col gap-3">
-            <HeaderRowEditor
-                v-for="(row, index) in model.rows"
-                :key="index"
-                :model-value="row"
-                :fields="fields"
-                :index="index"
-                :first="index === 0"
-                :last="index === model.rows.length - 1"
-                :removable="model.rows.length > 1"
-                :beside="model.logo.enabled && index < model.logo.rows"
-                @update:model-value="
-                    setRows(
-                        model.rows.map((r, p) => (p === index ? $event : r)),
-                    )
-                "
-                @move="setRows(moveItem(model.rows, index, $event))"
-                @remove="setRows(removeItem(model.rows, index))"
+        <div class="@container flex flex-col gap-3" @keydown="onKeydown">
+            <p class="text-sm text-muted-foreground">
+                Ubah kop langsung di pratinjau: klik sel atau logo, lalu atur
+                lewat toolbar dan panel pengaturan. Nomor revisi, tanggal
+                terbit, status, dan halaman diisi otomatis oleh sistem.
+            </p>
+            <FormatBar
+                v-model:zoom="zoom"
+                :cell="editor.cell.value"
+                :can-delete="editor.canDelete.value"
+                :can-undo="history.canUndo.value"
+                :can-redo="history.canRedo.value"
+                :presets="presets"
+                @patch="editor.patchCell"
+                @remove="editor.deleteCell"
+                @undo="history.undo"
+                @redo="history.redo"
+                @preset="applyLayout($event.layout)"
             />
-        </ol>
-        <div class="mt-3 flex flex-wrap gap-2">
-            <Button
-                v-if="model.rows.length < MAX_ROWS"
-                type="button"
-                variant="outline"
-                @click="addRow"
+            <div
+                class="grid items-start gap-4 @[60rem]:grid-cols-[minmax(0,1fr)_22rem]"
             >
-                <Plus /> Tambah baris
-            </Button>
-            <Button type="button" variant="ghost" @click="reset">
-                <RotateCcw /> Kembalikan ke bawaan
-            </Button>
+                <HeaderCanvas
+                    v-model:layout="model"
+                    :selection="editor.selection.value"
+                    :zoom="zoom"
+                    @select="editor.select"
+                    @add-row="editor.addRowAfter"
+                    @add-column="editor.addColumn"
+                />
+                <HeaderSidePanel
+                    v-model="model"
+                    :selection="editor.selection.value"
+                    :editor="editor"
+                    @reset="applyLayout(defaultLayout)"
+                />
+            </div>
         </div>
     </Panel>
 </template>

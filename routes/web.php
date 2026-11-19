@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserStatusController;
 use App\Http\Controllers\Documents\Config\ClauseConfigController;
 use App\Http\Controllers\Documents\Config\DepartmentConfigController;
 use App\Http\Controllers\Documents\Config\DocTypeConfigController;
+use App\Http\Controllers\Documents\Config\HeaderAssetController;
 use App\Http\Controllers\Documents\Config\NumberingConfigController;
 use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Documents\DocumentCreateController;
@@ -45,6 +46,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('types/{type}', [DocTypeConfigController::class, 'update'])->whereUuid('type')->name('types.update');
         Route::delete('types/{type}', [DocTypeConfigController::class, 'destroy'])->whereUuid('type')->name('types.destroy');
         Route::post('types/{type}/restore', [DocTypeConfigController::class, 'restore'])->whereUuid('type')->name('types.restore');
+
+        Route::post('header-assets', [HeaderAssetController::class, 'store'])->middleware('throttle:20,1')->name('header-assets.store');
+        Route::get('header-assets/company-logo', [HeaderAssetController::class, 'company'])->name('header-assets.company');
+        Route::get('header-assets/{asset}', [HeaderAssetController::class, 'show'])->whereUuid('asset')->name('header-assets.show');
+        Route::put('brand-colors', [HeaderAssetController::class, 'colors'])->name('brand-colors.update');
 
         Route::get('clauses', [ClauseConfigController::class, 'index'])->name('clauses.index');
         Route::get('clauses/create', [ClauseConfigController::class, 'create'])->name('clauses.create');

@@ -20,6 +20,7 @@ use App\Models\Role;
 use App\Models\Tenant;
 use App\Support\Dcs\Header\HeaderField;
 use App\Support\Dcs\Header\HeaderLayout;
+use App\Support\Dcs\Header\HeaderPalette;
 use App\Support\Listing\DocTypeListSpec;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -111,6 +112,10 @@ class DocTypeConfigController extends Controller
         return [
             'header_fields' => HeaderField::catalog(),
             'header_default' => HeaderLayout::default(),
+            'header_presets' => HeaderLayout::presets(),
+            'header_palette' => HeaderPalette::forEditor(),
+            'brand_colors' => $tenant->dcsSettings?->brand_colors ?? [],
+            'has_company_logo' => $tenant->dcsSettings?->company_logo_key !== null,
             'role_options' => Role::query()->where(fn ($query) => $query->whereNull('tenant_id')->orWhere('tenant_id', $tenant->id))->where('is_super_admin', false)
                 ->orderByDesc('level')->get(['key', 'name'])->unique('key')->map(fn (Role $role): array => ['value' => $role->key, 'label' => $role->name])->values()->all(),
             'clause_options' => Clause::query()->where('tenant_id', $tenant->id)->where('is_active', true)->orderBy('title')->get(['uuid', 'title', 'category'])

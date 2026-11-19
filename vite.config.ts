@@ -74,6 +74,8 @@ export default defineConfig({
             // Verbatim copy of the PDF engine's router (management-contract/dcs/pdf-flow-route.ts).
             'resources/js/components/documents/wizard/flow/flowRoute.ts',
             'resources/js/components/documents/wizard/flow/flowRouteUtil.ts',
+            // Verbatim copy of the PDF engine's header geometry (management-contract/dcs/pdf-header-geometry.ts).
+            'resources/js/lib/headerGeometry.ts',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],
