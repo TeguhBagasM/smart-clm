@@ -250,6 +250,36 @@ describe('the wizard', function () {
         wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.ports');
     });
 
+    it('keeps the bends of a line drawn by hand and refuses malformed ones', function () {
+        $created = wzCreate();
+        $points = [['x' => 0.5, 'y' => 1.5], ['x' => 2.25, 'y' => 1.5]];
+        $steps = [
+            ['id' => 's1', 'type' => 'process', 'row' => 0, 'nextId' => 's2', 'ports' => ['next' => ['exit' => 'bottom', 'entry' => 'top', 'points' => $points]]],
+            ['id' => 's2', 'type' => 'process', 'row' => 3],
+        ];
+
+        wzPatch($created, ['revision' => 1, 'flowMode' => 'builder', 'flowSteps' => $steps])->assertRedirect();
+        expect($created['version']->fresh('content')->content->flow_steps[0]['ports']['next']['points'])->toEqual($points);
+
+        $steps[0]['ports']['next']['points'] = [['x' => 'kiri', 'y' => 1]];
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.ports.next.points.0.x');
+        $steps[0]['ports']['next']['points'] = array_fill(0, 21, ['x' => 1, 'y' => 1]);
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.ports.next.points');
+    });
+
+    it('keeps a resized step and refuses sizes beyond the limits', function () {
+        $created = wzCreate();
+        $steps = [['id' => 's1', 'type' => 'process', 'row' => 0, 'size' => ['w' => 1.3, 'h' => 2]]];
+
+        wzPatch($created, ['revision' => 1, 'flowMode' => 'builder', 'flowSteps' => $steps])->assertRedirect();
+        expect($created['version']->fresh('content')->content->flow_steps[0]['size'])->toEqual(['w' => 1.3, 'h' => 2]);
+
+        $steps[0]['size'] = ['w' => 4, 'h' => 2];
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.size.w');
+        $steps[0]['size'] = ['w' => 1];
+        wzPatch($created, ['revision' => 2, 'flowSteps' => $steps])->assertSessionHasErrors('flowSteps.0.size.h');
+    });
+
     it('refuses a flow step outside the grid', function (mixed $row) {
         $created = wzCreate();
 

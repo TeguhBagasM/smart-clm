@@ -1,9 +1,15 @@
 import {
+    boxSize,
     canvasSize,
     cellBox,
     GRID,
+    fromGrid,
+    rowGrid,
 } from '@/components/documents/wizard/flow/flowGeometry';
-import type { Rect } from '@/components/documents/wizard/flow/flowGeometry';
+import type {
+    Rect,
+    RowGrid,
+} from '@/components/documents/wizard/flow/flowGeometry';
 import {
     flowLinks,
     laneIndex,
@@ -18,12 +24,19 @@ export type PlacedStep = FlowStep & { lane: number; row: number; box: Rect };
 
 export type DrawnEdge = Omit<FlowLink, 'label'> & {
     path: string;
+    /** The drawn corners, in canvas units. */
+    points: { x: number; y: number }[];
+    /** Bent by hand: kept as drawn, not avoided by the router. */
+    manual: boolean;
+    /** A hand-bent line that runs through a step it does not connect. */
+    blocked: boolean;
     label?: { text: string; x: number; y: number };
 };
 
 export type Layout = {
     lanes: string[];
     rows: number;
+    grid: RowGrid;
     width: number;
     height: number;
     steps: PlacedStep[];
@@ -40,11 +53,27 @@ export function layoutFlow(
     spareRows = 1,
 ): Layout {
     const columns = lanes.length ? lanes : [''];
-    const placed: PlacedStep[] = placeSteps(lanes, steps).map((step) => {
-        const cell = { lane: laneIndex(lanes, step.actor), row: step.row ?? 0 };
+    const positioned = placeSteps(lanes, steps).map((step) => ({
+        ...step,
+        lane: laneIndex(lanes, step.actor),
+        row: step.row ?? 0,
+    }));
+    const rows =
+        Math.max(0, ...positioned.map((step) => step.row + 1)) + spareRows;
+    const tallest: number[] = [];
 
-        return { ...step, ...cell, box: cellBox(cell) };
-    });
+    for (const step of positioned) {
+        tallest[step.row] = Math.max(
+            tallest[step.row] ?? 0,
+            boxSize(step.size).h,
+        );
+    }
+
+    const grid = rowGrid(tallest, rows);
+    const placed: PlacedStep[] = positioned.map((step) => ({
+        ...step,
+        box: cellBox(step, grid, step.size),
+    }));
     const boxes: FlowBox[] = placed.map((step) => ({
         id: step.id,
         cx: step.box.cx,
@@ -64,24 +93,59 @@ export function layoutFlow(
         laneLeft: (lane) => GRID.pad + lane * GRID.laneW,
         laneW: GRID.laneW,
         gap: GRID.gap,
+        place: (p) => {
+            const at = fromGrid(p, grid);
+
+            return { x: at.x, y: -at.y };
+        },
     });
-    const rows = Math.max(0, ...placed.map((step) => step.row + 1)) + spareRows;
 
     return {
         lanes: columns,
         rows,
-        ...canvasSize(columns.length, rows),
+        grid,
+        ...canvasSize(columns.length, grid),
         steps: placed,
-        edges: links.map((link, i) => ({
-            ...link,
-            path: routed[i].points
-                .map((p, j) => `${j ? 'L' : 'M'}${p.x},${-p.y}`)
-                .join(' '),
-            label: routed[i].label && {
-                text: routed[i].label.text,
-                x: routed[i].label.x,
-                y: -routed[i].label.y,
-            },
-        })),
+        edges: links.map((link, i) => {
+            const points = routed[i].points.map((p) => ({ x: p.x, y: -p.y }));
+
+            return {
+                ...link,
+                path: points
+                    .map((p, j) => `${j ? 'L' : 'M'}${p.x},${p.y}`)
+                    .join(' '),
+                points,
+                manual: Boolean(link.points?.length),
+                blocked:
+                    Boolean(link.points?.length) &&
+                    crossesStep(points, placed, link),
+                label: routed[i].label && {
+                    text: routed[i].label.text,
+                    x: routed[i].label.x,
+                    y: -routed[i].label.y,
+                },
+            };
+        }),
     };
+}
+
+/** Whether a line runs through a step other than its two ends. */
+function crossesStep(
+    points: { x: number; y: number }[],
+    steps: PlacedStep[],
+    link: FlowLink,
+): boolean {
+    return points.slice(1).some((q, i) => {
+        const p = points[i];
+
+        return steps.some(
+            ({ id, box }) =>
+                id !== link.from &&
+                id !== link.to &&
+                Math.max(p.x, q.x) > box.x &&
+                Math.min(p.x, q.x) < box.x + box.w &&
+                Math.max(p.y, q.y) > box.y &&
+                Math.min(p.y, q.y) < box.y + box.h,
+        );
+    });
 }

@@ -73,6 +73,7 @@ export default defineConfig({
             'resources/views/mail/*',
             // Verbatim copy of the PDF engine's router (management-contract/dcs/pdf-flow-route.ts).
             'resources/js/components/documents/wizard/flow/flowRoute.ts',
+            'resources/js/components/documents/wizard/flow/flowRouteUtil.ts',
         ],
         sortTailwindcss: {
             functions: ['clsx', 'cn', 'cva'],

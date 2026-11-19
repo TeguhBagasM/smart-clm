@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeftRight, Trash2, X } from '@lucide/vue';
+import { ArrowLeftRight, Trash2, Wand2, X } from '@lucide/vue';
 import { computed } from 'vue';
 import type { DrawnEdge } from '@/components/documents/wizard/flow/flowLayout';
 import {
@@ -42,6 +42,14 @@ function remove(): void {
                 ({{ label }})</template
             >
         </p>
+        <p v-if="edge.blocked" class="text-xs text-destructive">
+            Garis ini menembus simbol lain. Geser bagian garisnya atau pilih
+            Atur otomatis.
+        </p>
+        <p v-else-if="!edge.manual" class="text-xs text-muted-foreground">
+            Seret kotak kecil di tengah garis untuk menggesernya, atau ujung
+            garis ke titik lain.
+        </p>
         <FlowSidePicker
             label="Keluar dari"
             :value="edge.exit"
@@ -53,6 +61,22 @@ function remove(): void {
             @change="apply(setPorts(edge.from, edge.kind, { entry: $event }))"
         />
         <div class="flex flex-wrap gap-1">
+            <Button
+                v-if="edge.manual"
+                type="button"
+                variant="outline"
+                size="sm"
+                @click="
+                    apply(
+                        setPorts(edge.from, edge.kind, {
+                            exit: null,
+                            entry: null,
+                        }),
+                    )
+                "
+            >
+                <Wand2 /> Atur otomatis
+            </Button>
             <Button
                 v-if="edge.kind !== 'next'"
                 type="button"

@@ -19,7 +19,15 @@ export type FlowStepType =
 export type FlowSide = 'top' | 'right' | 'bottom' | 'left';
 
 /** Sides a line leaves its step and enters the next one; absent = chosen automatically. */
-export type FlowPorts = { exit?: FlowSide; entry?: FlowSide };
+export type FlowPorts = {
+    exit?: FlowSide;
+    entry?: FlowSide;
+    /** Bend points set by hand, in grid units (x = lane + fraction, y = row + fraction). */
+    points?: { x: number; y: number }[];
+};
+
+/** A step's size as a factor of the default box (1 = default). */
+export type FlowStepSize = { w: number; h: number };
 
 export type FlowStep = {
     id: string;
@@ -32,6 +40,8 @@ export type FlowStep = {
     row?: number;
     /** Line sides chosen by the author, per line (next, Ya, Tidak). */
     ports?: Partial<Record<'next' | 'yes' | 'no', FlowPorts>>;
+    /** Resized by the author; absent = default size. */
+    size?: FlowStepSize;
     color?: string;
     textColor?: string;
     nextId?: string;
