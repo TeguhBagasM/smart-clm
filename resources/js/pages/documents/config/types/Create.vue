@@ -9,6 +9,8 @@ import type {
     HeaderLayout,
     HeaderPalette,
     HeaderPreset,
+    NumberFormat,
+    SignerOption,
     ChoiceOption,
 } from '@/types';
 
@@ -30,6 +32,8 @@ defineOptions({
 defineProps<{
     role_options: ChoiceOption[];
     clause_options: ChoiceOption[];
+    signer_options: SignerOption[];
+    number_format: NumberFormat;
     header_fields: HeaderFieldOption[];
     header_default: HeaderLayout;
     header_presets: HeaderPreset[];
@@ -52,6 +56,8 @@ defineProps<{
             submit-label="Simpan jenis dokumen"
             :role-options="role_options"
             :clause-options="clause_options"
+            :signer-options="signer_options"
+            :number-format="number_format"
             :header-fields="header_fields"
             :header-default="header_default"
             :header-presets="header_presets"

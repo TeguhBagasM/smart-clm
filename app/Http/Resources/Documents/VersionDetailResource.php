@@ -72,6 +72,7 @@ class VersionDetailResource extends JsonResource
                 'cancel_release' => $user->can('cancelRelease', $this->resource),
                 'withdraw' => $user->can('withdraw', $this->resource),
                 'distribute' => $user->can('distribute', $this->resource),
+                'reassign_signer' => $user->can('reassignSigner', $this->resource),
                 'acknowledge' => ! $acknowledged && $user->can('acknowledge', $this->resource),
             ],
             'external_review' => $externalReview === null ? null : ['locked' => $externalReview->locked, 'expires_at' => ApiDate::format($externalReview->expires_at)],

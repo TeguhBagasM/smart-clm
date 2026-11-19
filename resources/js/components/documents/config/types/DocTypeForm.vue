@@ -10,6 +10,7 @@ import SectionsEditor from '@/components/documents/config/types/SectionsEditor.v
 import SignatureGroupsEditor from '@/components/documents/config/types/SignatureGroupsEditor.vue';
 import FormActions from '@/components/documents/config/FormActions.vue';
 import StringListEditor from '@/components/documents/config/StringListEditor.vue';
+import NumberFormatHint from '@/components/documents/config/types/NumberFormatHint.vue';
 import HeaderLayoutEditor from '@/components/documents/config/header/HeaderLayoutEditor.vue';
 import type {
     ChoiceOption,
@@ -19,6 +20,8 @@ import type {
     HeaderLayout,
     HeaderPalette,
     HeaderPreset,
+    NumberFormat,
+    SignerOption,
 } from '@/types';
 import type { RouteFormDefinition } from '@/wayfinder';
 
@@ -28,6 +31,8 @@ const props = defineProps<{
     type?: DocTypeForm;
     roleOptions: ChoiceOption[];
     clauseOptions: ChoiceOption[];
+    signerOptions: SignerOption[];
+    numberFormat: NumberFormat;
     headerFields: HeaderFieldOption[];
     headerDefault: HeaderLayout;
     headerPresets: HeaderPreset[];
@@ -51,7 +56,18 @@ const state = reactive({
     },
     sections: source?.defaultSections ?? [],
     groups: source?.signatureGroups ?? [
-        { heading: '', columns: [{ label: 'Disetujui oleh', role: '' }] },
+        {
+            heading: '',
+            columns: [
+                {
+                    label: 'Disetujui oleh',
+                    role: '',
+                    fillMode: 'at_creation',
+                    defaultUserId: null,
+                    allowCreator: false,
+                },
+            ],
+        },
     ],
     header: JSON.parse(
         JSON.stringify(source?.headerLayout ?? props.headerDefault),
@@ -95,6 +111,7 @@ function payload(): Record<string, never> {
                 :errors="errors"
                 :code-locked="!!type"
             />
+            <NumberFormatHint :format="numberFormat" class="mt-4" />
         </Panel>
         <HeaderLayoutEditor
             v-model="state.header"
@@ -109,6 +126,7 @@ function payload(): Record<string, never> {
         <SignatureGroupsEditor
             v-model="state.groups"
             :role-options="roleOptions"
+            :signer-options="signerOptions"
             :errors="errors"
         />
         <Panel title="Lane diagram alir" :count="state.lanes.length">

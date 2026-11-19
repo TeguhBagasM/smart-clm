@@ -2,6 +2,7 @@
 import { ArrowDown, ArrowUp, Trash2 } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import SignerModeFields from '@/components/documents/config/types/SignerModeFields.vue';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -10,7 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { ChoiceOption, SignatureColumn } from '@/types';
+import type { ChoiceOption, SignatureColumn, SignerOption } from '@/types';
 
 const ANYONE = '__anyone__';
 
@@ -19,6 +20,8 @@ defineProps<{
     index: number;
     last: boolean;
     roleOptions: ChoiceOption[];
+    signerOptions: SignerOption[];
+    first: boolean;
     error?: string;
 }>();
 
@@ -46,7 +49,10 @@ defineEmits<{
                     })
                 "
             >
-                <SelectTrigger class="w-full" aria-label="Peran penandatangan">
+                <SelectTrigger
+                    class="w-full"
+                    aria-label="Peran penandatangan (kandidat)"
+                >
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,6 +106,13 @@ defineEmits<{
                 </Button>
             </div>
         </div>
+        <SignerModeFields
+            :column="column"
+            :index="index"
+            :first="first"
+            :signer-options="signerOptions"
+            @change="$emit('change', $event)"
+        />
         <InputError :message="error" />
     </div>
 </template>

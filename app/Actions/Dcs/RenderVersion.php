@@ -90,7 +90,7 @@ class RenderVersion
         $history = $this->revisionHistory($document, $version);
 
         return [
-            'documentNumber' => $document->document_number,
+            'documentNumber' => $version->number_label ?? $document->document_number,
             'title' => $document->title,
             'docTypeCode' => $type->code,
             'department' => $document->department->code,
@@ -155,7 +155,7 @@ class RenderVersion
         $type = $document->type;
 
         return [
-            HeaderField::DocumentNumber->value => $document->document_number,
+            HeaderField::DocumentNumber->value => $version->number_label ?? $document->document_number,
             HeaderField::Title->value => $document->title,
             HeaderField::DocTypeName->value => $type->name,
             HeaderField::DocTypeCode->value => $type->code,

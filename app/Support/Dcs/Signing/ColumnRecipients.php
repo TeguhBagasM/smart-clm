@@ -22,6 +22,10 @@ class ColumnRecipients
             return $query->whereKey($column->assignedUserId)->get();
         }
 
+        if ($column->fillMode !== 'legacy') {
+            return new Collection;
+        }
+
         return $column->roleId === null ? new Collection : $query->where('role_id', $column->roleId)->get();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models\Dcs;
 use App\Models\Concerns\HasUuid;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Support\Dcs\NumberingMask;
 use Database\Factories\Dcs\DocumentFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,6 +24,9 @@ use Illuminate\Support\Carbon;
  * @property string $uuid
  * @property int $tenant_id
  * @property string $document_number
+ * @property string|null $base_number
+ * @property string|null $number_mask
+ * @property array<string, string|int>|null $number_tokens
  * @property int $doc_type_id
  * @property int $department_id
  * @property string $title
@@ -42,6 +46,26 @@ class Document extends Model
     use HasFactory, HasUuid;
 
     protected $table = 'dcs_documents';
+
+    protected function casts(): array
+    {
+        return ['number_tokens' => 'array'];
+    }
+
+    /**
+     * The full number of a revision, written with the pattern the document was numbered
+     * with (a document numbered by hand, or before patterns carried a revision, keeps its number).
+     */
+    public function numberFor(int $revision): string
+    {
+        $tokens = $this->number_tokens;
+
+        if ($this->number_mask === null || $tokens === null) {
+            return $this->document_number;
+        }
+
+        return NumberingMask::render($this->number_mask, $tokens, (int) $tokens['Seq'], $revision);
+    }
 
     /**
      * @return BelongsTo<Tenant, $this>

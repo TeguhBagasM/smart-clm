@@ -30,6 +30,7 @@ class FindOrCreateDepartment
                 throw DcsException::badRequest('Kode departemen hanya boleh berisi huruf, angka, spasi, dan karakter _ . & -.');
             }
 
+            $code = mb_strtoupper($code);
             $now = now();
 
             $inserted = DB::table('dcs_departments')->insertOrIgnore([

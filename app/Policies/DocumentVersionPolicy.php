@@ -40,14 +40,14 @@ class DocumentVersionPolicy
     {
         $column = $this->currentColumn($version);
 
-        return $version->status === VersionStatus::UnderReview && $version->currentRendition() !== null && $column !== null && $this->signerGate->maySign($actor, $column);
+        return $version->status === VersionStatus::UnderReview && $version->currentRendition() !== null && $column !== null && $this->signerGate->maySign($actor, $column, SignerGate::creatorIds($version));
     }
 
     public function requestChanges(User $actor, DocumentVersion $version): bool
     {
         $column = $this->currentColumn($version);
 
-        return $version->status === VersionStatus::UnderReview && ($column === null || $this->signerGate->mayRequestChanges($actor, $column));
+        return $version->status === VersionStatus::UnderReview && ($column === null || $this->signerGate->mayRequestChanges($actor, $column, SignerGate::creatorIds($version)));
     }
 
     public function returnToDraft(User $actor, DocumentVersion $version): bool
@@ -83,6 +83,17 @@ class DocumentVersionPolicy
     public function distribute(User $actor, DocumentVersion $version): bool
     {
         return $version->currentRendition() !== null && $actor->can(Permission::DcsRelease);
+    }
+
+    /**
+     * Replacing the person of a column on a running document: the company's administrators only.
+     */
+    public function reassignSigner(User $actor, DocumentVersion $version): bool
+    {
+        return $actor->tenant_id !== null
+            && $actor->tenant_id === $version->tenant_id
+            && $actor->role->is_tenant_admin
+            && in_array($version->status, [VersionStatus::Draft, VersionStatus::UnderReview], true);
     }
 
     public function acknowledge(User $actor, DocumentVersion $version): bool

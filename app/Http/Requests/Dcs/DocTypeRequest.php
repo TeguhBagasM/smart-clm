@@ -5,6 +5,7 @@ namespace App\Http\Requests\Dcs;
 use App\Enums\Dcs\BodyStyle;
 use App\Enums\Dcs\HeaderStyle;
 use App\Enums\Dcs\LayoutStyle;
+use App\Enums\Dcs\SignerFillMode;
 use App\Models\Dcs\HeaderAsset;
 use App\Support\Dcs\Header\HeaderLayout;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -41,6 +42,9 @@ abstract class DocTypeRequest extends FormRequest
             'signatureGroups.*.columns.*.label' => ['required', 'string', 'max:100'],
             'signatureGroups.*.columns.*.role' => ['nullable', 'string', 'max:60'],
             'signatureGroups.*.columns.*.roleName' => ['nullable', 'string', 'max:100'],
+            'signatureGroups.*.columns.*.fillMode' => ['nullable', Rule::enum(SignerFillMode::class)],
+            'signatureGroups.*.columns.*.defaultUserId' => ['nullable', 'string', 'max:100'],
+            'signatureGroups.*.columns.*.allowCreator' => ['nullable', 'boolean'],
             'signatureColumns' => ['nullable', 'array'],
             'signatureColumns.*.label' => ['required', 'string', 'max:100'],
             'signatureColumns.*.role' => ['nullable', 'string', 'max:60'],
@@ -133,6 +137,9 @@ abstract class DocTypeRequest extends FormRequest
             'label' => $column['label'],
             'role' => $column['role'] ?? null,
             'roleName' => $column['roleName'] ?? null,
+            'fillMode' => $column['fillMode'] ?? 'legacy',
+            'defaultUserId' => isset($column['defaultUserId']) && $column['defaultUserId'] !== '' ? (string) $column['defaultUserId'] : null,
+            'allowCreator' => (bool) ($column['allowCreator'] ?? false),
         ];
 
         if (is_array($this->input('signatureGroups'))) {

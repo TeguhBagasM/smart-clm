@@ -12,8 +12,8 @@ use LogicException;
  * Hands out document numbers. Concurrent creators of the same scope (rule +
  * scope hash) are serialized by a row lock on the scope's counter, so a number
  * is never given twice; different scopes never wait for each other. A number
- * released earlier is given out before the counter moves on, so cancelled
- * documents leave no gap. Allocation and release must run inside the
+ * that was released (a draft thrown away) is never given out again: the counter
+ * only moves forward and gaps stay. Allocation and release must run inside the
  * transaction that creates or changes the document: the lock lives until it
  * commits and a rollback returns the number.
  */
@@ -40,18 +40,6 @@ class NumberAllocator
 
         $sequence = $this->lockedSequence($rule, $tokens);
 
-        $pooled = NumberAllocation::query()
-            ->where('sequence_id', $sequence->id)
-            ->whereNotNull('released_at')
-            ->orderBy('seq')
-            ->first();
-
-        if ($pooled !== null) {
-            $pooled->forceFill(['released_at' => null])->save();
-
-            return $pooled;
-        }
-
         $sequence->forceFill(['current_seq' => $sequence->current_seq + 1])->save();
 
         return NumberAllocation::query()->forceCreate(['sequence_id' => $sequence->id, 'seq' => $sequence->current_seq]);
@@ -59,7 +47,7 @@ class NumberAllocator
 
     /**
      * The sequence number the next document would get, without reserving it.
-     * It ignores the pool of released numbers, as the Node preview did.
+     * A released number is never reused, so this is always the counter plus one.
      *
      * @param  array<string, string|int>  $tokens
      */
@@ -74,21 +62,15 @@ class NumberAllocator
     }
 
     /**
-     * Gives a number back. The last number handed out is simply taken back off
-     * the counter; any other waits in the pool.
+     * Gives up a number that will not be used (a draft that was thrown away). The number is
+     * marked released and kept for the record: it is never handed out again and the counter is
+     * never moved back, so an issued number is never repeated and a gap is never filled.
      */
     public function release(NumberAllocation $allocation): void
     {
         $this->requireTransaction();
 
-        $sequence = NumberSequence::query()->whereKey($allocation->sequence_id)->lockForUpdate()->firstOrFail();
-
-        if ($allocation->seq === $sequence->current_seq) {
-            $sequence->forceFill(['current_seq' => $sequence->current_seq - 1])->save();
-            $allocation->delete();
-
-            return;
-        }
+        NumberSequence::query()->whereKey($allocation->sequence_id)->lockForUpdate()->firstOrFail();
 
         $allocation->forceFill(['document_id' => null, 'released_at' => now()])->save();
     }

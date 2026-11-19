@@ -6,7 +6,9 @@ use App\Enums\Dcs\ReceiptStatus;
 use App\Enums\Dcs\VersionStatus;
 use App\Enums\Permission;
 use App\Models\Dcs\DocumentVersion;
+use App\Models\Dcs\VersionStep;
 use App\Models\User;
+use App\Support\Dcs\Signing\SignerGate;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -76,7 +78,23 @@ class TaskQueue
             ->filter(function (DocumentVersion $version) use ($user): bool {
                 $step = $version->steps->values()->get((int) $version->getAttribute('signed_count'));
 
-                return $step !== null && ($step->assigned_user_id !== null ? $step->assigned_user_id === $user->id : ($step->role_id !== null && $step->role_id === $user->role_id));
+                return $step !== null && $this->isTurnOf($user, $step, $version);
             })->pluck('id')->values()->all();
+    }
+
+    /**
+     * Whether the column is the person's: the one named (and, for the new kind of
+     * column, not the document's own creator unless allowed), else for an old column any holder of its role.
+     */
+    private function isTurnOf(User $user, VersionStep $step, DocumentVersion $version): bool
+    {
+        if ($step->assigned_user_id !== null) {
+            $position = $version->steps->values()->search(fn (VersionStep $other): bool => $other->id === $step->id);
+            $blocked = $step->fill_mode !== 'legacy' && ! $step->allow_creator && $position > 0 && in_array($user->id, SignerGate::creatorIds($version), true);
+
+            return $step->assigned_user_id === $user->id && ! $blocked;
+        }
+
+        return $step->fill_mode === 'legacy' && $step->role_id !== null && $step->role_id === $user->role_id;
     }
 }

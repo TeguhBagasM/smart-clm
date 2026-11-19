@@ -73,7 +73,7 @@ describe('import', function () {
         expect(DB::table('dcs_numbering_rules')->where('tenant_id', $this->tenant->id)->whereNull('doc_type_id')->value('uuid'))->toBe('33333333-3333-4333-8333-333333333333');
     });
 
-    it('carries the counter and the pool of released numbers, so numbering continues where Node stopped', function () {
+    it('carries the counter and keeps the released numbers out of use, so numbering continues where Node stopped', function () {
         $this->travelTo('2026-07-05 10:00:00');
         importLegacy()->assertSuccessful();
 
@@ -85,7 +85,7 @@ describe('import', function () {
         $first = dcsAs($this->owner)->postJson('/api/dcs/documents', ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru'])->assertOk();
         $second = dcsAs($this->owner)->postJson('/api/dcs/documents', ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru lagi'])->assertOk();
 
-        expect($first->json('documentNumber'))->toBe('SOP/HRD/2026/0002')->and($second->json('documentNumber'))->toBe('SOP/HRD/2026/0004');
+        expect($first->json('documentNumber'))->toBe('SOP/HRD/2026/0004')->and($second->json('documentNumber'))->toBe('SOP/HRD/2026/0005');
     });
 
     it('rebuilds the composed content, the signature columns and the attachments', function () {

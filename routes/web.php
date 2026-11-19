@@ -18,6 +18,7 @@ use App\Http\Controllers\Documents\VersionCommentController;
 use App\Http\Controllers\Documents\VersionDistributionController;
 use App\Http\Controllers\Documents\VersionFileController;
 use App\Http\Controllers\Documents\VersionReleaseController;
+use App\Http\Controllers\Documents\VersionSignerController;
 use App\Http\Controllers\Documents\VersionWorkflowController;
 use App\Http\Controllers\ModulePlaceholderController;
 use App\Models\Dcs\Document;
@@ -97,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('sign', [VersionWorkflowController::class, 'sign'])->name('sign');
             Route::post('request-changes', [VersionWorkflowController::class, 'requestChanges'])->name('request-changes');
             Route::post('return-to-draft', [VersionWorkflowController::class, 'returnToDraft'])->name('return-to-draft');
+            Route::post('signers/{order}', [VersionSignerController::class, 'reassign'])->whereNumber('order')->name('signers.reassign');
             Route::post('comments', [VersionCommentController::class, 'store'])->name('comments.store');
             Route::post('comments/{comment}/resolve', [VersionCommentController::class, 'resolve'])->whereUuid('comment')->name('comments.resolve');
             Route::post('acknowledge', [VersionDistributionController::class, 'acknowledge'])->name('acknowledge');

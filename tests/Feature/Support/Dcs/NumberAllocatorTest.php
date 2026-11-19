@@ -57,7 +57,7 @@ it('peeks the next number without reserving it', function () use ($tokens) {
         ->and(DB::table('dcs_number_allocations')->count())->toBe(1);
 });
 
-it('gives a released number out again before moving the counter on', function () use ($tokens) {
+it('never gives a released number out again', function () use ($tokens) {
     $rule = allocatorRule();
     $allocator = app(NumberAllocator::class);
 
@@ -69,7 +69,8 @@ it('gives a released number out again before moving the counter on', function ()
         return [$allocator->allocate($rule, $tokens)->seq, $allocator->allocate($rule, $tokens)->seq];
     });
 
-    expect($seqs)->toBe([1, 3]);
+    expect($seqs)->toBe([3, 4])
+        ->and(DB::table('dcs_number_allocations')->whereNotNull('released_at')->pluck('seq')->all())->toBe([1]);
 });
 
 it('returns the number when the surrounding transaction rolls back', function () use ($tokens) {

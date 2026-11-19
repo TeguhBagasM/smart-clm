@@ -154,10 +154,10 @@ describe('store', function () {
     it('creates an unknown department on the fly, ignoring case afterwards', function () {
         $admin = documentAdmin();
 
-        createDocument($admin, ['department' => 'Legal & Compliance'])->assertOk();
+        createDocument($admin, ['department' => 'LEGAL & COMPLIANCE'])->assertOk();
         createDocument($admin, ['department' => 'legal & compliance'])->assertOk();
 
-        expect(Department::query()->where('tenant_id', $admin->tenant_id)->pluck('code')->all())->toBe(['Legal & Compliance']);
+        expect(Department::query()->where('tenant_id', $admin->tenant_id)->pluck('code')->all())->toBe(['LEGAL & COMPLIANCE']);
     });
 
     it('rejects a department that is invalid or switched off', function () {
@@ -302,7 +302,7 @@ describe('index and show', function () {
 });
 
 describe('release number', function () {
-    it('gives the number back for reuse and keeps the document with a placeholder number', function () {
+    it('gives the number up for good and keeps the document with a placeholder number', function () {
         $this->travelTo('2026-07-05 10:00:00');
         $admin = documentAdmin();
         $first = createDocument($admin)->json('documentId');
@@ -313,12 +313,12 @@ describe('release number', function () {
         expect($response->json())->toBe(['success' => true, 'releasedNumber' => 'SOP/HRD/2026/0001']);
         $document = Document::query()->where('uuid', $first)->sole();
         expect($document->document_number)->toBe('(nomor dilepas) '.substr($first, 0, 8));
-        expect(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0001')
-            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0003');
+        expect(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0003')
+            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0004');
         expect(DocumentEvent::query()->where('event_type', DocumentEventType::NumberReleased)->sole()->payload)->toEqual(['number' => 'SOP/HRD/2026/0001']);
     });
 
-    it('takes the last number back off the counter', function () {
+    it('never moves the counter back, not even for the last number', function () {
         $this->travelTo('2026-07-05 10:00:00');
         $admin = documentAdmin();
         createDocument($admin);
@@ -326,21 +326,22 @@ describe('release number', function () {
 
         dcsAs($admin)->postJson("/api/dcs/documents/{$last}/release-number")->assertOk();
 
-        expect(DB::table('dcs_number_allocations')->count())->toBe(1)
-            ->and(DB::table('dcs_number_sequences')->value('current_seq'))->toBe(1)
-            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0002');
+        expect(DB::table('dcs_number_allocations')->count())->toBe(2)
+            ->and(DB::table('dcs_number_allocations')->whereNotNull('released_at')->count())->toBe(1)
+            ->and(DB::table('dcs_number_sequences')->value('current_seq'))->toBe(2)
+            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0003');
     });
 
-    it('hands out the smallest released number first', function () {
+    it('never hands out a released number again and leaves the gaps', function () {
         $this->travelTo('2026-07-05 10:00:00');
         $admin = documentAdmin();
         $ids = collect(range(1, 4))->map(fn () => createDocument($admin)->json('documentId'));
         dcsAs($admin)->postJson("/api/dcs/documents/{$ids[2]}/release-number")->assertOk();
         dcsAs($admin)->postJson("/api/dcs/documents/{$ids[0]}/release-number")->assertOk();
 
-        expect(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0001')
-            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0003')
-            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0005');
+        expect(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0005')
+            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0006')
+            ->and(createDocument($admin)->json('documentNumber'))->toBe('SOP/HRD/2026/0007');
     });
 
     it('refuses once a version is past draft, naming the statuses', function () {

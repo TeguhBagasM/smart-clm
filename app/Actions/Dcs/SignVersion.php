@@ -64,7 +64,7 @@ class SignVersion
         }
 
         $column = $columns[$already];
-        $this->signerGate->assertMaySign($actor, $column);
+        $this->signerGate->assertMaySign($actor, $column, SignerGate::creatorIds($version));
 
         $disk = Storage::disk(config('dcs.disk'));
         $clean = $disk->get($rendition->storage_key);

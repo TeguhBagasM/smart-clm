@@ -54,10 +54,17 @@ class BuildVersionSteps
 
         foreach ($groups as $groupIndex => $group) {
             foreach ($group['columns'] as $position => $column) {
+                $mode = $column['fillMode'] ?? 'legacy';
                 $assignedLegacyId = $column['assignedUserId'] ?? ($assignments[$flat] ?? null);
                 $assignedUserId = $assignedLegacyId !== null && $assignedLegacyId !== ''
                     ? $users[$assignedLegacyId]
-                    : ($flat === 0 ? $document->owner_user_id : null);
+                    : ($flat === 0 && $mode === 'legacy' ? $document->owner_user_id : null);
+
+                if ($mode === 'person') {
+                    $assignedUserId = $this->namedPerson($tenant, $column);
+                } elseif ($mode === 'at_creation' && $assignedUserId !== null) {
+                    $this->assertCandidate($tenant, $column, $assignedUserId);
+                }
 
                 VersionStep::query()->forceCreate([
                     'version_id' => $version->id,
@@ -68,6 +75,8 @@ class BuildVersionSteps
                     'role_id' => $column['roleId'] ?? (isset($column['roleKey']) && $column['roleKey'] !== '' ? $roleIds[$column['roleKey']] : null),
                     'role_name' => $column['roleName'],
                     'assigned_user_id' => $assignedUserId,
+                    'fill_mode' => $mode,
+                    'allow_creator' => (bool) ($column['allowCreator'] ?? false),
                     'status' => 'pending',
                 ]);
 
@@ -88,8 +97,47 @@ class BuildVersionSteps
                 'roleKey' => null,
                 'roleId' => $step->role_id,
                 'roleName' => $step->role_name,
+                'fillMode' => $step->fill_mode,
+                'allowCreator' => $step->allow_creator,
+                'defaultUserId' => $step->default_user_id,
             ])->values()->all(),
         ])->values()->all();
+    }
+
+    /**
+     * The person the template names for a column. They must still be an active user of this company.
+     *
+     * @param  array<string, mixed>  $column
+     *
+     * @throws ValidationException
+     */
+    private function namedPerson(Tenant $tenant, array $column): int
+    {
+        $id = $column['defaultUserId'] ?? null;
+        $active = $id !== null && User::query()->where('tenant_id', $tenant->id)->where('is_active', true)->whereKey($id)->exists();
+
+        if (! $active) {
+            throw ValidationException::withMessages(['signatureGroups' => "Penandatangan kolom \"{$column['label']}\" sudah tidak aktif. Minta administrator menetapkan orang lain pada jenis dokumen ini."]);
+        }
+
+        return (int) $id;
+    }
+
+    /**
+     * A person picked while drafting must be a candidate of the column: the same company, active, and
+     * holding the role the template asks for (when it asks for one).
+     *
+     * @param  array<string, mixed>  $column
+     *
+     * @throws ValidationException
+     */
+    private function assertCandidate(Tenant $tenant, array $column, int $userId): void
+    {
+        $user = User::query()->where('tenant_id', $tenant->id)->where('is_active', true)->find($userId);
+
+        if ($user === null || (($column['roleId'] ?? null) !== null && $user->role_id !== $column['roleId'])) {
+            throw ValidationException::withMessages(['signatureAssignments' => "Penandatangan kolom \"{$column['label']}\" harus pengguna aktif dengan jabatan yang ditentukan."]);
+        }
     }
 
     /**

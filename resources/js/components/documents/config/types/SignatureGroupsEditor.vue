@@ -5,12 +5,18 @@ import SignatureColumnRow from '@/components/documents/config/types/SignatureCol
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { moveItem, removeItem } from '@/lib/arrays';
-import type { ChoiceOption, SignatureColumn, SignatureGroup } from '@/types';
+import type {
+    ChoiceOption,
+    SignatureColumn,
+    SignatureGroup,
+    SignerOption,
+} from '@/types';
 
 const model = defineModel<SignatureGroup[]>({ required: true });
 
 defineProps<{
     roleOptions: ChoiceOption[];
+    signerOptions: SignerOption[];
     errors: Record<string, string>;
 }>();
 
@@ -73,6 +79,8 @@ function editColumn(
                     :index="columnIndex"
                     :last="columnIndex === group.columns.length - 1"
                     :role-options="roleOptions"
+                    :signer-options="signerOptions"
+                    :first="groupIndex === 0 && columnIndex === 0"
                     :error="
                         errors[
                             `signatureGroups.${groupIndex}.columns.${columnIndex}.label`
@@ -103,7 +111,13 @@ function editColumn(
                         editGroup(groupIndex, {
                             columns: [
                                 ...group.columns,
-                                { label: '', role: '' },
+                                {
+                                    label: '',
+                                    role: '',
+                                    fillMode: 'at_creation',
+                                    defaultUserId: null,
+                                    allowCreator: false,
+                                },
                             ],
                         })
                     "
@@ -120,7 +134,18 @@ function editColumn(
             @click="
                 model = [
                     ...model,
-                    { heading: '', columns: [{ label: '', role: '' }] },
+                    {
+                        heading: '',
+                        columns: [
+                            {
+                                label: '',
+                                role: '',
+                                fillMode: 'at_creation',
+                                defaultUserId: null,
+                                allowCreator: false,
+                            },
+                        ],
+                    },
                 ]
             "
         >

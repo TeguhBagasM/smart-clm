@@ -33,6 +33,8 @@ class SignatureColumns
             $step->assigned_user_id,
             $step->group_heading,
             $step->group_position,
+            $step->fill_mode,
+            $step->allow_creator,
         ));
     }
 

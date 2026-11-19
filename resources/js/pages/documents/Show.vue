@@ -67,7 +67,13 @@ defineProps<{
                 />
                 <template v-if="version">
                     <VersionFacts :version="version" />
-                    <SignatureRoster :roster="version.roster" />
+                    <SignatureRoster
+                        :roster="version.roster"
+                        :document-id="document.id"
+                        :version-id="version.id"
+                        :can-reassign="version.can.reassign_signer"
+                        :options="recipient_options"
+                    />
                     <ReceiptSummary :receipts="version.receipts" />
                 </template>
                 <TimelinePreview

@@ -22,7 +22,15 @@ export type SignatureColumn = {
     /** A role key; empty means anyone may sign. */
     role: string;
     roleName?: string;
+    /** How the column gets its person (see App\Enums\Dcs\SignerFillMode). */
+    fillMode?: 'legacy' | 'person' | 'at_creation';
+    defaultUserId?: string | null;
+    allowCreator?: boolean;
 };
+
+export type NumberFormat = { mask: string; example: string; custom: boolean };
+
+export type SignerOption = { value: string; label: string; role: string };
 
 export type SignatureGroup = { heading?: string; columns: SignatureColumn[] };
 

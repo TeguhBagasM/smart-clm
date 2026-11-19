@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { Check, Circle, Clock } from '@lucide/vue';
+import ReassignSignerDialog from '@/components/documents/actions/ReassignSignerDialog.vue';
 import Panel from '@/components/documents/Panel.vue';
 import { formatDateTime } from '@/lib/format';
-import type { RosterEntry } from '@/types';
+import type { RecipientOption, RosterEntry } from '@/types';
 
-defineProps<{ roster: RosterEntry[] }>();
+defineProps<{
+    roster: RosterEntry[];
+    documentId: string;
+    versionId: string;
+    canReassign: boolean;
+    options?: RecipientOption[];
+}>();
 </script>
 
 <template>
@@ -30,7 +37,7 @@ defineProps<{ roster: RosterEntry[] }>();
                     class="mt-0.5 size-4 shrink-0 text-muted-foreground"
                     aria-label="Belum giliran"
                 />
-                <div class="flex flex-col">
+                <div class="flex min-w-0 flex-1 flex-col">
                     <span class="font-medium">{{ entry.label }}</span>
                     <span v-if="entry.status === 'approved'">
                         {{ entry.signed_by }}
@@ -43,6 +50,14 @@ defineProps<{ roster: RosterEntry[] }>();
                         }}{{ entry.assigned_to ?? entry.role ?? 'siapa pun' }}
                     </span>
                 </div>
+                <ReassignSignerDialog
+                    v-if="canReassign && entry.status !== 'approved'"
+                    :document-id="documentId"
+                    :version-id="versionId"
+                    :order="entry.order"
+                    :label="entry.label"
+                    :options="options"
+                />
             </li>
         </ol>
     </Panel>

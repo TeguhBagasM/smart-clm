@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $role_name
  * @property int|null $assigned_user_id
  * @property string $status
+ * @property string $fill_mode
+ * @property bool $allow_creator
  * @property-read Role|null $role
  * @property-read User|null $assignedUser
  */
@@ -30,6 +32,11 @@ class VersionStep extends Model
     public $timestamps = false;
 
     protected $table = 'dcs_version_steps';
+
+    protected function casts(): array
+    {
+        return ['allow_creator' => 'boolean'];
+    }
 
     /**
      * @return BelongsTo<Role, $this>

@@ -115,6 +115,7 @@ export type VersionAbilities = {
     cancel_release: boolean;
     withdraw: boolean;
     distribute: boolean;
+    reassign_signer: boolean;
     acknowledge: boolean;
 };
 

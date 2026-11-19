@@ -14,13 +14,18 @@ use App\Http\Requests\Dcs\StoreDocTypeRequest;
 use App\Http\Requests\Dcs\UpdateDocTypeRequest;
 use App\Http\Resources\Dcs\DocTypeResource;
 use App\Http\Resources\Documents\Config\DocTypeRowResource;
+use App\Http\Resources\Documents\Config\NumberingRowResource;
 use App\Models\Dcs\Clause;
+use App\Models\Dcs\Department;
 use App\Models\Dcs\DocumentType;
+use App\Models\Dcs\NumberingRule;
 use App\Models\Role;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Support\Dcs\Header\HeaderField;
 use App\Support\Dcs\Header\HeaderLayout;
 use App\Support\Dcs\Header\HeaderPalette;
+use App\Support\Dcs\NumberingMask;
 use App\Support\Listing\DocTypeListSpec;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,11 +71,11 @@ class DocTypeConfigController extends Controller
     public function edit(Request $request, string $type): Response
     {
         $tenant = $this->tenant($request);
-        $model = $this->find($tenant, $type)->load(['sections', 'steps.role', 'defaultClauses']);
+        $model = $this->find($tenant, $type)->load(['sections', 'steps.role', 'steps.defaultUser', 'defaultClauses']);
 
         return Inertia::render('documents/config/types/Edit', [
             'type' => [...DocTypeResource::make($model)->resolve($request), 'bodyStyle' => $model->body_style->value, 'headerLayout' => HeaderLayout::effective($model->header_layout), 'is_active' => $model->is_active],
-            ...$this->formOptions($tenant),
+            ...$this->formOptions($tenant, $model),
         ]);
     }
 
@@ -97,6 +102,21 @@ class DocTypeConfigController extends Controller
         return $this->perform(fn () => $reactivateDocType->handle($request->user(), $tenant, $model), "Jenis dokumen {$model->code} diaktifkan kembali.");
     }
 
+    /**
+     * The pattern documents of this type are numbered with, and a first example of it (the code
+     * of a type not yet created is shown as SOP).
+     *
+     * @return array{mask: string, example: string, custom: bool}
+     */
+    private function numberFormat(Tenant $tenant, ?DocumentType $type): array
+    {
+        $own = $type === null ? null : NumberingRule::query()->where('tenant_id', $tenant->id)->where('doc_type_id', $type->id)->where('is_active', true)->first();
+        $mask = $own?->mask ?? NumberingRule::effectiveFor($tenant, null)?->mask ?? NumberingMask::DEFAULT_MASK;
+        $department = (string) (Department::query()->where('tenant_id', $tenant->id)->where('is_active', true)->orderBy('code')->value('code') ?? 'DEPT');
+
+        return ['mask' => $mask, 'example' => NumberingRowResource::example($mask, $type?->code ?? 'SOP', $department), 'custom' => $own !== null];
+    }
+
     private function find(Tenant $tenant, string $uuid): DocumentType
     {
         return $tenant->dcsDocumentTypes()->where('uuid', $uuid)->firstOrFail();
@@ -107,9 +127,12 @@ class DocTypeConfigController extends Controller
      *
      * @return array<string, mixed>
      */
-    private function formOptions(Tenant $tenant): array
+    private function formOptions(Tenant $tenant, ?DocumentType $type = null): array
     {
         return [
+            'number_format' => $this->numberFormat($tenant, $type ?? null),
+            'signer_options' => User::query()->where('tenant_id', $tenant->id)->where('is_active', true)->with('role')->orderBy('name')->limit(500)->get()
+                ->map(fn (User $user): array => ['value' => $user->apiId(), 'label' => $user->name, 'role' => $user->role?->name ?? ''])->all(),
             'header_fields' => HeaderField::catalog(),
             'header_default' => HeaderLayout::default(),
             'header_presets' => HeaderLayout::presets(),

@@ -16,6 +16,7 @@ class CreateDepartment
 
     public function handle(User $actor, Tenant $tenant, string $code, string $name): Department
     {
+        $code = mb_strtoupper(trim($code));
         try {
             return DB::transaction(function () use ($actor, $tenant, $code, $name): Department {
                 $department = new Department;
