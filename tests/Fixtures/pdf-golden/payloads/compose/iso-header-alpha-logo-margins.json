@@ -1,0 +1,313 @@
+{
+    "documentNumber": "SOP-HED-27-00-26",
+    "title": "Margin Khusus dan Logo Transparan",
+    "docTypeCode": "SOP",
+    "department": "HED",
+    "major": 1,
+    "minor": 0,
+    "purpose": "Menetapkan langkah pengadaan barang dan jasa agar terkendali.",
+    "scope": "Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.",
+    "sections": [
+        {
+            "heading": "Isi",
+            "content": "Paragraf 1 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 2 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 3 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 4 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n  - Butir pertama untuk paragraf 4, diperiksa oleh atasan langsung\n  - Butir kedua untuk paragraf 4 dengan **penekanan** pada batas waktu\n    - Sub-butir bersarang untuk memastikan indentasi daftar terbaca benar\nParagraf 5 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 6 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 7 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n\nParagraf 8 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n  - Butir pertama untuk paragraf 8, diperiksa oleh atasan langsung\n  - Butir kedua untuk paragraf 8 dengan **penekanan** pada batas waktu\n    - Sub-butir bersarang untuk memastikan indentasi daftar terbaca benar\nParagraf 9 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 10 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 11 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 12 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n  - Butir pertama untuk paragraf 12, diperiksa oleh atasan langsung\n  - Butir kedua untuk paragraf 12 dengan **penekanan** pada batas waktu\n    - Sub-butir bersarang untuk memastikan indentasi daftar terbaca benar\nParagraf 13 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 14 tentang margin khusus. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n",
+            "table": {
+                "columns": [
+                    "No",
+                    "Uraian",
+                    "Penanggung Jawab",
+                    "Keterangan"
+                ],
+                "rows": [
+                    [
+                        "1",
+                        "Uraian pekerjaan nomor 1 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 2",
+                        "Rutin"
+                    ],
+                    [
+                        "2",
+                        "Uraian pekerjaan nomor 2 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 3",
+                        "Rutin"
+                    ],
+                    [
+                        "3",
+                        "Uraian pekerjaan nomor 3 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 4",
+                        "Wajib dilampiri bukti pendukung berupa berita acara serah terima barang dan jasa"
+                    ],
+                    [
+                        "4",
+                        "Uraian pekerjaan nomor 4 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 5",
+                        "Rutin"
+                    ],
+                    [
+                        "5",
+                        "Uraian pekerjaan nomor 5 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 1",
+                        "Rutin"
+                    ],
+                    [
+                        "6",
+                        "Uraian pekerjaan nomor 6 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 2",
+                        "Wajib dilampiri bukti pendukung berupa berita acara serah terima barang dan jasa"
+                    ],
+                    [
+                        "7",
+                        "Uraian pekerjaan nomor 7 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 3",
+                        "Rutin"
+                    ],
+                    [
+                        "8",
+                        "Uraian pekerjaan nomor 8 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 4",
+                        "Rutin"
+                    ],
+                    [
+                        "9",
+                        "Uraian pekerjaan nomor 9 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 5",
+                        "Wajib dilampiri bukti pendukung berupa berita acara serah terima barang dan jasa"
+                    ],
+                    [
+                        "10",
+                        "Uraian pekerjaan nomor 10 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 1",
+                        "Rutin"
+                    ],
+                    [
+                        "11",
+                        "Uraian pekerjaan nomor 11 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 2",
+                        "Rutin"
+                    ],
+                    [
+                        "12",
+                        "Uraian pekerjaan nomor 12 yang cukup panjang sehingga harus dipotong ke beberapa baris di dalam sel tabel",
+                        "Staf Unit 3",
+                        "Wajib dilampiri bukti pendukung berupa berita acara serah terima barang dan jasa"
+                    ]
+                ]
+            }
+        }
+    ],
+    "flow": {
+        "mode": "none"
+    },
+    "letterhead": {
+        "companyName": "PT Contoh",
+        "companyAddress": "Jl. A",
+        "logo": "@asset:logo-alpha.png",
+        "logoMimeType": "image/png"
+    },
+    "signatureGroups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Staf Pengadaan"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Manajer HED"
+                }
+            ]
+        }
+    ],
+    "revisionHistory": [],
+    "appendix": [],
+    "margins": {
+        "top": 40,
+        "right": 90,
+        "bottom": 70,
+        "left": 30
+    },
+    "headerStyle": "iso",
+    "bodyStyle": "standard",
+    "docTypeName": "Standard Operating Procedure",
+    "documentLevel": "Internal",
+    "processOwner": "HED Departement",
+    "language": "Indonesia",
+    "issuedDateIso": null,
+    "header": {
+        "layout": {
+            "version": 2,
+            "border": "#404552",
+            "logo": {
+                "enabled": true,
+                "source": "company",
+                "assetId": null,
+                "side": "left",
+                "rows": 4,
+                "width": 22,
+                "valign": "middle",
+                "padding": 8
+            },
+            "rows": [
+                {
+                    "height": 20,
+                    "cells": [
+                        {
+                            "width": 100,
+                            "text": "{docTypeName}",
+                            "bold": true,
+                            "italic": false,
+                            "uppercase": true,
+                            "align": "center",
+                            "fontSize": null,
+                            "background": "#243661",
+                            "color": "#FFFFFF"
+                        }
+                    ]
+                },
+                {
+                    "height": 20,
+                    "cells": [
+                        {
+                            "width": 100,
+                            "text": "{title}",
+                            "bold": true,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "center",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Nomor Dokumen : {documentNumber}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Tanggal Diterbitkan : {issuedDate}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Nomor Revisi/Tahun : {revisionLabel}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Nomor Halaman : {page}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Bahasa : {language}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Tingkat Dokumen : {documentLevel}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Pemilik Proses : {processOwner}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Status Dokumen : {status}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                }
+            ]
+        },
+        "values": {
+            "documentNumber": "SOP-HED-27-00-26",
+            "title": "Prosedur Pengadaan Barang dan Jasa",
+            "docTypeName": "Standard Operating Procedure",
+            "docTypeCode": "SOP",
+            "issueNumber": "1",
+            "revisionNumber": "00",
+            "revisionLabel": "00/26",
+            "language": "Indonesia",
+            "documentLevel": "Internal",
+            "processOwner": "HED Departement",
+            "department": "HED",
+            "owner": "Dewi Ayu Kusumawardhani"
+        }
+    },
+    "statusLabel": "Draft",
+    "confidentialityNotice": null
+}

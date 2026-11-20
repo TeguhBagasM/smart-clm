@@ -1,0 +1,44 @@
+{
+    "documentNumber": "SOP-HED-27-00-26",
+    "title": "Memo dengan Kop Sederhana",
+    "docTypeCode": "SOP",
+    "department": "HED",
+    "major": 1,
+    "minor": 0,
+    "purpose": "Menetapkan langkah pengadaan barang dan jasa agar terkendali.",
+    "scope": "Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.",
+    "sections": [
+        {
+            "heading": "Isi Memo",
+            "content": "Diberitahukan bahwa rapat koordinasi akan diadakan pada hari Senin."
+        }
+    ],
+    "flow": {
+        "mode": "none"
+    },
+    "letterhead": {
+        "companyName": "PT Contoh Nusantara",
+        "companyAddress": "Jl. Merdeka No. 10, Bandung 40111",
+        "logo": "@asset:logo.png",
+        "logoMimeType": "image/png"
+    },
+    "signatureGroups": [],
+    "revisionHistory": [],
+    "appendix": [],
+    "margins": {
+        "top": 56,
+        "right": 56,
+        "bottom": 56,
+        "left": 56
+    },
+    "headerStyle": "simple",
+    "bodyStyle": "standard",
+    "docTypeName": "Standard Operating Procedure",
+    "documentLevel": "Internal",
+    "processOwner": "HED Departement",
+    "language": "Indonesia",
+    "issuedDateIso": null,
+    "header": null,
+    "statusLabel": "Draft",
+    "confidentialityNotice": null
+}

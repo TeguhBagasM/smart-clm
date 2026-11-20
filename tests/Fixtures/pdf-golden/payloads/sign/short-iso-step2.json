@@ -1,0 +1,33 @@
+{
+    "input": "golden\/sign\/short-iso-step1.pdf",
+    "mode": "column",
+    "signerName": "Hendra Gunawan",
+    "signerRole": "manajemen",
+    "signedAtIso": "2026-11-20T03:15:00.000Z",
+    "groups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Staf Pengadaan"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Manajer HED"
+                }
+            ]
+        }
+    ],
+    "pageIndex": 1,
+    "columnIndex": 1,
+    "sigLayout": {
+        "marginX": 56,
+        "colTopY": 595.89,
+        "contentW": 483.28,
+        "style": "table",
+        "serif": false
+    }
+}

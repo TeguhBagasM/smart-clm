@@ -1,0 +1,424 @@
+{
+    "provenance": {
+        "node": "v24.20.0",
+        "nodeTimeZone": "Asia/Jakarta",
+        "pdfLib": "1.17.1",
+        "managementContractCommit": "73acb13",
+        "managementContractDcsDirty": true,
+        "engineSourceSha256": {
+            "pdf-compose.ts": "60df378eb69a9e3e4bc3db3e25d19240c95038d85a60ea576f60b6dc49738a98",
+            "pdf-draw.ts": "2d923e803fc9ef8bded3de53f1b9e549dde42b74340f582dfb6730f8404f99f4",
+            "pdf-watermark.ts": "a854db5000ef9dd56883260f229d51ddb39740e40a1717f889a707b640670e67",
+            "pdf-signature.ts": "f111129e343e2c1869dd6cbe5c9fe52edf489a164663568b025a63e8ee02cf22",
+            "pdf-header.ts": "92ec5bb3367bfc0a671801b6cecaf7f4a6514fc6b260880eb30bb182bcd1793f",
+            "pdf-header-geometry.ts": "5fa3d9441b74b670253b7bf066a806e64ed0b81d9934fa15c1fa347323ceac25",
+            "pdf-flow-route.ts": "9fc775f198610e4a9bc2ba9c546360f1602c4801a1802af9361ad98ebd10be5f",
+            "pdf-flow-route-util.ts": "4b990a0db13d9a17552bae571190c7d301736bb3439de8eebb14bf505e252679",
+            "internal-pdf.ts": "e22d2aeaf4f17c7f5ea58ba2d78e68703ced3fb421e7964fb8653016a15da444"
+        },
+        "note": "pdf-lib stamps CreationDate/ModDate with the clock, so golden bytes are not reproducible; compare rendered pages, extracted text and page counts."
+    },
+    "entries": {
+        "compose/short-iso": {
+            "kind": "compose",
+            "payload": "payloads/compose/short-iso.json",
+            "golden": "golden/compose/short-iso.pdf",
+            "meta": "golden/compose/short-iso.meta.json",
+            "pages": 2,
+            "bytes": 4531,
+            "sha256": "c61416a3862dcc95441c4756c671cf9d5fb6862453ed9f0a003195e6054aaa6a"
+        },
+        "compose/multipage-standard": {
+            "kind": "compose",
+            "payload": "payloads/compose/multipage-standard.json",
+            "golden": "golden/compose/multipage-standard.pdf",
+            "meta": "golden/compose/multipage-standard.meta.json",
+            "pages": 16,
+            "bytes": 96802,
+            "sha256": "380cf112350b7e5c95a1ea90b1b83cffc769a2481e3e23b0c59416f97c4be4d1"
+        },
+        "compose/multipage-formal": {
+            "kind": "compose",
+            "payload": "payloads/compose/multipage-formal.json",
+            "golden": "golden/compose/multipage-formal.pdf",
+            "meta": "golden/compose/multipage-formal.meta.json",
+            "pages": 12,
+            "bytes": 80611,
+            "sha256": "4e746e14e05fb66a1d442a747964cbd56450cd5854329a3ab7c71acd1ff82571"
+        },
+        "compose/flow-swimlane": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-swimlane.json",
+            "golden": "golden/compose/flow-swimlane.pdf",
+            "meta": "golden/compose/flow-swimlane.meta.json",
+            "pages": 3,
+            "bytes": 6910,
+            "sha256": "cf0919f28cbd975fcdba39137c2f107343304509845aab3fc134f1f13e39b050"
+        },
+        "compose/flow-swimlane-formal": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-swimlane-formal.json",
+            "golden": "golden/compose/flow-swimlane-formal.pdf",
+            "meta": "golden/compose/flow-swimlane-formal.meta.json",
+            "pages": 3,
+            "bytes": 6994,
+            "sha256": "3f0b56fdfce9858be7e029114c3c5741f4633ad2ed719059fbad0890fe596420"
+        },
+        "compose/flow-table": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-table.json",
+            "golden": "golden/compose/flow-table.pdf",
+            "meta": "golden/compose/flow-table.meta.json",
+            "pages": 3,
+            "bytes": 6510,
+            "sha256": "ed39f4da54de90ae829c90112b97318ec6b1af7f2a64e6096d626fb0306d6029"
+        },
+        "compose/flow-manual-grid": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-manual-grid.json",
+            "golden": "golden/compose/flow-manual-grid.pdf",
+            "meta": "golden/compose/flow-manual-grid.meta.json",
+            "pages": 3,
+            "bytes": 7107,
+            "sha256": "b23b5dbb2ce201968bd6f415f8fccc2216bad6749101046967ccbb7ca21aa1b6"
+        },
+        "compose/flow-image": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-image.json",
+            "golden": "golden/compose/flow-image.pdf",
+            "meta": "golden/compose/flow-image.meta.json",
+            "pages": 3,
+            "bytes": 8534,
+            "sha256": "034cb89fa4396854fdc5d8782faa84ed1a92d24e71d07a9948bbc98fe488e11f"
+        },
+        "compose/many-signers": {
+            "kind": "compose",
+            "payload": "payloads/compose/many-signers.json",
+            "golden": "golden/compose/many-signers.pdf",
+            "meta": "golden/compose/many-signers.meta.json",
+            "pages": 3,
+            "bytes": 10614,
+            "sha256": "b8685cb4cdc164b4e3486a7c705ffc76f69a5f09d9066b2332ae1a51e5f7fd62"
+        },
+        "compose/many-signers-formal": {
+            "kind": "compose",
+            "payload": "payloads/compose/many-signers-formal.json",
+            "golden": "golden/compose/many-signers-formal.pdf",
+            "meta": "golden/compose/many-signers-formal.meta.json",
+            "pages": 2,
+            "bytes": 9656,
+            "sha256": "0450d6704f2c897d19fdc67006bbb33e25e576f7a87314e95a60e1f7b6d10638"
+        },
+        "compose/unicode-latin": {
+            "kind": "compose",
+            "payload": "payloads/compose/unicode-latin.json",
+            "golden": "golden/compose/unicode-latin.pdf",
+            "meta": "golden/compose/unicode-latin.meta.json",
+            "pages": 2,
+            "bytes": 5538,
+            "sha256": "1fe35e8e98444da9adb851625032201e61fd679fdeb52d7f03455f14b2f7a6af"
+        },
+        "compose/unicode-outside-winansi": {
+            "kind": "compose",
+            "payload": "payloads/compose/unicode-outside-winansi.json",
+            "error": "The PDF engine answered 500: WinAnsi cannot encode \"\u2192\" (0x2192)"
+        },
+        "compose/very-long-text": {
+            "kind": "compose",
+            "payload": "payloads/compose/very-long-text.json",
+            "golden": "golden/compose/very-long-text.pdf",
+            "meta": "golden/compose/very-long-text.meta.json",
+            "pages": 56,
+            "bytes": 456810,
+            "sha256": "e0b00c223495ed94bcb09fb8ad0e1f6822247ab19363b78220763d257aae9732"
+        },
+        "compose/simple-header-letterhead": {
+            "kind": "compose",
+            "payload": "payloads/compose/simple-header-letterhead.json",
+            "golden": "golden/compose/simple-header-letterhead.pdf",
+            "meta": "golden/compose/simple-header-letterhead.meta.json",
+            "pages": 2,
+            "bytes": 3549,
+            "sha256": "7c4abdf40f9dfc7ccc98e5e65d99c52e7c0852c55c09b671bd28963fd6c6ae47"
+        },
+        "compose/iso-header-logo-formal": {
+            "kind": "compose",
+            "payload": "payloads/compose/iso-header-logo-formal.json",
+            "golden": "golden/compose/iso-header-logo-formal.pdf",
+            "meta": "golden/compose/iso-header-logo-formal.meta.json",
+            "pages": 4,
+            "bytes": 17883,
+            "sha256": "346110127f6a42aea0b005a78837cf22ab2265f775b08b6ec8daecc79d87a5c9"
+        },
+        "compose/no-signature-no-header": {
+            "kind": "compose",
+            "payload": "payloads/compose/no-signature-no-header.json",
+            "golden": "golden/compose/no-signature-no-header.pdf",
+            "meta": "golden/compose/no-signature-no-header.meta.json",
+            "pages": 2,
+            "bytes": 3975,
+            "sha256": "8b2acead9fd9e8d910de6c90018abd8ca474568fcd2d9d7ef6fd4d40c1424998"
+        },
+        "compose/iso-fixed-box": {
+            "kind": "compose",
+            "payload": "payloads/compose/iso-fixed-box.json",
+            "golden": "golden/compose/iso-fixed-box.pdf",
+            "meta": "golden/compose/iso-fixed-box.meta.json",
+            "pages": 2,
+            "bytes": 59511,
+            "sha256": "abd07fabf82bf1c4fcdd3f2cf00d9f7c2f5df93fb4f61f0c9d67b173d442b38c"
+        },
+        "compose/memo-jpeg-logo-long-address": {
+            "kind": "compose",
+            "payload": "payloads/compose/memo-jpeg-logo-long-address.json",
+            "golden": "golden/compose/memo-jpeg-logo-long-address.pdf",
+            "meta": "golden/compose/memo-jpeg-logo-long-address.meta.json",
+            "pages": 2,
+            "bytes": 54262,
+            "sha256": "31c86a83f4dd34ccaa9ea8d3073a6ad318faa1dd0a23512abb71bb7931f2c751"
+        },
+        "compose/iso-header-alpha-logo-margins": {
+            "kind": "compose",
+            "payload": "payloads/compose/iso-header-alpha-logo-margins.json",
+            "golden": "golden/compose/iso-header-alpha-logo-margins.pdf",
+            "meta": "golden/compose/iso-header-alpha-logo-margins.meta.json",
+            "pages": 4,
+            "bytes": 22152,
+            "sha256": "550b87f478b561b35827b9381683fafa48dc2e35647ee35c1f7c5977532d567a"
+        },
+        "compose/flow-legacy-single-column": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-legacy-single-column.json",
+            "golden": "golden/compose/flow-legacy-single-column.pdf",
+            "meta": "golden/compose/flow-legacy-single-column.meta.json",
+            "pages": 3,
+            "bytes": 6294,
+            "sha256": "b9eda73d0c3fb9cb9dd522a64028948662c4a16d6c2c09a499131896635602ce"
+        },
+        "compose/flow-legacy-swimlane": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-legacy-swimlane.json",
+            "golden": "golden/compose/flow-legacy-swimlane.pdf",
+            "meta": "golden/compose/flow-legacy-swimlane.meta.json",
+            "pages": 3,
+            "bytes": 6697,
+            "sha256": "8f6601ba2b8c34488b78a388793ec97a039c50a9a0c9b4ea6438c0ee29a9b380"
+        },
+        "compose/flow-colors-predefined-overflow": {
+            "kind": "compose",
+            "payload": "payloads/compose/flow-colors-predefined-overflow.json",
+            "golden": "golden/compose/flow-colors-predefined-overflow.pdf",
+            "meta": "golden/compose/flow-colors-predefined-overflow.meta.json",
+            "pages": 3,
+            "bytes": 6784,
+            "sha256": "0d772ac0860315827004e1a7047b26e45351c4316dabd2938d42a77460b9d015"
+        },
+        "compose/signature-columns-legacy": {
+            "kind": "compose",
+            "payload": "payloads/compose/signature-columns-legacy.json",
+            "golden": "golden/compose/signature-columns-legacy.pdf",
+            "meta": "golden/compose/signature-columns-legacy.meta.json",
+            "pages": 2,
+            "bytes": 4262,
+            "sha256": "a876e3c97a60cb9f7995a724f0cc6671aa2c7a6dfcabd31c48f739d7348fb7a2"
+        },
+        "compose/revision-five-rows-no-fit": {
+            "kind": "compose",
+            "payload": "payloads/compose/revision-five-rows-no-fit.json",
+            "golden": "golden/compose/revision-five-rows-no-fit.pdf",
+            "meta": "golden/compose/revision-five-rows-no-fit.meta.json",
+            "pages": 3,
+            "bytes": 6378,
+            "sha256": "0482d01dc9d9388fb63f33011215899dff496e4b9d7fa196b9b587c65a4f3dd7"
+        },
+        "sign/many-signers-step1": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-step1.json",
+            "golden": "golden/sign/many-signers-step1.pdf",
+            "source": "golden/compose/many-signers.pdf",
+            "pages": 3,
+            "bytes": 11064,
+            "sha256": "63d4c86b549d4c1a748eb95ffde8422a5eab730af9f2291f7311ab0b0d381f5e"
+        },
+        "sign/many-signers-step2": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-step2.json",
+            "golden": "golden/sign/many-signers-step2.pdf",
+            "source": "golden/sign/many-signers-step1.pdf",
+            "pages": 3,
+            "bytes": 11497,
+            "sha256": "81c8a34f44b0be40d007a528ab57abb4d79d76b493b7eade14bbd7bccb564b14"
+        },
+        "sign/many-signers-step3": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-step3.json",
+            "golden": "golden/sign/many-signers-step3.pdf",
+            "source": "golden/sign/many-signers-step2.pdf",
+            "pages": 3,
+            "bytes": 11939,
+            "sha256": "decdf4b7d83d7ac8b13648492de5fa1e79f72573335215c7e6160d773b21c066"
+        },
+        "sign/many-signers-step4": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-step4.json",
+            "golden": "golden/sign/many-signers-step4.pdf",
+            "source": "golden/sign/many-signers-step3.pdf",
+            "pages": 3,
+            "bytes": 12381,
+            "sha256": "065c11bb4f597a58b613388f8e14e52dd9e6f5ead98c8d759a6081fc1991476d"
+        },
+        "sign/many-signers-formal-step1": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-formal-step1.json",
+            "golden": "golden/sign/many-signers-formal-step1.pdf",
+            "source": "golden/compose/many-signers-formal.pdf",
+            "pages": 2,
+            "bytes": 10105,
+            "sha256": "f474a15617caa8a52a3cfc51509a181f5fa7b5b9f7ffd38e579af616c0631319"
+        },
+        "sign/many-signers-formal-step2": {
+            "kind": "sign",
+            "payload": "payloads/sign/many-signers-formal-step2.json",
+            "golden": "golden/sign/many-signers-formal-step2.pdf",
+            "source": "golden/sign/many-signers-formal-step1.pdf",
+            "pages": 2,
+            "bytes": 10569,
+            "sha256": "6ca2684001a9a3636377351e6124d38d1fb9260340bf602a6b900b61039a6178"
+        },
+        "sign/short-iso-step1": {
+            "kind": "sign",
+            "payload": "payloads/sign/short-iso-step1.json",
+            "golden": "golden/sign/short-iso-step1.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 4970,
+            "sha256": "c68e14fa08b32be4c93c7e67fe576518457c33c62a79cf27998d7604af184f7b"
+        },
+        "sign/short-iso-step2": {
+            "kind": "sign",
+            "payload": "payloads/sign/short-iso-step2.json",
+            "golden": "golden/sign/short-iso-step2.pdf",
+            "source": "golden/sign/short-iso-step1.pdf",
+            "pages": 2,
+            "bytes": 5398,
+            "sha256": "83128b1a486d0f696a03100e8e74af423fecddc70b6fdb49c683d83915400150"
+        },
+        "sign/legacy-sheet": {
+            "kind": "sign",
+            "payload": "payloads/sign/legacy-sheet.json",
+            "golden": "golden/sign/legacy-sheet.pdf",
+            "source": "golden/compose/no-signature-no-header.pdf",
+            "pages": 2,
+            "bytes": 4463,
+            "sha256": "278a003be8909410f1e657aadb6a3b9e97dec3d7f794afb905fdde14f846962c"
+        },
+        "sign/generic-upload": {
+            "kind": "sign",
+            "payload": "payloads/sign/generic-upload.json",
+            "golden": "golden/sign/generic-upload.pdf",
+            "source": "assets/upload-cairo.pdf",
+            "pages": 16,
+            "bytes": 51240,
+            "sha256": "51f221cf7b4cb785fa0a8715c402032d08566dd272bd325642bdbe4134fa7987"
+        },
+        "watermark/short-iso-draft": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-draft.json",
+            "golden": "golden/watermark/short-iso-draft.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5678,
+            "sha256": "7af32ae7a0c061ac3b562282c175a6e2db9c723a70be25dda7fd77176e88e6f1"
+        },
+        "watermark/short-iso-under_review": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-under_review.json",
+            "golden": "golden/watermark/short-iso-under_review.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5745,
+            "sha256": "83d6fa05d3f79870d7d5b1e874a8e7c73314941371ebd50dc0c52195d8623356"
+        },
+        "watermark/short-iso-approved": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-approved.json",
+            "golden": "golden/watermark/short-iso-approved.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5718,
+            "sha256": "accb34327b1699094f4f03d076c9a0dbba1903dffb8843668a61b8a1a6055d68"
+        },
+        "watermark/short-iso-effective": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-effective.json",
+            "golden": "golden/watermark/short-iso-effective.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5755,
+            "sha256": "0be1c3be5a68de51e2594eee32e783e402b247acf00fba416d15d9ce83a95c1d"
+        },
+        "watermark/short-iso-effective-expired": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-effective-expired.json",
+            "golden": "golden/watermark/short-iso-effective-expired.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5800,
+            "sha256": "8fc59abb2fd2ab3f825357b31b20b21af565e7f5c0f8b13daca90005dbc14ef8"
+        },
+        "watermark/short-iso-superseded": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/short-iso-superseded.json",
+            "golden": "golden/watermark/short-iso-superseded.pdf",
+            "source": "golden/compose/short-iso.pdf",
+            "pages": 2,
+            "bytes": 5773,
+            "sha256": "d3a6a752580ca43c9b5037264365cccaf073af572e908d0472371ff43eec06ee"
+        },
+        "watermark/multipage-formal-effective": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/multipage-formal-effective.json",
+            "golden": "golden/watermark/multipage-formal-effective.pdf",
+            "source": "golden/compose/multipage-formal.pdf",
+            "pages": 12,
+            "bytes": 87061,
+            "sha256": "ff8c606e4b6d541210f1321fe819f4ecccd2c5aca261bebe2978d76e5206da85"
+        },
+        "watermark/multipage-standard-superseded-longname": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/multipage-standard-superseded-longname.json",
+            "golden": "golden/watermark/multipage-standard-superseded-longname.pdf",
+            "source": "golden/compose/multipage-standard.pdf",
+            "pages": 16,
+            "bytes": 106498,
+            "sha256": "85e9b0b206fcdd95172ce061122ff282e7f7ff50b57b7d209e9aa7d994d15c24"
+        },
+        "watermark/signed-many-effective": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/signed-many-effective.json",
+            "golden": "golden/watermark/signed-many-effective.pdf",
+            "source": "golden/sign/many-signers-step4.pdf",
+            "pages": 3,
+            "bytes": 14077,
+            "sha256": "933cd9aefca978f64c287a9a19aeaa67dd3289b8082d83bab3dfeb2daa90535a"
+        },
+        "watermark/upload-cairo-effective": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/upload-cairo-effective.json",
+            "golden": "golden/watermark/upload-cairo-effective.pdf",
+            "source": "assets/upload-cairo.pdf",
+            "pages": 16,
+            "bytes": 57620,
+            "sha256": "c983e41c3c75bf8ac7295222e7973bf88b7cf9e22d840c5eb50c0483a863bf8a"
+        },
+        "watermark/upload-cairo-superseded": {
+            "kind": "watermark",
+            "payload": "payloads/watermark/upload-cairo-superseded.json",
+            "golden": "golden/watermark/upload-cairo-superseded.pdf",
+            "source": "assets/upload-cairo.pdf",
+            "pages": 16,
+            "bytes": 57769,
+            "sha256": "3b2ac9e80c56b1a0e491c5643709f8859daaa4ed749e853ad4d936dcceb9b71b"
+        }
+    }
+}

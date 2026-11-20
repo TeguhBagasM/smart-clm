@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
 import DocumentDraftController from '@/actions/App/Http/Controllers/Documents/DocumentDraftController';
 import { steps } from '@/components/documents/wizard/steps';
@@ -56,7 +56,8 @@ function fromHash(): StepKey {
     return steps.find((step) => step.key === key)?.key ?? 'body';
 }
 
-const step = ref<StepKey>(fromHash());
+/** The server render has no URL hash, so the step is read once mounted. */
+const step = ref<StepKey>('body');
 
 function go(next: StepKey): void {
     step.value = next;
@@ -69,7 +70,10 @@ const warn = (event: BeforeUnloadEvent): void => {
     if (wizard.status.value !== 'saved') event.preventDefault();
 };
 
-window.addEventListener('beforeunload', warn);
+onMounted(() => {
+    step.value = fromHash();
+    window.addEventListener('beforeunload', warn);
+});
 onBeforeUnmount(() => {
     window.removeEventListener('beforeunload', warn);
     void wizard.flush();

@@ -14,8 +14,8 @@ use App\Support\Dcs\Ai\NodeDcsAi;
 use App\Support\Dcs\CurrentTenant;
 use App\Support\Dcs\Notifications\DcsNotifier;
 use App\Support\Dcs\Notifications\NullDcsNotifier;
-use App\Support\Dcs\Pdf\NodePdfEngine;
 use App\Support\Dcs\Pdf\PdfEngine;
+use App\Support\Dcs\Pdf\PhpPdfEngine;
 use App\Support\Navigation\NavigationMenu;
 use App\Support\Rbac\PermissionResolver;
 use Carbon\CarbonImmutable;
@@ -43,11 +43,7 @@ class AppServiceProvider extends ServiceProvider
             (int) config('dcs.ai.timeout'),
         ));
         $this->app->bind(DcsNotifier::class, NullDcsNotifier::class);
-        $this->app->bind(PdfEngine::class, fn (): PdfEngine => new NodePdfEngine(
-            config('dcs.pdf.url'),
-            config('dcs.pdf.secret'),
-            (int) config('dcs.pdf.timeout'),
-        ));
+        $this->app->bind(PdfEngine::class, fn (): PdfEngine => new PhpPdfEngine(config('dcs.numbering_timezone') ?? config('app.timezone')));
     }
 
     /**

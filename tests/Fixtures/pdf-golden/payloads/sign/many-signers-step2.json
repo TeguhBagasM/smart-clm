@@ -1,0 +1,78 @@
+{
+    "input": "golden\/sign\/many-signers-step1.pdf",
+    "mode": "column",
+    "signerName": "Budi Santoso",
+    "signerRole": "supervisor",
+    "signedAtIso": "2026-11-20T03:15:00.000Z",
+    "groups": [
+        {
+            "heading": "Kelompok 1",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Jabatan 1"
+                },
+                {
+                    "label": "Diperiksa oleh",
+                    "role": "supervisor",
+                    "roleName": "Jabatan 2"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Jabatan 3"
+                }
+            ]
+        },
+        {
+            "heading": "Kelompok 2",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Jabatan 4"
+                },
+                {
+                    "label": "Diperiksa oleh",
+                    "role": "supervisor",
+                    "roleName": "Jabatan 5"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Jabatan 6"
+                }
+            ]
+        },
+        {
+            "heading": "Kelompok 3",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Jabatan 7"
+                },
+                {
+                    "label": "Diperiksa oleh",
+                    "role": "supervisor",
+                    "roleName": "Jabatan 8"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Jabatan 9"
+                }
+            ]
+        }
+    ],
+    "pageIndex": 1,
+    "columnIndex": 1,
+    "sigLayout": {
+        "marginX": 56,
+        "colTopY": 595.89,
+        "contentW": 483.28,
+        "style": "table",
+        "serif": false
+    }
+}

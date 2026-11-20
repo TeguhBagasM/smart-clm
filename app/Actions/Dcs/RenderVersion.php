@@ -53,9 +53,7 @@ class RenderVersion
         } catch (PdfEngineException $e) {
             report($e);
 
-            throw DcsException::serverError($e->notConfigured
-                ? 'Mesin PDF belum dikonfigurasi. Hubungi administrator server (DCS_PDF_ENGINE_URL dan DCS_PDF_ENGINE_SECRET).'
-                : 'Gagal menyusun dokumen.');
+            throw DcsException::serverError('Gagal menyusun dokumen.');
         }
 
         return DB::transaction(function () use ($actor, $version, $content, $composed, $input): Rendition {

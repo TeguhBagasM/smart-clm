@@ -1,0 +1,23 @@
+{
+    "input": "golden\/compose\/multipage-formal.pdf",
+    "status": "effective",
+    "viewerName": "José Muñoz-Pérez",
+    "accessedAt": "2026-11-20 02:00:00 UTC",
+    "documentNumber": "SOP-HED-27-00-26",
+    "major": 2,
+    "minor": 3,
+    "expired": false,
+    "headerLayout": {
+        "issued": {
+            "x": 453.54043472,
+            "y": 734.244,
+            "size": 7.56
+        },
+        "status": {
+            "x": 398.969744,
+            "y": 680.244,
+            "size": 7.56
+        }
+    },
+    "issuedDateIso": "2026-11-20T00:00:00.000Z"
+}

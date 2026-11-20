@@ -1,0 +1,271 @@
+{
+    "documentNumber": "SOP-HED-27-00-26",
+    "title": "Simbol Warna dan Teks Meluber",
+    "docTypeCode": "SOP",
+    "department": "HED",
+    "major": 1,
+    "minor": 0,
+    "purpose": "Menetapkan langkah pengadaan barang dan jasa agar terkendali.",
+    "scope": "Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.",
+    "sections": [
+        {
+            "heading": "Uraian",
+            "content": "Simbol berwarna, proses terdefinisi, dan teks yang melebihi kotak."
+        }
+    ],
+    "flow": {
+        "mode": "builder",
+        "displayStyle": "diagram",
+        "steps": [
+            {
+                "id": "a",
+                "order": 1,
+                "type": "start",
+                "text": "Mulai",
+                "color": "#0f9d58",
+                "textColor": "#ffffff",
+                "nextId": "b"
+            },
+            {
+                "id": "b",
+                "order": 2,
+                "type": "predefined",
+                "text": "Menjalankan SOP-HED-01 tentang penerimaan barang dengan semua langkah pemeriksaan yang ada di dalamnya dan seterusnya sampai panjang sekali melebihi kotak",
+                "color": "#abc",
+                "nextId": "c"
+            },
+            {
+                "id": "c",
+                "order": 3,
+                "type": "data",
+                "text": "Data pesanan",
+                "nextId": "d"
+            },
+            {
+                "id": "d",
+                "order": 4,
+                "type": "decision",
+                "text": "Sesuai spesifikasi yang diminta oleh pemohon?",
+                "yesId": "e",
+                "noId": "b"
+            },
+            {
+                "id": "e",
+                "order": 5,
+                "type": "end",
+                "text": "Selesai",
+                "color": "bukan-warna"
+            }
+        ]
+    },
+    "letterhead": {
+        "companyName": "PT Contoh Nusantara",
+        "companyAddress": "Jl. Merdeka No. 10, Bandung 40111"
+    },
+    "signatureGroups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Staf Pengadaan"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Manajer HED"
+                }
+            ]
+        }
+    ],
+    "revisionHistory": [],
+    "appendix": [],
+    "margins": {
+        "top": 56,
+        "right": 56,
+        "bottom": 56,
+        "left": 56
+    },
+    "headerStyle": "iso",
+    "bodyStyle": "standard",
+    "docTypeName": "Standard Operating Procedure",
+    "documentLevel": "Internal",
+    "processOwner": "HED Departement",
+    "language": "Indonesia",
+    "issuedDateIso": null,
+    "header": {
+        "layout": {
+            "version": 2,
+            "border": "#404552",
+            "logo": {
+                "enabled": true,
+                "source": "company",
+                "assetId": null,
+                "side": "left",
+                "rows": 4,
+                "width": 22,
+                "valign": "middle",
+                "padding": 8
+            },
+            "rows": [
+                {
+                    "height": 20,
+                    "cells": [
+                        {
+                            "width": 100,
+                            "text": "{docTypeName}",
+                            "bold": true,
+                            "italic": false,
+                            "uppercase": true,
+                            "align": "center",
+                            "fontSize": null,
+                            "background": "#243661",
+                            "color": "#FFFFFF"
+                        }
+                    ]
+                },
+                {
+                    "height": 20,
+                    "cells": [
+                        {
+                            "width": 100,
+                            "text": "{title}",
+                            "bold": true,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "center",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Nomor Dokumen : {documentNumber}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Tanggal Diterbitkan : {issuedDate}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Nomor Revisi/Tahun : {revisionLabel}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Nomor Halaman : {page}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Bahasa : {language}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Tingkat Dokumen : {documentLevel}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                },
+                {
+                    "height": 18,
+                    "cells": [
+                        {
+                            "width": 58.33,
+                            "text": "Pemilik Proses : {processOwner}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        },
+                        {
+                            "width": 41.67,
+                            "text": "Status Dokumen : {status}",
+                            "bold": false,
+                            "italic": false,
+                            "uppercase": false,
+                            "align": "left",
+                            "fontSize": null,
+                            "background": null,
+                            "color": "#1F212B"
+                        }
+                    ]
+                }
+            ]
+        },
+        "values": {
+            "documentNumber": "SOP-HED-27-00-26",
+            "title": "Prosedur Pengadaan Barang dan Jasa",
+            "docTypeName": "Standard Operating Procedure",
+            "docTypeCode": "SOP",
+            "issueNumber": "1",
+            "revisionNumber": "00",
+            "revisionLabel": "00/26",
+            "language": "Indonesia",
+            "documentLevel": "Internal",
+            "processOwner": "HED Departement",
+            "department": "HED",
+            "owner": "Dewi Ayu Kusumawardhani"
+        }
+    },
+    "statusLabel": "Draft",
+    "confidentialityNotice": null
+}

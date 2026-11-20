@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Support\Dcs\Pdf;
+namespace Tests\Fixtures\PdfGolden;
 
+use App\Support\Dcs\Pdf\PdfEngine;
+use App\Support\Dcs\Pdf\PdfEngineException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Composes documents through the Node application's internal endpoint
- * (POST /internal/dcs/pdf/compose), authenticated with a shared secret.
- * Binary parts travel as base64.
+ * Calls the retired Node PDF engine (POST /internal/dcs/pdf/*). It exists only so
+ * generate.php can rebuild the golden files from Node; the application itself no
+ * longer talks to Node for PDFs.
  */
-class NodePdfEngine implements PdfEngine
+class NodeEngineClient implements PdfEngine
 {
     public function __construct(private ?string $baseUrl, private ?string $secret, private int $timeout = 120) {}
 
@@ -49,7 +51,7 @@ class NodePdfEngine implements PdfEngine
     private function post(string $path, array $payload): Response
     {
         if ($this->baseUrl === null || $this->baseUrl === '' || $this->secret === null || $this->secret === '') {
-            throw PdfEngineException::notConfigured();
+            throw new PdfEngineException('Set DCS_PDF_ENGINE_URL and DCS_PDF_ENGINE_SECRET to reach the Node engine.');
         }
 
         try {

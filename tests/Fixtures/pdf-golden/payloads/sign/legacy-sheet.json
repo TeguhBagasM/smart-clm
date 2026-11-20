@@ -1,0 +1,26 @@
+{
+    "input": "golden\/compose\/no-signature-no-header.pdf",
+    "mode": "column",
+    "signerName": "Maria Magdalena Sugiharto Wijayakusuma dari Divisi",
+    "signerRole": "manajemen",
+    "signedAtIso": "2026-11-20T03:15:00.000Z",
+    "groups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Direktur Utama"
+                }
+            ]
+        }
+    ],
+    "pageIndex": 0,
+    "columnIndex": 1,
+    "sigLayout": null
+}

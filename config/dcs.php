@@ -46,35 +46,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | PDF Engine
-    |--------------------------------------------------------------------------
-    |
-    | Documents are composed by the PDF engine of the Node application, reached
-    | through its internal endpoint (guarded by a shared secret), so existing and
-    | new documents come from the same layout code.
-    |
-    */
-
-    'pdf' => [
-        'url' => env('DCS_PDF_ENGINE_URL'),
-        'secret' => env('DCS_PDF_ENGINE_SECRET'),
-        'timeout' => (int) env('DCS_PDF_ENGINE_TIMEOUT', 120),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | AI Services
     |--------------------------------------------------------------------------
     |
     | Translation and metadata extraction call Gemini through the Node
     | application's internal endpoint, which keeps the API key and the prompts.
-    | By default it is the same Node instance and secret as the PDF engine.
+    | PDFs no longer go through Node: they are drawn inside Laravel (PhpPdfEngine).
     |
     */
 
     'ai' => [
-        'url' => env('DCS_AI_URL', env('DCS_PDF_ENGINE_URL')),
-        'secret' => env('DCS_AI_SECRET', env('DCS_PDF_ENGINE_SECRET')),
+        'url' => env('DCS_AI_URL'),
+        'secret' => env('DCS_AI_SECRET'),
         'timeout' => (int) env('DCS_AI_TIMEOUT', 120),
     ],
 

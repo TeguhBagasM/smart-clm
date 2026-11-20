@@ -1,0 +1,33 @@
+{
+    "input": "golden\/compose\/short-iso.pdf",
+    "mode": "column",
+    "signerName": "Rina Marlina",
+    "signerRole": "staff",
+    "signedAtIso": "2026-11-20T03:15:00.000Z",
+    "groups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Staf Pengadaan"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Manajer HED"
+                }
+            ]
+        }
+    ],
+    "pageIndex": 1,
+    "columnIndex": 0,
+    "sigLayout": {
+        "marginX": 56,
+        "colTopY": 595.89,
+        "contentW": 483.28,
+        "style": "table",
+        "serif": false
+    }
+}

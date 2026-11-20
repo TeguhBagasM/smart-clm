@@ -1,0 +1,52 @@
+{
+    "documentNumber": "SOP-HED-27-00-26",
+    "title": "Memo dengan Logo JPEG dan Alamat Panjang yang Harus Dipotong Tiga Baris",
+    "docTypeCode": "SOP",
+    "department": "HED",
+    "major": 1,
+    "minor": 0,
+    "purpose": "Menetapkan langkah pengadaan barang dan jasa agar terkendali.",
+    "scope": "Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.",
+    "sections": [
+        {
+            "heading": "Isi Memo",
+            "content": "Rapat koordinasi akan diadakan."
+        }
+    ],
+    "flow": {
+        "mode": "none"
+    },
+    "letterhead": {
+        "companyName": "PT Contoh Nusantara Sejahtera Makmur Abadi",
+        "companyAddress": "Jl. Jenderal Sudirman Kav. 52-53, Gedung Menara Contoh Lantai 21, Senayan, Kebayoran Baru, Jakarta Selatan 12190, Indonesia, Telepon (021) 5551234, Faksimile (021) 5551235",
+        "logo": "@asset:logo.jpg",
+        "logoMimeType": "image/jpeg"
+    },
+    "signatureGroups": [],
+    "revisionHistory": [
+        {
+            "major": 1,
+            "minor": 0,
+            "changeSummary": null,
+            "effectiveAt": null,
+            "createdAt": "2025-02-20T00:00:00.000Z"
+        }
+    ],
+    "appendix": [],
+    "margins": {
+        "top": 56,
+        "right": 56,
+        "bottom": 56,
+        "left": 56
+    },
+    "headerStyle": "simple",
+    "bodyStyle": "standard",
+    "docTypeName": "Standard Operating Procedure",
+    "documentLevel": "Internal",
+    "processOwner": "HED Departement",
+    "language": "Indonesia",
+    "issuedDateIso": "2026-03-05T00:00:00.000Z",
+    "header": null,
+    "statusLabel": "Draft",
+    "confidentialityNotice": null
+}

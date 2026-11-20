@@ -1,0 +1,60 @@
+{
+    "documentNumber": "SOP-HED-27-00-26",
+    "title": "Dokumen dengan Kotak ISO Tetap yang Judulnya Sengaja Dibuat Sangat Panjang Sekali Supaya Terpotong",
+    "docTypeCode": "SOP",
+    "department": "HED",
+    "major": 1,
+    "minor": 0,
+    "purpose": "Menetapkan langkah pengadaan barang dan jasa agar terkendali.",
+    "scope": "Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.",
+    "sections": [
+        {
+            "heading": "Isi",
+            "content": "Paragraf 1 tentang kotak iso tetap. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 2 tentang kotak iso tetap. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 3 tentang kotak iso tetap. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\nParagraf 4 tentang kotak iso tetap. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan.\n  - Butir pertama untuk paragraf 4, diperiksa oleh atasan langsung\n  - Butir kedua untuk paragraf 4 dengan **penekanan** pada batas waktu\n    - Sub-butir bersarang untuk memastikan indentasi daftar terbaca benar\nParagraf 5 tentang kotak iso tetap. Setiap unit kerja wajib memastikan bahwa **dokumen pendukung** lengkap sebelum diajukan, dan pemeriksaan dilakukan oleh pihak yang berwenang sesuai tingkat persetujuan yang berlaku di perusahaan."
+        }
+    ],
+    "flow": {
+        "mode": "none"
+    },
+    "letterhead": {
+        "companyName": "PT Contoh Nusantara",
+        "companyAddress": "Jl. Merdeka No. 10",
+        "logo": "@asset:logo.jpg",
+        "logoMimeType": "image/jpeg"
+    },
+    "signatureGroups": [
+        {
+            "heading": "Persetujuan",
+            "columns": [
+                {
+                    "label": "Dibuat oleh",
+                    "role": "staff",
+                    "roleName": "Staf Pengadaan"
+                },
+                {
+                    "label": "Disetujui oleh",
+                    "role": "manajemen",
+                    "roleName": "Manajer HED"
+                }
+            ]
+        }
+    ],
+    "revisionHistory": [],
+    "appendix": [],
+    "margins": {
+        "top": 56,
+        "right": 56,
+        "bottom": 56,
+        "left": 56
+    },
+    "headerStyle": "iso",
+    "bodyStyle": "standard",
+    "docTypeName": "Standard Operating Procedure",
+    "documentLevel": "Internal",
+    "processOwner": "",
+    "language": "Indonesia / English",
+    "issuedDateIso": null,
+    "header": null,
+    "statusLabel": "Draft",
+    "confidentialityNotice": null
+}

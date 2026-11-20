@@ -1,0 +1,22 @@
+{
+    "signatureSheetPageIndex": 3,
+    "sigLayout": {
+        "marginX": 30,
+        "colTopY": 611.89,
+        "contentW": 475.28,
+        "style": "table",
+        "serif": false
+    },
+    "headerLayout": {
+        "issued": {
+            "x": 426.36668272000003,
+            "y": 750.244,
+            "size": 7.56
+        },
+        "status": {
+            "x": 374.041384,
+            "y": 696.244,
+            "size": 7.56
+        }
+    }
+}
