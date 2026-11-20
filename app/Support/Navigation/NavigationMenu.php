@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
 use App\Models\User;
+use App\Support\MasterData\MasterDataCatalog;
 use Closure;
 
 /**
@@ -136,10 +137,8 @@ class NavigationMenu
                     $this->dashboard(),
                     ['title' => 'Pengaturan Dokumen', 'icon' => 'settings', 'route' => 'documents.config.types.index', 'active_prefix' => '/documents/config', 'visible' => fn (User $user): bool => $user->can('configure', Document::class)],
                     $this->soon('klausul-template', 'Klausul & Template', 'sliders'),
-                    $this->soon('kategori-kontrak', 'Kategori Kontrak', 'folder-tree'),
+                    ['title' => 'Daftar Pilihan', 'icon' => 'folder-tree', 'route' => 'master-data.index', 'active_prefix' => '/master-data', 'visible' => fn (User $user): bool => app(MasterDataCatalog::class)->canOpenAny($user)],
                     $this->soon('vendor', 'Data Vendor', 'store'),
-                    $this->soon('karyawan', 'Data Karyawan', 'id-card'),
-                    $this->soon('mitra-operator', 'Mitra / Operator', 'handshake'),
                 ],
             ],
             [

@@ -3,6 +3,7 @@ export * from './comparison';
 export * from './config';
 export * from './documents';
 export * from './list';
+export * from './master-data';
 export * from './navigation';
 export * from './rbac';
 export * from './ui';

@@ -18,7 +18,16 @@ use Illuminate\Support\Facades\Gate;
  */
 abstract class SaveMasterDataRequest extends FormRequest
 {
-    abstract protected function list(): MasterList;
+    /**
+     * The list this form is for: the route parameter `list`. Forms of one list
+     * (document type, partner group, partner) override it.
+     */
+    protected function list(): MasterList
+    {
+        $list = $this->route('list');
+
+        return $list instanceof MasterList ? $list : MasterList::from((string) $list);
+    }
 
     /**
      * @return array<string, ValidationRule|array<mixed>|string>

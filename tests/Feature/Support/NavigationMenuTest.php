@@ -38,7 +38,7 @@ test('a company user sees only finished menus they may open', function (SystemRo
 })->with([
     'admin' => [SystemRole::Admin, [
         'Dokumen Internal' => ['Tugas saya', 'Dokumen Terkontrol'],
-        'Master Data' => ['Pengaturan Dokumen'],
+        'Master Data' => ['Pengaturan Dokumen', 'Daftar Pilihan'],
         'AI Tools Hukum' => ['Bandingkan 2 Dokumen'],
         'Pengaturan Sistem' => ['Pengguna', 'Hak Akses'],
     ]],
@@ -60,3 +60,16 @@ test('every menu points at an existing page', function () {
 
     expect($placeholder)->toMatchArray(['href' => '/modules/dokumen-eksternal/dashboard', 'in_development' => true]);
 });
+
+test('the master data menu shows to whoever may open at least one list, and to nobody else', function (SystemRole $role, bool $sees) {
+    $titles = menuFor(User::factory()->role($role)->create())['Master Data'] ?? [];
+
+    expect(in_array('Daftar Pilihan', $titles, true))->toBe($sees);
+})->with([
+    'admin' => [SystemRole::Admin, true],
+    'legal (categories)' => [SystemRole::Legal, true],
+    'hr_ga (employees)' => [SystemRole::HrGa, true],
+    'it_system' => [SystemRole::ItSystem, true],
+    'viewer' => [SystemRole::Viewer, false],
+    'manajemen' => [SystemRole::Manajemen, false],
+]);

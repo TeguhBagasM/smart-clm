@@ -47,7 +47,7 @@ enum MasterList: string
 
     public function label(): string
     {
-        return config()->string("master_data.lists.{$this->value}");
+        return config()->string("master_data.lists.{$this->value}.label");
     }
 
     /**

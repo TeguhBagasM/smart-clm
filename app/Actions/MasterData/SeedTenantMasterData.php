@@ -2,6 +2,7 @@
 
 namespace App\Actions\MasterData;
 
+use App\Actions\Audit\RecordAuditLog;
 use App\Models\MasterData\ContractDocumentType;
 use App\Models\Tenant;
 use App\Support\MasterData\MasterDataDefaults;
@@ -14,11 +15,12 @@ use Throwable;
  * Idempotent: adds only entries whose code and name the company does not have
  * yet, active or not, so a deactivated default is never brought back and
  * nothing the company changed is overwritten. With $dryRun everything is
- * rolled back and only the report is returned.
+ * rolled back and only the report is returned. A run that adds something is
+ * audited (no actor: it is the system), in the same transaction.
  */
 class SeedTenantMasterData
 {
-    public function __construct(private MasterDataDefaults $defaults) {}
+    public function __construct(private MasterDataDefaults $defaults, private RecordAuditLog $recordAuditLog) {}
 
     /**
      * @return array{added: array<string, list<string>>, warnings: list<string>}
@@ -35,6 +37,12 @@ class SeedTenantMasterData
             }
 
             $report['added']['contract_document_types'] = $this->addDocumentTypes($tenant, $report['warnings']);
+
+            $added = array_filter($report['added']);
+
+            if (! $dryRun && $added !== []) {
+                $this->recordAuditLog->handle(null, 'master_data.defaults.seeded', $tenant, null, ['added' => $added], $tenant->id);
+            }
         } catch (Throwable $exception) {
             DB::rollBack();
 

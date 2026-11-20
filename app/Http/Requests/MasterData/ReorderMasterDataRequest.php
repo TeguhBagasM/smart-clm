@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\MasterData;
 
-use App\Enums\MasterData\MasterList;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 
@@ -12,13 +11,6 @@ use Illuminate\Support\Facades\Gate;
  */
 class ReorderMasterDataRequest extends SaveMasterDataRequest
 {
-    protected function list(): MasterList
-    {
-        $list = $this->route('list');
-
-        return $list instanceof MasterList ? $list : MasterList::from((string) $list);
-    }
-
     public function authorize(): Response
     {
         return Gate::forUser($this->user())->inspect('reorder', $this->list()->model());
