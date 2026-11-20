@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(MasterDataDefaultsSeeder::class);
+        $this->call(TemplateLibraryDefaultsSeeder::class);
 
         if (app()->environment(DemoUsersSeeder::ALLOWED_ENVIRONMENTS)) {
             $this->call(DemoUsersSeeder::class);

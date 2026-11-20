@@ -38,7 +38,7 @@ test('a company user sees only finished menus they may open', function (SystemRo
 })->with([
     'admin' => [SystemRole::Admin, [
         'Dokumen Internal' => ['Tugas saya', 'Dokumen Terkontrol'],
-        'Master Data' => ['Pengaturan Dokumen', 'Daftar Pilihan'],
+        'Master Data' => ['Pengaturan Dokumen', 'Daftar Pilihan', 'Data Vendor'],
         'AI Tools Hukum' => ['Bandingkan 2 Dokumen'],
         'Pengaturan Sistem' => ['Pengguna', 'Hak Akses'],
     ]],
@@ -73,3 +73,22 @@ test('the master data menu shows to whoever may open at least one list, and to n
     'viewer' => [SystemRole::Viewer, false],
     'manajemen' => [SystemRole::Manajemen, false],
 ]);
+
+test('the vendor menu shows to holders of vendors.manage only', function (SystemRole $role, bool $sees) {
+    $titles = menuFor(User::factory()->role($role)->create())['Master Data'] ?? [];
+
+    expect(in_array('Data Vendor', $titles, true))->toBe($sees);
+})->with([
+    'admin' => [SystemRole::Admin, true],
+    'legal' => [SystemRole::Legal, true],
+    'hr_ga' => [SystemRole::HrGa, false],
+    'it_system' => [SystemRole::ItSystem, false],
+    'viewer' => [SystemRole::Viewer, false],
+]);
+
+test('a super admin sees the finished vendor menu, not a placeholder', function () {
+    $items = collect(app(NavigationMenu::class)->for(User::factory()->superAdmin()->create()))->firstWhere('title', 'Master Data')['items'];
+    $vendor = collect($items)->firstWhere('title', 'Data Vendor');
+
+    expect($vendor['href'])->toBe('/master-data/vendors')->and($vendor['in_development'] ?? false)->toBeFalse();
+});

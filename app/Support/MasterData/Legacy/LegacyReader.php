@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Reads the Node database (read only): the company's platforms, categories,
- * master data lists, employees and the values its contracts use. It selects
+ * master data lists, employees, vendors and the values its contracts use. It selects
  * only the fields the import needs, so salaries and national ids are never
  * loaded, and it leaves out the demo rows the Node code seeds.
  */
@@ -61,6 +61,20 @@ class LegacyReader
             ->orderBy('seq')->get()
             ->map(fn (object $row): array => ['id' => (string) $row->id, 'name' => $row->name, 'position' => $row->position, 'department' => $row->department, 'startDate' => $row->startDate])
             ->all();
+    }
+
+    /**
+     * The tenant's vendors (Node `vendors`), without the mock rows of the Node code.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function vendors(string $nodeId): array
+    {
+        $rows = $this->db()->table('vendors')->where('data->tenantId', $nodeId)
+            ->whereNotIn('id', config()->array('vendors.import.demo_ids'))
+            ->orderBy('seq')->get(['id', 'data']);
+
+        return array_values($rows->map(fn (object $row): array => ['id' => (string) $row->id] + $this->json($row->data))->all());
     }
 
     /**

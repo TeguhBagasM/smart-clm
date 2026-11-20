@@ -11,6 +11,7 @@ use App\Models\MasterData\Partner;
 use App\Models\MasterData\PartnerGroup;
 use App\Models\MasterData\PartyType;
 use App\Models\MasterData\TenantPlatform;
+use App\Models\MasterData\Vendor;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -74,5 +75,11 @@ trait HasMasterData
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);
+    }
+
+    /** @return HasMany<Vendor, $this> */
+    public function vendors(): HasMany
+    {
+        return $this->hasMany(Vendor::class);
     }
 }

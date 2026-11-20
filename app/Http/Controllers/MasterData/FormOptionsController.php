@@ -18,7 +18,7 @@ use Illuminate\Validation\Rule;
  * names it with `tenant_id`): only active rows, narrowed by the earlier choice
  * (platform for partners, module and category for categories and document
  * types). Every user of the company may read them, except the employee list,
- * which is personal data and needs employees.manage.
+ * which is personal data and needs employees.manage. Vendors are names only.
  */
 class FormOptionsController extends Controller
 {
@@ -43,6 +43,7 @@ class FormOptionsController extends Controller
             'party-types' => $options->partyTypes($tenant),
             'currencies' => $options->currencies($tenant),
             'departments' => $options->departments($tenant),
+            'vendors' => $options->vendors($tenant),
             'employees' => Gate::forUser($request->user())->authorize('viewAny', Employee::class) ? $directory->options($tenant) : [],
             default => abort(404),
         };

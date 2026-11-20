@@ -5,6 +5,7 @@ namespace App\Support\Navigation;
 use App\Enums\Permission;
 use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
+use App\Models\MasterData\Vendor;
 use App\Models\User;
 use App\Support\MasterData\MasterDataCatalog;
 use Closure;
@@ -138,7 +139,7 @@ class NavigationMenu
                     ['title' => 'Pengaturan Dokumen', 'icon' => 'settings', 'route' => 'documents.config.types.index', 'active_prefix' => '/documents/config', 'visible' => fn (User $user): bool => $user->can('configure', Document::class)],
                     $this->soon('klausul-template', 'Klausul & Template', 'sliders'),
                     ['title' => 'Daftar Pilihan', 'icon' => 'folder-tree', 'route' => 'master-data.index', 'active_prefix' => '/master-data', 'visible' => fn (User $user): bool => app(MasterDataCatalog::class)->canOpenAny($user)],
-                    $this->soon('vendor', 'Data Vendor', 'store'),
+                    ['title' => 'Data Vendor', 'icon' => 'store', 'route' => 'master-data.vendors.index', 'active_prefix' => '/master-data/vendors', 'visible' => fn (User $user): bool => $user->can('viewAny', Vendor::class)],
                 ],
             ],
             [

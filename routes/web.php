@@ -31,10 +31,12 @@ use App\Http\Controllers\MasterData\MasterListController;
 use App\Http\Controllers\MasterData\MasterRecordStateController;
 use App\Http\Controllers\MasterData\PartnerController;
 use App\Http\Controllers\MasterData\PartnerGroupController;
+use App\Http\Controllers\MasterData\VendorController;
 use App\Http\Controllers\ModulePlaceholderController;
 use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
 use App\Models\MasterData\Employee;
+use App\Models\MasterData\Vendor;
 use App\Support\Navigation\NavigationMenu;
 use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Route;
@@ -42,12 +44,12 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/dashboard')->name('home');
 
 // `{record}` of a master data route is the row of the list named by `{list}` or by the first path
-// segment after master-data (document-types, partner-groups, partners, employees). Another
+// segment after master-data (document-types, partner-groups, partners, employees, vendors). Another
 // company's row is found here and then refused by the policy with 404, so nothing leaks.
 Route::bind('record', function (string $value, RouteInstance $route) {
     $key = $route->parameter('list') ?? (explode('/', $route->uri())[1] ?? null);
     $key = $key instanceof MasterList ? $key->value : (string) $key;
-    $model = $key === 'employees' ? Employee::class : (MasterList::tryFrom($key)?->model() ?? abort(404));
+    $model = ['employees' => Employee::class, 'vendors' => Vendor::class][$key] ?? MasterList::tryFrom($key)?->model() ?? abort(404);
 
     return $model::query()->findOrFail($value);
 });
@@ -74,13 +76,15 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/', MasterDataIndexController::class)->name('index');
         Route::get('options/{kind}', [FormOptionsController::class, 'show'])
-            ->whereIn('kind', ['platforms', 'partners', 'categories', 'document-types', 'employment-types', 'party-types', 'currencies', 'departments', 'employees'])->name('options');
+            ->whereIn('kind', ['platforms', 'partners', 'categories', 'document-types', 'employment-types', 'party-types', 'currencies', 'departments', 'employees', 'vendors'])->name('options');
 
-        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::post('employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::put('employees/{record}', [EmployeeController::class, 'update'])->whereNumber('record')->name('employees.update');
-        Route::patch('employees/{record}/deactivate', [EmployeeController::class, 'deactivate'])->whereNumber('record')->name('employees.deactivate');
-        Route::patch('employees/{record}/reactivate', [EmployeeController::class, 'reactivate'])->whereNumber('record')->name('employees.reactivate');
+        foreach (['employees' => EmployeeController::class, 'vendors' => VendorController::class] as $path => $controller) {
+            Route::get($path, [$controller, 'index'])->name("{$path}.index");
+            Route::post($path, [$controller, 'store'])->name("{$path}.store");
+            Route::put("{$path}/{record}", [$controller, 'update'])->whereNumber('record')->name("{$path}.update");
+            Route::patch("{$path}/{record}/deactivate", [$controller, 'deactivate'])->whereNumber('record')->name("{$path}.deactivate");
+            Route::patch("{$path}/{record}/reactivate", [$controller, 'reactivate'])->whereNumber('record')->name("{$path}.reactivate");
+        }
 
         foreach (['document-types' => DocumentTypeController::class, 'partner-groups' => PartnerGroupController::class, 'partners' => PartnerController::class] as $path => $controller) {
             Route::post($path, [$controller, 'store'])->name("{$path}.store");

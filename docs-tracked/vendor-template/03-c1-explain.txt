@@ -1,0 +1,27 @@
+--- Q1 perpustakaan pasal satu PT, urut judul, 25 baris
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   ->  Index Scan using contract_clauses_tenant_title_unique on contract_clauses  (cost=0.41..2533.00 rows=2011 width=344) (actual time=0.016..0.028 rows=25 loops=1)
+ Execution Time: 0.039 ms
+--- Q2 filter kategori
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         ->  Bitmap Heap Scan on contract_clauses  (cost=115.17..381.87 rows=101 width=344) (actual time=0.197..0.956 rows=2000 loops=1)
+                     ->  Bitmap Index Scan on contract_clauses_category_index  (cost=0.00..27.37 rows=2011 width=0) (actual time=0.056..0.056 rows=2000 loops=1)
+                     ->  Bitmap Index Scan on contract_clauses_tenant_title_unique  (cost=0.00..87.50 rows=2011 width=0) (actual time=0.087..0.087 rows=2000 loops=1)
+ Execution Time: 1.891 ms
+--- Q3 jumlah pemakaian pasal (withCount) untuk 25 pasal
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   ->  Index Scan using contract_clauses_tenant_title_unique on contract_clauses c  (cost=0.41..26796.35 rows=2011 width=48) (actual time=0.018..0.091 rows=25 loops=1)
+                 ->  Bitmap Heap Scan on contract_template_clauses tc  (cost=4.31..12.05 rows=2 width=0) (actual time=0.002..0.002 rows=2 loops=25)
+                       ->  Bitmap Index Scan on contract_template_clauses_source_index  (cost=0.00..4.31 rows=2 width=0) (actual time=0.001..0.001 rows=2 loops=25)
+ Execution Time: 0.101 ms
+--- Q4 daftar template + versi terbit
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         ->  Index Scan using contract_templates_tenant_name_unique on contract_templates t  (cost=0.28..227.44 rows=200 width=818) (actual time=0.004..0.011 rows=25 loops=1)
+         ->  Index Scan using contract_template_versions_one_published on contract_template_versions v  (cost=0.28..2.86 rows=1 width=10) (actual time=0.001..0.001 rows=1 loops=25)
+ Execution Time: 0.050 ms
+--- Q5 isi satu versi (pasal berurutan)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                   ->  Index Only Scan Backward using contract_template_versions_pkey on contract_template_versions  (cost=0.29..456.29 rows=12000 width=8) (actual time=0.005..0.005 rows=1 loops=1)
+   ->  Bitmap Heap Scan on contract_template_clauses  (cost=4.48..34.32 rows=8 width=36) (actual time=0.011..0.015 rows=8 loops=1)
+         ->  Bitmap Index Scan on contract_template_clauses_position_unique  (cost=0.00..4.48 rows=8 width=0) (actual time=0.009..0.009 rows=8 loops=1)
+ Execution Time: 0.022 ms

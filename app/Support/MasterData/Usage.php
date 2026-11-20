@@ -34,8 +34,10 @@ class Usage
     /**
      * Adds `usage_count` to a list query in one pass (no query per row).
      *
-     * @param  Builder<Model>  $query
-     * @return Builder<Model>
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
      */
     public function withCount(Builder $query): Builder
     {

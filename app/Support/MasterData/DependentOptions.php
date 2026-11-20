@@ -112,6 +112,16 @@ class DependentOptions
     }
 
     /**
+     * Active vendors by name only: their contact, tax and bank details are not options.
+     *
+     * @return list<Option>
+     */
+    public function vendors(Tenant $tenant): array
+    {
+        return $this->map($tenant->vendors()->where('is_active', true)->orderByRaw('lower(name)')->get(['id', 'name']), false);
+    }
+
+    /**
      * Departments are the DCS ones, only read here, by name.
      *
      * @return list<Option>

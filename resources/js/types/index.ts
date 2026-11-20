@@ -7,4 +7,5 @@ export * from './master-data';
 export * from './navigation';
 export * from './rbac';
 export * from './ui';
+export * from './vendors';
 export * from './wizard';

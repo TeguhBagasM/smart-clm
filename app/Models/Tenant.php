@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasContractTemplates;
 use App\Models\Concerns\HasMasterData;
 use App\Models\Dcs\Clause;
 use App\Models\Dcs\Department;
@@ -29,7 +30,7 @@ use Illuminate\Support\Carbon;
 class Tenant extends Model
 {
     /** @use HasFactory<TenantFactory> */
-    use HasFactory, HasMasterData;
+    use HasContractTemplates, HasFactory, HasMasterData;
 
     /**
      * @return HasMany<User, $this>

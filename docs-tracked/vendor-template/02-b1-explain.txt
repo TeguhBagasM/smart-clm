@@ -1,0 +1,68 @@
+--- Q1 halaman default (urut nama, 25 baris)
+                                                                     QUERY PLAN                                                                     
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.41..29.78 rows=25 width=2054) (actual time=0.013..0.030 rows=25 loops=1)
+   ->  Index Scan using vendors_tenant_name_unique on vendors  (cost=0.41..3011.21 rows=2563 width=2054) (actual time=0.012..0.029 rows=25 loops=1)
+         Index Cond: (tenant_id = 900001)
+ Planning Time: 0.442 ms
+ Execution Time: 0.044 ms
+(5 rows)
+
+--- Q2 hitung total untuk paginasi
+                                                                   QUERY PLAN                                                                    
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=877.72..877.73 rows=1 width=8) (actual time=0.815..0.815 rows=1 loops=1)
+   ->  Bitmap Heap Scan on vendors  (cost=124.28..871.32 rows=2563 width=0) (actual time=0.192..0.746 rows=2500 loops=1)
+         Recheck Cond: (tenant_id = 900001)
+         Heap Blocks: exact=715
+         ->  Bitmap Index Scan on vendors_tenant_name_unique  (cost=0.00..123.64 rows=2563 width=0) (actual time=0.127..0.127 rows=2500 loops=1)
+               Index Cond: (tenant_id = 900001)
+ Planning Time: 0.025 ms
+ Execution Time: 0.830 ms
+(8 rows)
+
+--- Q3 filter status + urut nama
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.41..205.14 rows=25 width=2054) (actual time=0.007..0.041 rows=25 loops=1)
+   ->  Index Scan using vendors_tenant_name_unique on vendors  (cost=0.41..3005.72 rows=367 width=2054) (actual time=0.007..0.040 rows=25 loops=1)
+         Index Cond: (tenant_id = 900001)
+         Filter: (NOT is_active)
+         Rows Removed by Filter: 152
+ Planning Time: 0.039 ms
+ Execution Time: 0.053 ms
+(7 rows)
+
+--- Q4 cari nama/NPWP
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.41..734.36 rows=25 width=2054) (actual time=0.059..0.073 rows=25 loops=1)
+   ->  Index Scan using vendors_tenant_name_unique on vendors  (cost=0.41..3024.29 rows=103 width=2054) (actual time=0.059..0.072 rows=25 loops=1)
+         Index Cond: (tenant_id = 900001)
+         Filter: ((lower((name)::text) ~~ '%uji 12%'::text) OR ((npwp)::text ~~ '%0012%'::text))
+         Rows Removed by Filter: 111
+ Planning Time: 0.103 ms
+ Execution Time: 0.086 ms
+(7 rows)
+
+--- Q5 cek nama ganda (Request)
+                                                                QUERY PLAN                                                                
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.41..8.43 rows=1 width=4) (actual time=0.009..0.010 rows=0 loops=1)
+   ->  Index Scan using vendors_tenant_name_unique on vendors  (cost=0.41..8.43 rows=1 width=4) (actual time=0.009..0.009 rows=0 loops=1)
+         Index Cond: ((tenant_id = 900001) AND (lower((name)::text) = 'vendor uji 21'::text))
+ Planning Time: 0.025 ms
+ Execution Time: 0.013 ms
+(5 rows)
+
+--- Q6 importer cari legacy_key
+                                                                   QUERY PLAN                                                                    
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.12..8.14 rows=1 width=4) (actual time=0.001..0.001 rows=0 loops=1)
+   ->  Index Only Scan using vendors_tenant_legacy_unique on vendors  (cost=0.12..8.14 rows=1 width=4) (actual time=0.001..0.001 rows=0 loops=1)
+         Index Cond: ((tenant_id = 900001) AND (legacy_key = 'VND123'::text))
+         Heap Fetches: 0
+ Planning Time: 0.037 ms
+ Execution Time: 0.005 ms
+(6 rows)
+

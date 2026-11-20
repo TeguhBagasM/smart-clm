@@ -2,7 +2,7 @@ import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { confirm } from '@/composables/useConfirm';
 import { impactDialog } from '@/lib/masterData';
-import type { MasterInfo } from '@/types';
+import type { ImpactInfo } from '@/lib/masterData';
 
 type Hideable = { id: number; name: string; usage_count?: number };
 
@@ -11,7 +11,7 @@ type Hideable = { id: number; name: string; usage_count?: number };
  * in the server's words, how many records still use the row; the buttons are
  * off while a request runs, so a double tap sends once.
  */
-export function useMasterList(info: () => MasterInfo) {
+export function useMasterList(info: () => ImpactInfo) {
     const busy = ref<number | null>(null);
 
     async function setActive(

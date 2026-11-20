@@ -1,4 +1,17 @@
-import type { ListColumn, ListMeta, MasterInfo } from '@/types';
+import type { ListColumn, ListMeta, MasterInfo, MasterTexts } from '@/types';
+
+/** What the hide/show question needs from a page's info (master data lists, vendors). */
+export type ImpactInfo = {
+    texts: Pick<
+        MasterTexts,
+        | 'impact_hide_title'
+        | 'impact_used'
+        | 'impact_unused'
+        | 'impact_show_title'
+        | 'impact_show'
+    >;
+    usage_notice: string | null;
+};
 
 /** Fills `:name`-style placeholders of a text the server sent. */
 export function fill(
@@ -46,7 +59,10 @@ export function cellText(
 }
 
 /** Columns from the server; one is sortable when the list declares a sort of the same key. */
-export function tableColumns(info: MasterInfo, list: ListMeta): ListColumn[] {
+export function tableColumns(
+    info: Pick<MasterInfo, 'columns'>,
+    list: ListMeta,
+): ListColumn[] {
     const sortable = new Set(list.sorts.map((sort) => sort.key));
 
     return info.columns.map((column) => ({
@@ -58,7 +74,7 @@ export function tableColumns(info: MasterInfo, list: ListMeta): ListColumn[] {
 
 /** The question asked before hiding or showing a row, from the server's texts and its usage count. */
 export function impactDialog(
-    info: MasterInfo,
+    info: ImpactInfo,
     row: { name: string; usage_count: number },
     hiding: boolean,
 ): { title: string; message: string } {
