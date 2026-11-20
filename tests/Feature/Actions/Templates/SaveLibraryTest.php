@@ -39,7 +39,7 @@ it('creates a clause at revision 1 and raises the revision only when its content
     $save->handle($this->actor, $this->tenant, ($this->clause)(['body' => 'Isi baru.', 'is_protected' => true]), $clause);
     expect($clause->refresh()->revision)->toBe(2);
 
-    expect(AuditLog::query()->where('subject_id', $clause->id)->pluck('event')->all())
+    expect(AuditLog::query()->where('subject_id', $clause->id)->orderBy('id')->pluck('event')->all())
         ->toBe(['contract_templates.clauses.created', 'contract_templates.clauses.updated', 'contract_templates.clauses.updated']);
 });
 

@@ -11,6 +11,7 @@ use App\Models\Templates\TemplateParty;
 use App\Models\Templates\TemplateVersion;
 use App\Models\User;
 use App\Support\Templates\DraftVersions;
+use App\Support\Templates\PlaceholderGuard;
 use App\Support\Templates\PlainText;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -52,7 +53,20 @@ class SaveTemplateDraft
         return DB::transaction(function () use ($actor, $template, $data, $parties, $clauseIds, $paragraphs): TemplateVersion {
             $draft = DraftVersions::lockedDraft($template, (int) $data['expected_revision']);
             $clauses = $this->libraryClauses((int) $template->tenant_id, $clauseIds);
-            $this->fieldVariables((int) $template->tenant_id, $data['variables']);
+            $selected = $this->fieldVariables((int) $template->tenant_id, $data['variables']);
+            $allowed = PlaceholderGuard::known($selected);
+            $notSelected = config()->string('contract_templates.messages.placeholder_not_selected');
+
+            foreach ($paragraphs as $key => $text) {
+                if ($text !== null) {
+                    PlaceholderGuard::ensureUsable($text, $allowed, $key, $notSelected);
+                }
+            }
+
+            foreach ($clauses as $clause) {
+                PlaceholderGuard::ensureUsable($clause->body, $allowed, 'clause_ids', $notSelected);
+            }
+
             $before = $this->summary($draft);
 
             TemplateClause::query()->where('contract_template_version_id', $draft->getKey())->delete();
@@ -130,8 +144,9 @@ class SaveTemplateDraft
 
     /**
      * @param  list<array{id: int, required: bool}>  $rows
+     * @return list<string> codes of the fields chosen
      */
-    private function fieldVariables(int $tenantId, array $rows): void
+    private function fieldVariables(int $tenantId, array $rows): array
     {
         $found = ContractVariable::query()->where('tenant_id', $tenantId)->whereIn('id', array_column($rows, 'id'))->get();
 
@@ -144,6 +159,14 @@ class SaveTemplateDraft
                 throw ValidationException::withMessages(['variables' => strtr(config()->string('contract_templates.messages.variable_inactive'), [':code' => '{{'.$variable->code.'}}'])]);
             }
         }
+
+        $codes = [];
+
+        foreach ($found as $variable) {
+            $codes[] = $variable->code;
+        }
+
+        return $codes;
     }
 
     /**

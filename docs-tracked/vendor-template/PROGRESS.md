@@ -1,16 +1,18 @@
 # PROGRESS — Data Vendor dan Klausul & Template (Node → Laravel)
 
-Diperbarui: akhir Fase C2 (Policy, Form Request, Resource, ListSpec, Action Klausul & Template). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
+Diperbarui: akhir Fase C4 (saran AI untuk pasal). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
 
 ## Selesai
 - Fase A: audit → `01-audit.md`. Semua rekomendasi disetujui pengguna ("Setuju semua").
 - Fase B (B1-B6): Data Vendor → `02-b-data-vendor.md`, `02-b1-explain.txt`.
 - Fase C1: 7 tabel, enum, model, penjaga versi beku (trigger PostgreSQL + event model), nilai bawaan + seeder → `03-c1-skema.md`, `03-c1-explain.txt`.
 - Fase C2: 9 Action, 3 Policy, 3 ListSpec, 4 Resource, 7 Form Request (tanpa controller/route/UI) → `04-c2-library.md`. Suite: PostgreSQL 1651/1651, SQLite 1637 + 14 dilewati.
+- Fase C3: parser placeholder, penjaga (pasal dan draf), renderer anti-injeksi, pratinjau dengan contoh → `05-c3-mesin-variabel.md`. Suite: PostgreSQL 1692/1692, SQLite 1678 + 14 dilewati.
+- Fase C4: saran pasal dengan AI (tanpa menyimpan, izin `templates.manage`, prompt tanpa data PT, keluaran divalidasi, audit tanpa isi) → `06-c4-saran-ai.md`. Suite: PostgreSQL 1704/1704, SQLite 1690 + 14 dilewati.
 
 ## Berikutnya
-- **BERHENTI** setelah C2: menunggu "lanjut" untuk C3 (mesin variabel) dan jawaban `04-c2-library.md` §7.
-- Lalu C3, C4 (saran AI, hanya jika disetujui), C5 (impor dari Node), C6 (controller, route, tes HTTP; berhenti wajib setelah C6).
+- **BERHENTI** setelah C4: menunggu "lanjut" untuk C5 (impor dari Node) dan jawaban `06-c4-saran-ai.md` §7.
+- Lalu C5 (impor dari Node), C6 (controller, route, tes HTTP; berhenti wajib setelah C6).
 
 ## Keputusan yang berlaku
 - Semua keputusan `docs-tracked/master-data/PROGRESS.md` tetap berlaku (tanpa hapus permanen, nilai bawaan belum diverifikasi, larangan git, format hanya berkas sendiri).
@@ -33,3 +35,5 @@ Diperbarui: akhir Fase C2 (Policy, Form Request, Resource, ListSpec, Action Klau
 - Fase B: daftar lengkap di `02-b-data-vendor.md` bagian "Berkas".
 - Fase C1: daftar lengkap di `03-c1-skema.md` bagian "Berkas".
 - Fase C2: daftar lengkap di `04-c2-library.md` bagian "Berkas".
+- Fase C3: daftar lengkap di `05-c3-mesin-variabel.md` bagian "Berkas".
+- Fase C4: daftar lengkap di `06-c4-saran-ai.md` bagian "Berkas".
