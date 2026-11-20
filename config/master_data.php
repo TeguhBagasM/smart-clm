@@ -25,6 +25,18 @@
 
 return [
 
+    // Names shown to people for each list (singular). Keyed by App\Enums\MasterData\MasterList::value.
+    'lists' => [
+        'platforms' => 'Platform',
+        'categories' => 'Kategori dokumen eksternal',
+        'document-types' => 'Jenis surat dan perjanjian',
+        'employment-types' => 'Status hubungan kerja',
+        'party-types' => 'Jenis mitra kontrak',
+        'currencies' => 'Mata uang',
+        'partner-groups' => 'Kelompok mitra',
+        'partners' => 'Mitra',
+    ],
+
     'defaults' => [
 
         // A new Node company got these eight (server.ts:1273), then the external seed (server.ts:7680-7683).
