@@ -36,7 +36,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['name', 'description'])]
-class ContractTemplate extends Model
+class ContractTemplate extends Model implements CountsUsage
 {
     /** @use HasFactory<ContractTemplateFactory> */
     use HasFactory;
@@ -85,6 +85,12 @@ class ContractTemplate extends Model
     public function draft(): HasOne
     {
         return $this->hasOne(TemplateVersion::class)->where('status', TemplateVersionStatus::Draft->value);
+    }
+
+    public function usageCount(): int
+    {
+        // Contracts do not use templates yet (the contract module is not migrated), so nothing counts.
+        return 0;
     }
 
     /**

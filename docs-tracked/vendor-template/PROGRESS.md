@@ -1,15 +1,16 @@
 # PROGRESS — Data Vendor dan Klausul & Template (Node → Laravel)
 
-Diperbarui: akhir Fase C1 (skema Klausul & Template). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
+Diperbarui: akhir Fase C2 (Policy, Form Request, Resource, ListSpec, Action Klausul & Template). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
 
 ## Selesai
 - Fase A: audit → `01-audit.md`. Semua rekomendasi disetujui pengguna ("Setuju semua").
 - Fase B (B1-B6): Data Vendor → `02-b-data-vendor.md`, `02-b1-explain.txt`.
 - Fase C1: 7 tabel, enum, model, penjaga versi beku (trigger PostgreSQL + event model), nilai bawaan + seeder → `03-c1-skema.md`, `03-c1-explain.txt`.
+- Fase C2: 9 Action, 3 Policy, 3 ListSpec, 4 Resource, 7 Form Request (tanpa controller/route/UI) → `04-c2-library.md`. Suite: PostgreSQL 1651/1651, SQLite 1637 + 14 dilewati.
 
 ## Berikutnya
-- **BERHENTI**: menunggu "lanjut" dan jawaban pertanyaan `03-c1-skema.md` §7.
-- Lalu C2 (Policy, Request, Resource, ListSpec, Action simpan/terbitkan/nonaktifkan/urutkan/duplikasi, audit) … C6, berhenti wajib setelah C6.
+- **BERHENTI** setelah C2: menunggu "lanjut" untuk C3 (mesin variabel) dan jawaban `04-c2-library.md` §7.
+- Lalu C3, C4 (saran AI, hanya jika disetujui), C5 (impor dari Node), C6 (controller, route, tes HTTP; berhenti wajib setelah C6).
 
 ## Keputusan yang berlaku
 - Semua keputusan `docs-tracked/master-data/PROGRESS.md` tetap berlaku (tanpa hapus permanen, nilai bawaan belum diverifikasi, larangan git, format hanya berkas sendiri).
@@ -23,9 +24,12 @@ Diperbarui: akhir Fase C1 (skema Klausul & Template). Sebelum melanjutkan di ses
 
 ## Pertanyaan terbuka
 - Dari `02-b-data-vendor.md` §7: vendor uji di dev DB; rekening di salinan vendor pada kontrak kelak.
-- Dari `03-c1-skema.md` §7: pengganti `current_version_id`, `legacy_key` sebagai kunci bawaan, kolom isian `Salary`, migrasi/seed DB dev.
+- Dari `04-c2-library.md` §7: pasal terlindungi cukup `templates.manage` atau perlu batasan tambahan.
+- Dari `03-c1-skema.md` §7 (sudah disetujui): tinggal migrasi dan isi DB dev saat C6.
+- Lama, dari `03-c1-skema.md` §7: pengganti `current_version_id`, `legacy_key` sebagai kunci bawaan, kolom isian `Salary`, migrasi/seed DB dev.
 
 ## Path berkas
 - Dokumen: `docs-tracked/vendor-template/{01-audit.md,02-b-data-vendor.md,02-b1-explain.txt,03-c1-skema.md,03-c1-explain.txt,PROGRESS.md}`.
 - Fase B: daftar lengkap di `02-b-data-vendor.md` bagian "Berkas".
 - Fase C1: daftar lengkap di `03-c1-skema.md` bagian "Berkas".
+- Fase C2: daftar lengkap di `04-c2-library.md` bagian "Berkas".

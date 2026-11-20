@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * names the contract field that fills it automatically (config/contract_templates.php);
  * empty = typed in when the contract is made.
  *
+ * @property \Illuminate\Database\Eloquent\Relations\Pivot|null $pivot Set only on rows read through a template version's relation.
  * @property int $id
  * @property int $tenant_id
  * @property string $code
@@ -34,7 +35,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['code', 'name', 'description', 'default_value', 'sort_order'])]
-class ContractVariable extends Model
+class ContractVariable extends Model implements CountsUsage
 {
     /** @use HasFactory<ContractVariableFactory> */
     use HasFactory, IsTenantLookup;
@@ -50,6 +51,11 @@ class ContractVariable extends Model
     {
         return $this->belongsToMany(TemplateVersion::class, 'contract_template_version_variables', 'contract_variable_id', 'contract_template_version_id')
             ->withPivot(['is_required', 'position']);
+    }
+
+    public function usageCount(): int
+    {
+        return $this->versions()->count();
     }
 
     /**

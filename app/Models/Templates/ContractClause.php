@@ -34,7 +34,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Fillable(['title', 'body', 'is_mandatory', 'is_protected'])]
-class ContractClause extends Model
+class ContractClause extends Model implements CountsUsage
 {
     /** @use HasFactory<ContractClauseFactory> */
     use HasFactory;
@@ -65,6 +65,11 @@ class ContractClause extends Model
     public function copies(): HasMany
     {
         return $this->hasMany(TemplateClause::class, 'source_clause_id');
+    }
+
+    public function usageCount(): int
+    {
+        return $this->copies()->count();
     }
 
     /**

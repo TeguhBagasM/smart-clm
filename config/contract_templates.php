@@ -37,6 +37,64 @@ return [
         'vendor.bank_account_number' => 'Nomor rekening vendor',
     ],
 
+    // Lists of the library: labels for search, filters and sorts (the ListSpecs).
+    'list' => [
+        'search' => ['clauses' => 'Cari judul atau isi pasal…', 'variables' => 'Cari kode atau nama kolom isian…', 'templates' => 'Cari nama atau deskripsi template…'],
+        'clauses' => [
+            'status' => ['label' => 'Status', 'options' => ['active' => 'Tampil', 'inactive' => 'Disembunyikan']],
+            'category' => ['label' => 'Kategori'],
+            'kind' => ['label' => 'Jenis pasal', 'options' => ['mandatory' => 'Wajib ada', 'protected' => 'Terlindungi']],
+            'sorts' => ['title' => 'Judul', 'updated_at' => 'Terakhir diubah'],
+        ],
+        'variables' => [
+            'status' => ['label' => 'Status', 'options' => ['active' => 'Tampil', 'inactive' => 'Disembunyikan']],
+            'type' => ['label' => 'Jenis isian', 'options' => ['text' => 'Teks', 'number' => 'Angka', 'date' => 'Tanggal']],
+            'sorts' => ['name' => 'Nama', 'code' => 'Kode'],
+        ],
+        'templates' => [
+            'status' => ['label' => 'Status', 'options' => ['active' => 'Tampil', 'inactive' => 'Disembunyikan']],
+            'module' => ['label' => 'Jenis dokumen', 'options' => ['external' => 'Dokumen Eksternal', 'employee' => 'Dokumen Karyawan']],
+            'category' => ['label' => 'Kategori'],
+            'version' => ['label' => 'Versi terbit', 'options' => ['published' => 'Sudah terbit', 'draft_only' => 'Belum terbit']],
+            'sorts' => ['name' => 'Nama', 'updated_at' => 'Terakhir diubah'],
+        ],
+    ],
+
+    // Size limits of one version and of one text (checked by the Actions and the Form Requests).
+    'limits' => [
+        'clause_body' => 20000, 'paragraph' => 5000, 'party_label' => 150,
+        'clauses_per_version' => 100, 'variables_per_version' => 50, 'parties_per_version' => 10,
+    ],
+
+    // Texts shown to people. Placeholders: :title, :code, :name, :max, :attribute.
+    'messages' => [
+        'body_html' => 'Isi hanya boleh berupa teks biasa. Hapus tanda < dan > atau kode HTML, lalu simpan lagi.',
+        'too_long' => ':attribute terlalu panjang (paling banyak :max karakter).',
+        'title_taken' => 'Judul pasal ini sudah ada. Pakai judul lain.',
+        'name_taken' => 'Nama ini sudah dipakai. Pakai nama lain.',
+        'code_taken' => 'Kode ini sudah dipakai kolom isian lain. Pakai kode lain.',
+        'code_format' => 'Kode hanya boleh huruf dan angka tanpa spasi, diawali huruf, misalnya NamaPerusahaan.',
+        'code_in_use' => 'Kolom isian :code sudah dipakai di pasal atau template, jadi kodenya tidak bisa diganti. Buat kolom isian baru.',
+        'source_unknown' => 'Sumber otomatis ini tidak dikenal. Pilih dari daftar, atau kosongkan agar diisi manual.',
+        'category_foreign' => 'Kategori ini bukan milik perusahaan ini. Pilih dari daftar kategori.',
+        'clause_missing' => 'Ada pasal yang tidak ditemukan di perpustakaan perusahaan ini. Muat ulang halaman, lalu pilih lagi.',
+        'clause_inactive' => 'Pasal ":title" sudah disembunyikan, jadi tidak bisa dipakai. Hapus dari draf atau tampilkan lagi di perpustakaan.',
+        'variable_missing' => 'Ada kolom isian yang tidak ditemukan di perusahaan ini. Muat ulang halaman, lalu pilih lagi.',
+        'variable_inactive' => 'Kolom isian :code sudah disembunyikan, jadi tidak bisa dipakai. Hapus dari draf atau tampilkan lagi.',
+        'duplicate_item' => 'Pasal atau kolom isian yang sama tidak boleh dipakai dua kali.',
+        'too_many' => 'Terlalu banyak isi untuk satu versi. Kurangi pasal, pihak, atau kolom isian.',
+        'party_invalid' => 'Setiap pihak harus diisi dan tidak lebih dari 150 karakter.',
+        'no_draft' => 'Template ini belum punya draf untuk diubah. Buat draf baru dari versi terbit dulu.',
+        'draft_conflict' => 'Draf ini sudah diubah orang lain. Muat ulang halaman, periksa perubahan Anda, lalu simpan lagi.',
+        'draft_exists' => 'Sudah ada draf untuk template ini. Selesaikan atau terbitkan draf itu dulu.',
+        'publish_needs_clause' => 'Tambahkan minimal satu pasal sebelum menerbitkan.',
+        'publish_needs_party' => 'Isi minimal satu pihak sebelum menerbitkan.',
+        'order_incomplete' => 'Urutan pasal tidak lengkap. Muat ulang halaman, lalu atur urutannya lagi.',
+        'duplicate' => 'Data ini bentrok dengan perubahan yang baru disimpan orang lain. Muat ulang halaman, lalu coba lagi.',
+        'copy_suffix' => ' (salinan)',
+        'copy_suffix_numbered' => ' (salinan :n)',
+    ],
+
     'defaults' => [
 
         // code, name, type (text|number|date), description, default, source field.
