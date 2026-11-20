@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(MasterDataDefaultsSeeder::class);
+
         if (app()->environment(DemoUsersSeeder::ALLOWED_ENVIRONMENTS)) {
             $this->call(DemoUsersSeeder::class);
         }

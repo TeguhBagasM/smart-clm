@@ -1,0 +1,194 @@
+=== Q1 daftar mitra per PT urut nama — SEBELUM (tanpa indeks: partners_tenant_name_index)
+ Limit (actual rows=25 loops=1)
+   ->  Gather Merge (actual rows=25 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Sort (actual rows=21 loops=3)
+               Sort Key: name
+               Sort Method: top-N heapsort  Memory: 30kB
+               Worker 0:  Sort Method: top-N heapsort  Memory: 30kB
+               Worker 1:  Sort Method: top-N heapsort  Memory: 30kB
+               ->  Parallel Seq Scan on partners (actual rows=100 loops=3)
+                     Filter: (tenant_id = 1000)
+                     Rows Removed by Filter: 199900
+ Planning Time: 1.107 ms
+ Execution Time: 28.523 ms
+=== Q1 daftar mitra per PT urut nama — SESUDAH
+ Limit (actual rows=25 loops=1)
+   ->  Index Scan using partners_tenant_name_index on partners (actual rows=25 loops=1)
+         Index Cond: (tenant_id = 1000)
+ Planning Time: 0.388 ms
+ Execution Time: 0.473 ms
+=== Q2 opsi mitra satu grup — SEBELUM (tanpa indeks: partners_group_name_unique)
+ Gather Merge (actual rows=100 loops=1)
+   Workers Planned: 2
+   Workers Launched: 2
+   ->  Sort (actual rows=33 loops=3)
+         Sort Key: sort_order, name
+         Sort Method: quicksort  Memory: 27kB
+         Worker 0:  Sort Method: quicksort  Memory: 26kB
+         Worker 1:  Sort Method: quicksort  Memory: 27kB
+         ->  Parallel Seq Scan on partners (actual rows=33 loops=3)
+               Filter: (is_active AND (partner_group_id = 1000))
+               Rows Removed by Filter: 199967
+ Planning Time: 0.249 ms
+ Execution Time: 26.947 ms
+=== Q2 opsi mitra satu grup — SESUDAH
+ Sort (actual rows=100 loops=1)
+   Sort Key: sort_order, name
+   Sort Method: quicksort  Memory: 32kB
+   ->  Bitmap Heap Scan on partners (actual rows=100 loops=1)
+         Recheck Cond: (partner_group_id = 1000)
+         Filter: is_active
+         Heap Blocks: exact=100
+         ->  Bitmap Index Scan on partners_group_name_unique (actual rows=100 loops=1)
+               Index Cond: (partner_group_id = 1000)
+ Planning Time: 0.384 ms
+ Execution Time: 0.889 ms
+=== Q3 daftar karyawan per PT urut nama — SEBELUM (tanpa indeks: employees_tenant_name_index)
+ Limit (actual rows=25 loops=1)
+   ->  Gather Merge (actual rows=25 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Sort (actual rows=19 loops=3)
+               Sort Key: name
+               Sort Method: top-N heapsort  Memory: 30kB
+               Worker 0:  Sort Method: top-N heapsort  Memory: 30kB
+               Worker 1:  Sort Method: top-N heapsort  Memory: 30kB
+               ->  Parallel Seq Scan on employees (actual rows=67 loops=3)
+                     Filter: (tenant_id = 1000)
+                     Rows Removed by Filter: 133267
+ Planning Time: 0.571 ms
+ Execution Time: 18.964 ms
+=== Q3 daftar karyawan per PT urut nama — SESUDAH
+ Limit (actual rows=25 loops=1)
+   ->  Index Scan using employees_tenant_name_index on employees (actual rows=25 loops=1)
+         Index Cond: (tenant_id = 1000)
+ Planning Time: 0.474 ms
+ Execution Time: 0.098 ms
+=== Q4 filter karyawan per departemen — SEBELUM (tanpa indeks: employees_department_id_index)
+ Limit (actual rows=20 loops=1)
+   ->  Gather Merge (actual rows=20 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Sort (actual rows=7 loops=3)
+               Sort Key: name
+               Sort Method: quicksort  Memory: 25kB
+               Worker 0:  Sort Method: quicksort  Memory: 25kB
+               Worker 1:  Sort Method: quicksort  Memory: 26kB
+               ->  Parallel Seq Scan on employees (actual rows=7 loops=3)
+                     Filter: (department_id = 1000)
+                     Rows Removed by Filter: 133327
+ Planning Time: 0.389 ms
+ Execution Time: 20.196 ms
+=== Q4 filter karyawan per departemen — SESUDAH
+ Limit (actual rows=20 loops=1)
+   ->  Sort (actual rows=20 loops=1)
+         Sort Key: name
+         Sort Method: quicksort  Memory: 27kB
+         ->  Bitmap Heap Scan on employees (actual rows=20 loops=1)
+               Recheck Cond: (department_id = 1000)
+               Heap Blocks: exact=20
+               ->  Bitmap Index Scan on employees_department_id_index (actual rows=20 loops=1)
+                     Index Cond: (department_id = 1000)
+ Planning Time: 0.432 ms
+ Execution Time: 0.142 ms
+=== Q5 jumlah pemakaian hubungan kerja — SEBELUM (tanpa indeks: employees_employment_type_id_index)
+ Finalize Aggregate (actual rows=1 loops=1)
+   ->  Gather (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate (actual rows=1 loops=3)
+               ->  Parallel Seq Scan on employees (actual rows=13 loops=3)
+                     Filter: (employment_type_id = 1000)
+                     Rows Removed by Filter: 133320
+ Planning Time: 0.377 ms
+ Execution Time: 16.170 ms
+=== Q5 jumlah pemakaian hubungan kerja — SESUDAH
+ Aggregate (actual rows=1 loops=1)
+   ->  Index Only Scan using employees_employment_type_id_index on employees (actual rows=40 loops=1)
+         Index Cond: (employment_type_id = 1000)
+         Heap Fetches: 0
+ Planning Time: 0.380 ms
+ Execution Time: 0.112 ms
+=== Q6 opsi kategori aktif per PT — SEBELUM (tanpa indeks: contract_categories_tenant_code_unique contract_categories_tenant_name_unique contract_categories_tenant_legacy_unique contract_categories_employee_key_unique)
+ERROR:  syntax error at or near "contract_categories_tenant_name_unique"
+LINE 1: ...DROP INDEX contract_categories_tenant_code_unique contract_c...
+                                                             ^
+ Sort (actual rows=12 loops=1)
+   Sort Key: sort_order, name
+   Sort Method: quicksort  Memory: 25kB
+   ->  Bitmap Heap Scan on contract_categories (actual rows=12 loops=1)
+         Recheck Cond: (tenant_id = 1000)
+         Filter: is_active
+         Rows Removed by Filter: 3
+         Heap Blocks: exact=15
+         ->  Bitmap Index Scan on contract_categories_tenant_name_unique (actual rows=15 loops=1)
+               Index Cond: (tenant_id = 1000)
+ Planning Time: 0.346 ms
+ Execution Time: 0.089 ms
+WARNING:  there is no transaction in progress
+=== Q6 opsi kategori aktif per PT — SESUDAH
+ Sort (actual rows=12 loops=1)
+   Sort Key: sort_order, name
+   Sort Method: quicksort  Memory: 25kB
+   ->  Bitmap Heap Scan on contract_categories (actual rows=12 loops=1)
+         Recheck Cond: (tenant_id = 1000)
+         Filter: is_active
+         Rows Removed by Filter: 3
+         Heap Blocks: exact=15
+         ->  Bitmap Index Scan on contract_categories_tenant_name_unique (actual rows=15 loops=1)
+               Index Cond: (tenant_id = 1000)
+ Planning Time: 1.130 ms
+ Execution Time: 0.199 ms
+=== Q7 jenis dokumen milik satu kategori — SEBELUM (tanpa indeks: contract_document_type_categories_category_id_index)
+ Seq Scan on contract_document_type_categories (actual rows=4 loops=1)
+   Filter: (category_id = 1000)
+   Rows Removed by Filter: 119996
+ Planning Time: 0.483 ms
+ Execution Time: 12.916 ms
+=== Q7 jenis dokumen milik satu kategori — SESUDAH
+ Bitmap Heap Scan on contract_document_type_categories (actual rows=4 loops=1)
+   Recheck Cond: (category_id = 1000)
+   Heap Blocks: exact=1
+   ->  Bitmap Index Scan on contract_document_type_categories_category_id_index (actual rows=4 loops=1)
+         Index Cond: (category_id = 1000)
+ Planning Time: 0.744 ms
+ Execution Time: 1.326 ms
+=== Q8 grup mitra milik satu platform — SEBELUM (tanpa indeks: partner_group_platforms_platform_id_index)
+ Seq Scan on partner_group_platforms (actual rows=1 loops=1)
+   Filter: (platform_id = 1000)
+   Rows Removed by Filter: 11999
+ Planning Time: 0.602 ms
+ Execution Time: 1.571 ms
+=== Q8 grup mitra milik satu platform — SESUDAH
+ Index Scan using partner_group_platforms_platform_id_index on partner_group_platforms (actual rows=1 loops=1)
+   Index Cond: (platform_id = 1000)
+ Planning Time: 0.822 ms
+ Execution Time: 3.341 ms
+=== Q6 opsi kategori aktif per PT — SEBELUM (tanpa 4 indeks berawalan tenant_id)
+ Sort (actual rows=12 loops=1)
+   Sort Key: sort_order, name
+   Sort Method: quicksort  Memory: 25kB
+   ->  Seq Scan on contract_categories (actual rows=12 loops=1)
+         Filter: (is_active AND (tenant_id = 1000))
+         Rows Removed by Filter: 29988
+ Planning Time: 0.727 ms
+ Execution Time: 11.689 ms
+=== Q6 — SESUDAH
+ Sort (actual rows=12 loops=1)
+   Sort Key: sort_order, name
+   Sort Method: quicksort  Memory: 25kB
+   ->  Bitmap Heap Scan on contract_categories (actual rows=12 loops=1)
+         Recheck Cond: (tenant_id = 1000)
+         Filter: is_active
+         Rows Removed by Filter: 3
+         Heap Blocks: exact=15
+         ->  Bitmap Index Scan on contract_categories_tenant_name_unique (actual rows=15 loops=1)
+               Index Cond: (tenant_id = 1000)
+ Planning Time: 1.099 ms
+ Execution Time: 0.209 ms
+=== Q8 diulang 3x (tabel kecil, cek derau)
+Execution Time: 0.077 ms
+Execution Time: 0.074 ms
+Execution Time: 0.085 ms
