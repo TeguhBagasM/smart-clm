@@ -24,11 +24,18 @@ abstract class LibraryFormRequest extends FormRequest
         return $this->record() === null ? 'create' : 'update';
     }
 
+    /**
+     * The row this form is about: the model bound to the route, whatever its parameter is called.
+     */
     public function record(): ?Model
     {
-        $record = $this->route('record');
+        foreach ($this->route()?->parameters() ?? [] as $value) {
+            if ($value instanceof Model) {
+                return $value;
+            }
+        }
 
-        return $record instanceof Model ? $record : null;
+        return null;
     }
 
     public function authorize(): Response

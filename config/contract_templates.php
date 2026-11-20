@@ -135,6 +135,27 @@ return [
         'legacy_default_tenant' => 't-01',
     ],
 
+    // Short texts of the saved-result messages (toasts). :name, :title, :usage are replaced.
+    'toast' => [
+        'clause_created' => 'Pasal ":title" ditambahkan.',
+        'clause_updated' => 'Pasal ":title" disimpan.',
+        'clause_deactivated' => 'Pasal ":title" disembunyikan dari pilihan baru. Masih disalin oleh :usage templat, dan templat itu tetap memakainya.',
+        'clause_reactivated' => 'Pasal ":title" ditampilkan lagi.',
+        'variable_created' => 'Kolom isian :name ditambahkan.',
+        'variable_updated' => 'Kolom isian :name disimpan.',
+        'variable_deactivated' => 'Kolom isian :name disembunyikan dari pilihan baru. Masih dipakai oleh :usage versi, dan versi itu tetap memakainya.',
+        'variable_reactivated' => 'Kolom isian :name ditampilkan lagi.',
+        'template_created' => 'Templat ":name" dibuat. Draf pertamanya siap diisi.',
+        'template_updated' => 'Templat ":name" disimpan.',
+        'template_deactivated' => 'Templat ":name" disembunyikan dari pilihan baru.',
+        'template_reactivated' => 'Templat ":name" ditampilkan lagi.',
+        'draft_saved' => 'Draf disimpan.',
+        'order_saved' => 'Urutan pasal disimpan.',
+        'published' => 'Versi :version diterbitkan. Kontrak baru akan memakai versi ini.',
+        'draft_started' => 'Draf baru dibuat dari versi :version.',
+        'duplicated' => 'Templat disalin menjadi ":name".',
+    ],
+
     'defaults' => [
 
         // code, name, type (text|number|date), description, default, source field.
