@@ -54,7 +54,8 @@ class TemplateController extends Controller
         return Inertia::render('contract-library/Templates', [
             'items' => ContractTemplateResource::collection($spec->paginate($query, $parsed)),
             'list' => $spec->meta($parsed),
-            'info' => ['search' => config()->string('contract_templates.list.search.templates')],
+            'info' => LibraryOptions::pageInfo('templates', 'contract_templates.list.search.templates'),
+            'options' => ['categories' => LibraryOptions::categories($tenant)],
             'company' => ['id' => $tenant->id, 'name' => $tenant->name],
             'companies' => $catalog->companies($request->user()),
         ]);
@@ -85,7 +86,8 @@ class TemplateController extends Controller
             'version' => $version === null ? null : (new TemplateVersionResource($version))->resolve($request),
             'versions' => TemplateVersion::query()->where('contract_template_id', $template->id)->orderByDesc('version_no')->get(['id', 'version_no', 'status', 'published_at'])
                 ->map(fn (TemplateVersion $item): array => ['id' => $item->id, 'version_no' => $item->version_no, 'status' => ['value' => $item->status->value, 'label' => $item->status->label()], 'published_at' => $item->published_at?->toIso8601String()])->values()->all(),
-            'options' => ['clauses' => LibraryOptions::clauses($tenant), 'fields' => LibraryOptions::fields($tenant)],
+            'options' => ['clauses' => LibraryOptions::clauses($tenant), 'fields' => LibraryOptions::fields($tenant), 'categories' => LibraryOptions::categories($tenant)],
+            'info' => LibraryOptions::pageInfo('templates', 'contract_templates.list.search.templates'),
             'company' => ['id' => $tenant->id, 'name' => $tenant->name],
         ]);
     }

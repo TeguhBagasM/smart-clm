@@ -38,7 +38,7 @@ test('a company user sees only finished menus they may open', function (SystemRo
 })->with([
     'admin' => [SystemRole::Admin, [
         'Dokumen Internal' => ['Tugas saya', 'Dokumen Terkontrol'],
-        'Master Data' => ['Pengaturan Dokumen', 'Daftar Pilihan', 'Data Vendor'],
+        'Master Data' => ['Pengaturan Dokumen', 'Klausul & Template', 'Daftar Pilihan', 'Data Vendor'],
         'AI Tools Hukum' => ['Bandingkan 2 Dokumen'],
         'Pengaturan Sistem' => ['Pengguna', 'Hak Akses'],
     ]],
@@ -92,3 +92,13 @@ test('a super admin sees the finished vendor menu, not a placeholder', function 
 
     expect($vendor['href'])->toBe('/master-data/vendors')->and($vendor['in_development'] ?? false)->toBeFalse();
 });
+
+test('the contract library menu shows to whoever may open a template, and to nobody else', function (SystemRole $role, bool $sees) {
+    $titles = menuFor(User::factory()->role($role)->create())['Master Data'] ?? [];
+
+    expect(in_array('Klausul & Template', $titles, true))->toBe($sees);
+})->with([
+    'legal' => [SystemRole::Legal, true],
+    'hr_ga' => [SystemRole::HrGa, false],
+    'viewer' => [SystemRole::Viewer, false],
+]);

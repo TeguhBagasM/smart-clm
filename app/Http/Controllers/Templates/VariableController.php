@@ -12,9 +12,9 @@ use App\Http\Resources\Templates\ContractVariableResource;
 use App\Models\Templates\ContractVariable;
 use App\Support\Listing\ContractVariableListSpec;
 use App\Support\MasterData\MasterDataCatalog;
+use App\Support\Templates\LibraryOptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -48,7 +48,7 @@ class VariableController extends Controller
         return Inertia::render('contract-library/Fields', [
             'items' => ContractVariableResource::collection($spec->paginate($query, $parsed)),
             'list' => $spec->meta($parsed),
-            'info' => ['search' => config()->string('contract_templates.list.search.variables'), 'sources' => config()->array('contract_templates.source_fields'), 'texts' => Arr::only(config()->array('contract_templates.messages'), ['code_format'])],
+            'info' => LibraryOptions::pageInfo('fields', 'contract_templates.list.search.variables') + ['sources' => LibraryOptions::sources(), 'types' => LibraryOptions::types()],
             'company' => ['id' => $tenant->id, 'name' => $tenant->name],
             'companies' => $catalog->companies($request->user()),
         ]);

@@ -15,7 +15,6 @@ use App\Support\MasterData\MasterDataCatalog;
 use App\Support\Templates\LibraryOptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -50,7 +49,8 @@ class ClauseController extends Controller
         return Inertia::render('contract-library/Clauses', [
             'items' => ContractClauseResource::collection($spec->paginate($query, $parsed)),
             'list' => $spec->meta($parsed),
-            'info' => ['search' => config()->string('contract_templates.list.search.clauses'), 'texts' => Arr::only(config()->array('contract_templates.messages'), ['body_html'])],
+            'info' => LibraryOptions::pageInfo('clauses', 'contract_templates.list.search.clauses'),
+            'options' => ['categories' => LibraryOptions::categories($tenant), 'field_codes' => array_column(LibraryOptions::fields($tenant), 'code')],
             'company' => ['id' => $tenant->id, 'name' => $tenant->name],
             'companies' => $catalog->companies($request->user()),
         ]);

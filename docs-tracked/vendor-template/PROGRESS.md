@@ -1,6 +1,6 @@
 # PROGRESS — Data Vendor dan Klausul & Template (Node → Laravel)
 
-Diperbarui: akhir Fase C6 (controller, route, tes HTTP). Fase C selesai; berikutnya fase D (UI). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
+Diperbarui: 2026-11-20, akhir Fase D (UI Klausul & Template, verifikasi sebagian; lihat `09-fase-d-ui.md`). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
 
 ## Selesai
 - Fase A: audit → `01-audit.md`. Semua rekomendasi disetujui pengguna ("Setuju semua").
@@ -12,9 +12,13 @@ Diperbarui: akhir Fase C6 (controller, route, tes HTTP). Fase C selesai; berikut
 - Fase C5: impor kolom isian, pasal, dan templat dari Node (dry-run, semua-atau-tidak, adopsi bawaan, rollback dengan batas templat terbit) → `07-c5-impor-node.md`. Suite: PostgreSQL 1718/1718, SQLite 1704 + 14 dilewati.
 - Fase C6: 23 route, 5 controller tipis, 37 tes HTTP; DB dev dimigrasi dan diisi bawaan (20 kolom isian, 8 pasal, 3 templat draf) → `08-c6-http.md`. Suite: PostgreSQL 1755/1755, SQLite 1741 + 14 dilewati.
 
+- Fase D (UI): halaman Klausul, Kolom isian, Templat, editor draf (simpan dengan revisi, susun pasal, kolom isian, perpustakaan, pratinjau, riwayat, terbitkan, salin, nonaktifkan), menu "Klausul & Template" aktif. Verifikasi: JS 124/124, PHP PostgreSQL 1758/1758, SQLite 1744 + 14 dilewati, build, tsc, lint. Perbaikan lebar 375 px di `DraftForm.vue`. Rincian dan daftar cek manual di `09-fase-d-ui.md`.
+
 ## Berikutnya
-- **BERHENTI** setelah C6 (akhir fase C): menunggu "lanjut" untuk fase D (halaman Vue) dan jawaban `08-c6-http.md` §7.
-- Fase D (UI): daftar klausul, kolom isian, templat, editor draf, pratinjau, perpustakaan, menu aktif. Mulai hanya setelah "lanjut".
+- Selesaikan verifikasi browser yang belum dicoba (768/1280, mode gelap, daftar, perpustakaan, dialog terbitkan, pratinjau, riwayat) dan daftar cek ponsel di `09-fase-d-ui.md` §4-§5.
+- Susun tabel paritas Node vs Laravel untuk Klausul & Template (`09-fase-d-ui.md` §6).
+- Selidiki batas memori 128 MB pada `artisan test` dan asal permintaan `PUT /templates/5` 422 yang sempat muncul.
+- Menunggu jawaban pengguna atas pertanyaan di `09-fase-d-ui.md` §7 sebelum commit.
 
 ## Keputusan yang berlaku
 - Semua keputusan `docs-tracked/master-data/PROGRESS.md` tetap berlaku (tanpa hapus permanen, nilai bawaan belum diverifikasi, larangan git, format hanya berkas sendiri).

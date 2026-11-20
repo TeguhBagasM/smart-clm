@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './comparison';
 export * from './config';
+export * from './contract-library';
 export * from './documents';
 export * from './list';
 export * from './master-data';
