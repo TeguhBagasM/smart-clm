@@ -128,6 +128,13 @@ return [
         'task' => 'Tulis satu pasal sesuai permintaan di atas. Balas hanya JSON.',
     ],
 
+    // Importing the Node library (contract-templates:import-legacy). Read-only on the Node side,
+    // through the connection of the master data import. Node stores variables without a tenantId
+    // under the default tenant (db.ts:346).
+    'import' => [
+        'legacy_default_tenant' => 't-01',
+    ],
+
     'defaults' => [
 
         // code, name, type (text|number|date), description, default, source field.

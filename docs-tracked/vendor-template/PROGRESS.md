@@ -1,6 +1,6 @@
 # PROGRESS — Data Vendor dan Klausul & Template (Node → Laravel)
 
-Diperbarui: akhir Fase C4 (saran AI untuk pasal). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
+Diperbarui: akhir Fase C5 (impor perpustakaan dari Node). Sebelum melanjutkan di sesi baru, baca ulang instruksi tugas, `CLAUDE.md`, `docs-tracked/master-data/PROGRESS.md`, lalu `01-audit.md`, `02-b-data-vendor.md` dan `03-c1-skema.md` di folder ini.
 
 ## Selesai
 - Fase A: audit → `01-audit.md`. Semua rekomendasi disetujui pengguna ("Setuju semua").
@@ -9,10 +9,11 @@ Diperbarui: akhir Fase C4 (saran AI untuk pasal). Sebelum melanjutkan di sesi ba
 - Fase C2: 9 Action, 3 Policy, 3 ListSpec, 4 Resource, 7 Form Request (tanpa controller/route/UI) → `04-c2-library.md`. Suite: PostgreSQL 1651/1651, SQLite 1637 + 14 dilewati.
 - Fase C3: parser placeholder, penjaga (pasal dan draf), renderer anti-injeksi, pratinjau dengan contoh → `05-c3-mesin-variabel.md`. Suite: PostgreSQL 1692/1692, SQLite 1678 + 14 dilewati.
 - Fase C4: saran pasal dengan AI (tanpa menyimpan, izin `templates.manage`, prompt tanpa data PT, keluaran divalidasi, audit tanpa isi) → `06-c4-saran-ai.md`. Suite: PostgreSQL 1704/1704, SQLite 1690 + 14 dilewati.
+- Fase C5: impor kolom isian, pasal, dan templat dari Node (dry-run, semua-atau-tidak, adopsi bawaan, rollback dengan batas templat terbit) → `07-c5-impor-node.md`. Suite: PostgreSQL 1718/1718, SQLite 1704 + 14 dilewati.
 
 ## Berikutnya
-- **BERHENTI** setelah C4: menunggu "lanjut" untuk C5 (impor dari Node) dan jawaban `06-c4-saran-ai.md` §7.
-- Lalu C5 (impor dari Node), C6 (controller, route, tes HTTP; berhenti wajib setelah C6).
+- **BERHENTI** setelah C5: menunggu "lanjut" untuk C6 (controller, route, halaman, tes HTTP) dan jawaban `07-c5-impor-node.md` §7.
+- Lalu C6 (controller, route, tes HTTP; migrasi dan isi DB dev; berhenti wajib setelah C6).
 
 ## Keputusan yang berlaku
 - Semua keputusan `docs-tracked/master-data/PROGRESS.md` tetap berlaku (tanpa hapus permanen, nilai bawaan belum diverifikasi, larangan git, format hanya berkas sendiri).
@@ -26,6 +27,7 @@ Diperbarui: akhir Fase C4 (saran AI untuk pasal). Sebelum melanjutkan di sesi ba
 
 ## Pertanyaan terbuka
 - Dari `02-b-data-vendor.md` §7: vendor uji di dev DB; rekening di salinan vendor pada kontrak kelak.
+- Dari `07-c5-impor-node.md` §7: rollback templat terbit (ditolak sekarang), dry run terhadap salinan Node.
 - Dari `04-c2-library.md` §7: pasal terlindungi cukup `templates.manage` atau perlu batasan tambahan.
 - Dari `03-c1-skema.md` §7 (sudah disetujui): tinggal migrasi dan isi DB dev saat C6.
 - Lama, dari `03-c1-skema.md` §7: pengganti `current_version_id`, `legacy_key` sebagai kunci bawaan, kolom isian `Salary`, migrasi/seed DB dev.
@@ -37,3 +39,4 @@ Diperbarui: akhir Fase C4 (saran AI untuk pasal). Sebelum melanjutkan di sesi ba
 - Fase C2: daftar lengkap di `04-c2-library.md` bagian "Berkas".
 - Fase C3: daftar lengkap di `05-c3-mesin-variabel.md` bagian "Berkas".
 - Fase C4: daftar lengkap di `06-c4-saran-ai.md` bagian "Berkas".
+- Fase C5: daftar lengkap di `07-c5-impor-node.md` bagian "Berkas".
