@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\AuthUserResource;
+use App\Support\Branding\CompanyBranding;
 use App\Support\Navigation\NavigationMenu;
 use App\Support\Rbac\PermissionResolver;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private PermissionResolver $permissionResolver, private NavigationMenu $navigationMenu) {}
+    public function __construct(private PermissionResolver $permissionResolver, private NavigationMenu $navigationMenu, private CompanyBranding $branding) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -43,6 +44,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'branding' => fn (): array => ['logo_url' => $this->branding->logoUrl($request->user())],
             'auth' => [
                 'user' => fn (): ?array => $request->user()
                     ? AuthUserResource::make($request->user())->resolve($request)

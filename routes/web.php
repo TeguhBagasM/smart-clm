@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserStatusController;
 use App\Http\Controllers\AiTools\DocumentComparisonController;
+use App\Http\Controllers\BrandingLogoController;
 use App\Http\Controllers\Documents\Config\ClauseConfigController;
 use App\Http\Controllers\Documents\Config\DepartmentConfigController;
 use App\Http\Controllers\Documents\Config\DocTypeConfigController;
@@ -50,6 +51,7 @@ use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('branding/logo', [BrandingLogoController::class, 'show'])->middleware('throttle:120,1')->name('branding.logo');
 
 // Outside parties open their review link without an account; the token is the credential.
 Route::prefix('tinjau/dcs/{token}')->middleware(['throttle:60,1', ProtectReviewLink::class])->where(['token' => '[A-Za-z0-9]+'])->name('external-review.')->group(function () {

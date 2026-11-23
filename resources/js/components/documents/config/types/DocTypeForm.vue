@@ -12,6 +12,7 @@ import FormActions from '@/components/documents/config/FormActions.vue';
 import StringListEditor from '@/components/documents/config/StringListEditor.vue';
 import NumberFormatHint from '@/components/documents/config/types/NumberFormatHint.vue';
 import HeaderLayoutEditor from '@/components/documents/config/header/HeaderLayoutEditor.vue';
+import HeaderStartChooser from '@/components/documents/config/header/HeaderStartChooser.vue';
 import type {
     ChoiceOption,
     DocTypeForm,
@@ -69,9 +70,10 @@ const state = reactive({
             ],
         },
     ],
-    header: JSON.parse(
-        JSON.stringify(source?.headerLayout ?? props.headerDefault),
-    ) as HeaderLayout,
+    // A new type starts with no letterhead chosen (the company default applies until it picks one).
+    header: (source
+        ? JSON.parse(JSON.stringify(source.headerLayout ?? props.headerDefault))
+        : null) as HeaderLayout | null,
     lanes: source?.defaultLanes ?? [],
     clauses: source?.defaultClauseIds ?? [],
 });
@@ -113,7 +115,17 @@ function payload(): Record<string, never> {
             />
             <NumberFormatHint :format="numberFormat" class="mt-4" />
         </Panel>
+        <HeaderStartChooser
+            v-if="state.header === null"
+            :presets="headerPresets"
+            :fields="headerFields"
+            :palette="headerPalette"
+            :brand-colors="brandColors"
+            :has-company-logo="hasCompanyLogo"
+            @choose="state.header = JSON.parse(JSON.stringify($event.layout))"
+        />
         <HeaderLayoutEditor
+            v-else
             v-model="state.header"
             :fields="headerFields"
             :default-layout="headerDefault"

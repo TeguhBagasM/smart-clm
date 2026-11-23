@@ -31,13 +31,14 @@ final class HeaderPainter
         $border = $this->rgb(HeaderGeometry::parseColor($layout['border']) ?? ['r' => 64, 'g' => 69, 'b' => 82]);
         $geo = HeaderGeometry::compute($layout, $boxW);
         $reactive = [];
+        $sides = $this->resolvedSides($geo, $layout);
 
-        foreach ($geo['cells'] as $box) {
+        foreach ($geo['cells'] as $index => $box) {
             $cell = $box['cell'];
             [$w, $h] = [$box['w'], $box['h']];
             [$x, $top] = [$boxLeft + $box['x'], $boxTop - $box['y']];
             $bg = HeaderGeometry::parseColor($cell['background'] ?? null);
-            $page->rect($x, $top - $h, $w, $h, $bg === null ? null : $this->rgb($bg), $border, 0.5, $bg['a'] ?? null);
+            $this->box($page, $x, $top, $w, $h, $sides[$index], $bg === null ? null : $this->rgb($bg), $border, $bg['a'] ?? null);
 
             $font = ! empty($cell['bold']) ? (! empty($cell['italic']) ? $fonts['boldItalic'] : $fonts['bold']) : (! empty($cell['italic']) ? $fonts['italic'] : $fonts['regular']);
             $size = HeaderGeometry::fontSize($cell, $h);
@@ -62,7 +63,7 @@ final class HeaderPainter
 
         if ($geo['logo'] !== null) {
             $lb = $geo['logo'];
-            $page->rect($boxLeft + $lb['x'], $boxTop - $lb['y'] - $lb['h'], $lb['w'], $lb['h'], null, $border, 0.5);
+            $this->box($page, $boxLeft + $lb['x'], $boxTop - $lb['y'], $lb['w'], $lb['h'], $sides[count($geo['cells'])], null, $border, null);
 
             if ($logo !== null) {
                 $fitted = HeaderGeometry::fitLogo($lb, $layout['logo']['padding'], $logo->width, $logo->height, $layout['logo']['valign']);
@@ -70,9 +71,60 @@ final class HeaderPainter
             }
         }
 
-        $page->rect($boxLeft, $boxTop - $geo['height'], $boxW, $geo['height'], null, $border, 1);
+        if ($layout['frame'] ?? true) {
+            $page->rect($boxLeft, $boxTop - $geo['height'], $boxW, $geo['height'], null, $border, 1);
+        }
 
         return $reactive;
+    }
+
+    /**
+     * The sides drawn for every cell (in order) and then the logo block.
+     *
+     * @param  array<string, mixed>  $geo
+     * @param  array<string, mixed>  $layout
+     * @return list<array{top: bool, right: bool, bottom: bool, left: bool}>
+     */
+    private function resolvedSides(array $geo, array $layout): array
+    {
+        $all = ['top' => true, 'right' => true, 'bottom' => true, 'left' => true];
+        $boxes = array_map(fn (array $b): array => ['x' => $b['x'], 'y' => $b['y'], 'w' => $b['w'], 'h' => $b['h'], 'want' => $b['cell']['borders'] ?? $all], $geo['cells']);
+
+        if ($geo['logo'] !== null) {
+            $lb = $geo['logo'];
+            $boxes[] = ['x' => $lb['x'], 'y' => $lb['y'], 'w' => $lb['w'], 'h' => $lb['h'], 'want' => ($layout['logo']['border'] ?? true) ? $all : array_map(fn (): bool => false, $all)];
+        }
+
+        return HeaderBorders::resolve($boxes);
+    }
+
+    /**
+     * A box with its fill and the sides that are drawn. With every side drawn it is one stroked rectangle
+     * (as before); otherwise the fill is painted alone and each wanted side is a line.
+     *
+     * @param  array{top: bool, right: bool, bottom: bool, left: bool}  $sides
+     * @param  array{0: float, 1: float, 2: float}|null  $fill
+     * @param  array{0: float, 1: float, 2: float}  $border
+     */
+    private function box(PageCanvas $page, float $x, float $top, float $w, float $h, array $sides, ?array $fill, array $border, ?float $fillOpacity): void
+    {
+        $bottom = $top - $h;
+
+        if (! in_array(false, $sides, true)) {
+            $page->rect($x, $bottom, $w, $h, $fill, $border, 0.5, $fillOpacity);
+
+            return;
+        }
+
+        if ($fill !== null) {
+            $page->rect($x, $bottom, $w, $h, $fill, null, 0, $fillOpacity);
+        }
+
+        foreach ([['top', $x, $top, $x + $w, $top], ['bottom', $x, $bottom, $x + $w, $bottom], ['left', $x, $bottom, $x, $top], ['right', $x + $w, $bottom, $x + $w, $top]] as [$side, $x1, $y1, $x2, $y2]) {
+            if ($sides[$side]) {
+                $page->line($x1, $y1, $x2, $y2, 0.5, $border);
+            }
+        }
     }
 
     /**

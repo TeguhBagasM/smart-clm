@@ -16,6 +16,7 @@ export function newCell(width: number, text = 'Teks'): HeaderCell {
         fontSize: null,
         background: null,
         color: 'auto',
+        borders: { top: true, right: true, bottom: true, left: true },
     };
 }
 

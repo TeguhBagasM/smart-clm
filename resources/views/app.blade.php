@@ -30,9 +30,13 @@
             }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @php($companyLogo = app(\App\Support\Branding\CompanyBranding::class)->logoUrl(auth()->user()))
+        @if ($companyLogo)
+            <link rel="icon" href="{{ $companyLogo }}">
+            <link rel="apple-touch-icon" href="{{ $companyLogo }}">
+        @else
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        @endif
 
         @fonts
 

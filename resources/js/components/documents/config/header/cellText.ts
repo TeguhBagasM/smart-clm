@@ -29,3 +29,15 @@ export function displayCell(
         width - 10,
     );
 }
+
+/** Where a cell's text starts and how it is anchored, for its alignment (5 pt of padding, as the PDF). */
+export function textAnchor(
+    cell: HeaderCell,
+    box: { x: number; w: number },
+): { x: number; anchor: 'start' | 'middle' | 'end' } {
+    if (cell.align === 'center')
+        return { x: box.x + box.w / 2, anchor: 'middle' };
+    if (cell.align === 'right') return { x: box.x + box.w - 5, anchor: 'end' };
+
+    return { x: box.x + 5, anchor: 'start' };
+}

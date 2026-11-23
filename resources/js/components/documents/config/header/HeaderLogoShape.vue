@@ -7,6 +7,7 @@ defineProps<{
     image: Box | null;
     url: string | null;
     border: string;
+    path: string;
     selected: boolean;
 }>();
 defineEmits<{ select: []; hover: [] }>();
@@ -29,9 +30,14 @@ defineEmits<{ select: []; hover: [] }>();
             :width="area.w"
             :height="area.h"
             fill="none"
+            pointer-events="all"
+        />
+        <path
+            :d="path"
+            fill="none"
             :stroke="safeColor(border)"
             stroke-width="0.5"
-            pointer-events="all"
+            pointer-events="none"
         />
         <image
             v-if="url && image"

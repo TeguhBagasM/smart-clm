@@ -14,7 +14,11 @@ import type {
     Selection,
     useHeaderEditor,
 } from '@/components/documents/config/header/useHeaderEditor';
+import CellBorders from '@/components/documents/config/header/CellBorders.vue';
+import { ALL_SIDES } from '@/components/documents/config/header/headerBorders';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import type { HeaderLayout } from '@/types';
 
 const layout = defineModel<HeaderLayout>({ required: true });
@@ -85,6 +89,10 @@ const cut = computed(() => {
                 :background="editor.cell.value.background"
                 :palette="context.palette"
             />
+            <CellBorders
+                :borders="editor.cell.value.borders ?? ALL_SIDES"
+                @update="editor.patchCell({ borders: $event })"
+            />
             <RowControls
                 :row="selection.row"
                 :height="layout.rows[selection.row].height"
@@ -96,12 +104,28 @@ const cut = computed(() => {
                 @add-column="editor.addColumn(selection.row)"
             />
         </template>
-        <LogoPanel
-            v-else-if="selection.kind === 'logo'"
-            :model-value="layout.logo"
-            :row-count="layout.rows.length"
-            @update:model-value="layout = { ...layout, logo: $event }"
-        />
+        <template v-else-if="selection.kind === 'logo'">
+            <LogoPanel
+                :model-value="layout.logo"
+                :row-count="layout.rows.length"
+                @update:model-value="layout = { ...layout, logo: $event }"
+            />
+            <Label
+                v-if="layout.logo.enabled"
+                class="flex items-center gap-2 border-t pt-4 font-normal"
+            >
+                <Checkbox
+                    :model-value="layout.logo.border !== false"
+                    @update:model-value="
+                        layout = {
+                            ...layout,
+                            logo: { ...layout.logo, border: $event === true },
+                        }
+                    "
+                />
+                Garis di sekeliling logo
+            </Label>
+        </template>
         <template v-else>
             <h3 class="text-sm font-medium">Seluruh kop</h3>
             <p class="text-sm text-muted-foreground">
@@ -119,6 +143,27 @@ const cut = computed(() => {
                     }
                 "
             />
+            <Label class="flex items-center gap-2 font-normal">
+                <Checkbox
+                    :model-value="layout.logo.enabled"
+                    @update:model-value="
+                        layout = {
+                            ...layout,
+                            logo: { ...layout.logo, enabled: $event === true },
+                        }
+                    "
+                />
+                Tampilkan logo di kop
+            </Label>
+            <Label class="flex items-center gap-2 font-normal">
+                <Checkbox
+                    :model-value="layout.frame !== false"
+                    @update:model-value="
+                        layout = { ...layout, frame: $event === true }
+                    "
+                />
+                Bingkai di sekeliling seluruh kop
+            </Label>
             <Button
                 type="button"
                 variant="outline"

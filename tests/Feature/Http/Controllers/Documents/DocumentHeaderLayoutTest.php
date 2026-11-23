@@ -197,7 +197,7 @@ describe('presets', function () {
     it('offers presets that all pass the same rules as a saved letterhead, with the default first', function () {
         $presets = HeaderLayout::presets();
 
-        expect($presets[0]['key'])->toBe('sop')->and($presets[0]['layout'])->toBe(HeaderLayout::default())->and($presets[1]['key'])->toBe('iso')->and($presets[1]['layout'])->toBe(HeaderLayout::legacyIso());
+        expect($presets[0]['key'])->toBe('sop')->and($presets[0]['layout'])->toBe(HeaderLayout::default())->and($presets[1]['key'])->toBe('iso')->and($presets[1]['layout'])->toBe(HeaderLayout::preset('iso')['layout']);
 
         foreach ($presets as $preset) {
             $layout = $preset['layout'];
@@ -223,5 +223,62 @@ describe('legacy letterheads in the database', function () {
         expect($old->refresh()->header_layout['version'])->toBe(2)
             ->and($old->header_layout['rows'][0]['cells'][0])->toMatchArray(['text' => '{docTypeName}', 'background' => '#243661', 'color' => '#FFFFFF'])
             ->and($new->refresh()->header_layout)->toEqual(HeaderLayout::default());
+    });
+});
+
+describe('lines', function () {
+    it('draws every line of a letterhead saved before the options existed, and keeps the choices of one saved after', function () {
+        $old = HeaderLayout::default();
+        unset($old['frame'], $old['logo']['border']);
+        $old['rows'][0]['cells'][0] = array_diff_key($old['rows'][0]['cells'][0], ['borders' => 1]);
+
+        $normalized = HeaderLayout::normalize($old);
+
+        expect($normalized['frame'])->toBeTrue()
+            ->and($normalized['logo']['border'])->toBeTrue()
+            ->and($normalized['rows'][0]['cells'][0]['borders'])->toBe(['top' => true, 'right' => true, 'bottom' => true, 'left' => true]);
+
+        $custom = HeaderLayout::default();
+        $custom['frame'] = false;
+        $custom['logo']['border'] = false;
+        $custom['rows'][0]['cells'][0]['borders'] = ['top' => false, 'right' => false, 'bottom' => true, 'left' => false];
+
+        $this->actingAs($this->admin)->post(route('documents.config.types.store'), [...hdrType(), 'headerLayout' => $custom])->assertSessionHasNoErrors();
+        $saved = $this->tenant->dcsDocumentTypes()->where('code', 'PRG')->first()->header_layout;
+
+        expect($saved['frame'])->toBeFalse()
+            ->and($saved['logo']['border'])->toBeFalse()
+            ->and($saved['rows'][0]['cells'][0]['borders'])->toEqual(['top' => false, 'right' => false, 'bottom' => true, 'left' => false]);
+    });
+
+    it('refuses a line option that is not a yes or no', function () {
+        $bad = HeaderLayout::default();
+        $bad['rows'][0]['cells'][0]['borders']['top'] = 'kadang';
+
+        $this->actingAs($this->admin)->post(route('documents.config.types.store'), [...hdrType(), 'headerLayout' => $bad])->assertSessionHasErrors('headerLayout.rows.0.cells.0.borders.top');
+    });
+
+    it('offers templates for a logo with a line under it and for an empty letterhead, both without boxes', function () {
+        $logo = HeaderLayout::preset('logo-garis')['layout'];
+        $empty = HeaderLayout::preset('kosong')['layout'];
+
+        expect($logo['frame'])->toBeFalse()->and($logo['logo']['border'])->toBeFalse()->and($logo['rows'][1]['cells'][0]['borders'])->toEqual(['top' => false, 'right' => false, 'bottom' => true, 'left' => false])
+            ->and($empty['logo']['enabled'])->toBeFalse()->and($empty['rows'])->toHaveCount(1);
+    });
+});
+
+describe('starting a new type', function () {
+    it('keeps the company default when no letterhead was chosen, and keeps the choice when one was', function () {
+        $this->actingAs($this->admin)->post(route('documents.config.types.store'), [...hdrType(), 'code' => 'NOL', 'name' => 'Tanpa pilihan', 'headerLayout' => null])->assertSessionHasNoErrors();
+        $this->actingAs($this->admin)->post(route('documents.config.types.store'), [...hdrType(), 'code' => 'PIL', 'name' => 'Dengan pilihan', 'headerLayout' => HeaderLayout::preset('logo-garis')['layout']])->assertSessionHasNoErrors();
+
+        $none = $this->tenant->dcsDocumentTypes()->where('code', 'NOL')->first();
+        $chosen = $this->tenant->dcsDocumentTypes()->where('code', 'PIL')->first();
+
+        expect($none->header_layout)->toBeNull()
+            ->and($chosen->header_layout['frame'])->toBeFalse()
+            ->and($chosen->header_layout['rows'])->toHaveCount(2);
+
+        $this->actingAs($this->admin)->get(route('documents.config.types.edit', $none->uuid))->assertInertia(fn (Assert $page) => $page->where('type.headerLayout.rows.0.cells.0.text', '{companyName}'));
     });
 });

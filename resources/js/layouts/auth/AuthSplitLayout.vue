@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { FileCheck2, ShieldCheck, Workflow } from '@lucide/vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BrandMark from '@/components/BrandMark.vue';
 import { home } from '@/routes';
 
 const name = usePage().props.name;
@@ -27,11 +27,7 @@ const highlights = [
                 :href="home()"
                 class="flex items-center gap-3 text-lg font-semibold"
             >
-                <span
-                    class="flex size-10 items-center justify-center rounded-xl bg-primary-foreground/15"
-                >
-                    <AppLogoIcon class="size-6 fill-current" />
-                </span>
+                <BrandMark size="lg" tone="on-primary" />
                 {{ name }}
             </Link>
 
@@ -63,11 +59,7 @@ const highlights = [
                     :href="home()"
                     class="flex items-center gap-2 font-semibold lg:hidden"
                 >
-                    <span
-                        class="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground"
-                    >
-                        <AppLogoIcon class="size-5 fill-current" />
-                    </span>
+                    <BrandMark size="md" tone="primary" />
                     {{ name }}
                 </Link>
 

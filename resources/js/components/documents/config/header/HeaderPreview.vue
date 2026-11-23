@@ -2,7 +2,11 @@
 import { computed, inject, useId } from 'vue';
 import { safeColor } from '@/components/documents/config/header/color/colorMath';
 import { headerContextKey } from '@/components/documents/config/header/headerContext';
-import { displayCell } from '@/components/documents/config/header/cellText';
+import {
+    displayCell,
+    textAnchor,
+} from '@/components/documents/config/header/cellText';
+import { useHeaderBorders } from '@/components/documents/config/header/useHeaderBorders';
 import { nextCellSelection } from '@/components/documents/config/header/canvasKeys';
 import type { Selection } from '@/components/documents/config/header/useHeaderEditor';
 import HeaderLogoShape from '@/components/documents/config/header/HeaderLogoShape.vue';
@@ -12,8 +16,8 @@ import {
     computeGeometry,
     fontSizeOf,
     type CellBox,
-    type HeaderLayout,
 } from '@/lib/headerGeometry';
+import type { HeaderLayout } from '@/types';
 
 /**
  * The letterhead as the PDF prints it: the same geometry (lib/headerGeometry.ts)
@@ -35,6 +39,7 @@ const samples = computed(() =>
 const geometry = computed(() =>
     computeGeometry(props.layout, PAGE_CONTENT_WIDTH),
 );
+const { cellPath, logoPath } = useHeaderBorders(() => props.layout, geometry);
 const { url: logoUrl, box: logoBox } = useLogoBox(
     () => props.layout,
     () => geometry.value.logo,
@@ -123,27 +128,20 @@ function textFill(
                 :width="box.w"
                 :height="box.h"
                 :fill="safeColor(box.cell.background) ?? 'none'"
-                :stroke="safeColor(layout.border)"
-                stroke-width="0.5"
                 pointer-events="all"
             />
+            <path
+                :d="cellPath(i)"
+                fill="none"
+                :stroke="safeColor(layout.border)"
+                stroke-width="0.5"
+                pointer-events="none"
+            />
             <text
-                :x="
-                    box.cell.align === 'center'
-                        ? box.x + box.w / 2
-                        : box.cell.align === 'right'
-                          ? box.x + box.w - 5
-                          : box.x + 5
-                "
+                :x="textAnchor(box.cell, box).x"
                 :y="box.y + box.h / 2"
                 dominant-baseline="central"
-                :text-anchor="
-                    box.cell.align === 'center'
-                        ? 'middle'
-                        : box.cell.align === 'right'
-                          ? 'end'
-                          : 'start'
-                "
+                :text-anchor="textAnchor(box.cell, box).anchor"
                 :font-size="fontSizeOf(box.cell, box.h)"
                 :font-weight="box.cell.bold ? 700 : 400"
                 :font-style="box.cell.italic ? 'italic' : 'normal'"
@@ -173,11 +171,13 @@ function textFill(
             :image="logoBox"
             :url="logoUrl"
             :border="layout.border"
+            :path="logoPath"
             :selected="selection?.kind === 'logo'"
             @select="emit('select', { kind: 'logo' })"
             @hover="emit('hover', { kind: 'logo' })"
         />
         <rect
+            v-if="layout.frame !== false"
             x="0"
             y="0"
             :width="geometry.width"

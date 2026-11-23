@@ -17,13 +17,11 @@ export type Selection =
 export function useHeaderEditor(layout: Ref<HeaderLayout>) {
     const selected = ref<Selection>({ kind: 'header' });
 
-    /** The selection, or the whole header when what it pointed at is gone. */
+    /** The selection, or the whole header when the cell it pointed at is gone. The logo stays selectable when it is switched off, so it can be switched on again. */
     const selection = computed<Selection>(() => {
         const s = selected.value;
 
         if (s.kind === 'cell' && !layout.value.rows[s.row]?.cells[s.cell])
-            return { kind: 'header' };
-        if (s.kind === 'logo' && !layout.value.logo.enabled)
             return { kind: 'header' };
 
         return s;

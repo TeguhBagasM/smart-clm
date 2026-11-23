@@ -104,3 +104,18 @@ describe('editor state', () => {
         expect(e2.canDelete.value).toBe(false);
     });
 });
+
+describe('logo selection', () => {
+    it('stays selectable after the logo is switched off, so it can be switched on again', () => {
+        const model = ref(layout());
+        const editor = useHeaderEditor(model);
+
+        editor.select({ kind: 'logo' });
+        model.value = {
+            ...model.value,
+            logo: { ...model.value.logo, enabled: false },
+        };
+
+        expect(editor.selection.value).toEqual({ kind: 'logo' });
+    });
+});

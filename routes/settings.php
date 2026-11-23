@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\CompanyController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -20,4 +21,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
+
+    Route::get('settings/company', [CompanyController::class, 'edit'])->name('company.edit');
+    Route::post('settings/company/logo', [CompanyController::class, 'update'])->middleware('throttle:20,1')->name('company.logo.update');
+    Route::delete('settings/company/logo', [CompanyController::class, 'destroy'])->name('company.logo.destroy');
 });

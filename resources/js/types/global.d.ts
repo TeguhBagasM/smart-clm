@@ -19,6 +19,7 @@ declare module '@inertiajs/core' {
     export interface InertiaConfig {
         sharedPageProps: {
             name: string;
+            branding: { logo_url: string | null };
             auth: Auth;
             navigation: NavModule[];
             sidebarOpen: boolean;

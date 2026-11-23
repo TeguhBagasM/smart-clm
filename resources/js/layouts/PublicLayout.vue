@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BrandMark from '@/components/BrandMark.vue';
 import { Toaster } from '@/components/ui/sonner';
 </script>
 
@@ -9,7 +9,7 @@ import { Toaster } from '@/components/ui/sonner';
             <div
                 class="mx-auto flex max-w-3xl items-center gap-2 px-4 py-3 md:px-6"
             >
-                <AppLogoIcon class="size-7 fill-current" />
+                <BrandMark size="sm" tone="plain" />
                 <span class="font-semibold">Smart CLM</span>
                 <span class="text-sm text-muted-foreground">
                     · Tinjauan dokumen

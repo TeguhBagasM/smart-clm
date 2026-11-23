@@ -98,6 +98,13 @@ export type NumberingRow = {
 };
 
 /** Schema version 2 of App\Support\Dcs\Header\HeaderLayout: colours are hex, a cell is one text with {field} placeholders. */
+export type HeaderSides = {
+    top: boolean;
+    right: boolean;
+    bottom: boolean;
+    left: boolean;
+};
+
 export type HeaderCell = {
     width: number;
     text: string;
@@ -108,6 +115,8 @@ export type HeaderCell = {
     fontSize: number | null;
     background: string | null;
     color: string;
+    /** Which sides are drawn (all when missing); a line shared with the next cell needs both cells to show it. */
+    borders?: HeaderSides;
 };
 
 export type HeaderRow = { height: number; cells: HeaderCell[] };
@@ -121,11 +130,14 @@ export type HeaderLogo = {
     width: number;
     valign: 'top' | 'middle' | 'bottom';
     padding: number;
+    border?: boolean;
 };
 
 export type HeaderLayout = {
     version: number;
     border: string;
+    /** The outer rectangle of the whole letterhead. */
+    frame?: boolean;
     logo: HeaderLogo;
     rows: HeaderRow[];
 };

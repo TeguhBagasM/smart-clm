@@ -13,13 +13,18 @@ use Illuminate\Validation\Rule;
  * white after the background). A cell's `text` is free text with `{field}`
  * placeholders taken from {@see HeaderField}.
  *
+ * Lines are optional and default to "drawn": each cell has `borders` (top, right, bottom, left), the
+ * whole header has a `frame` (the outer rectangle) and the logo block a `border`. A line shared by two
+ * cells is drawn only when both cells show it ({@see HeaderBorders}).
+ *
  * Version 1 (cells with `span` in twelfths and a `fill` name) is converted by
  * {@see self::fromV1()}, to the very same colours the engine used to draw.
  *
- * @phpstan-type Cell array{width: float, text: string, bold: bool, italic: bool, uppercase: bool, align: string, fontSize: int|null, background: string|null, color: string}
+ * @phpstan-type Borders array{top: bool, right: bool, bottom: bool, left: bool}
+ * @phpstan-type Cell array{width: float, text: string, bold: bool, italic: bool, uppercase: bool, align: string, fontSize: int|null, background: string|null, color: string, borders: Borders}
  * @phpstan-type Row array{height: int, cells: list<Cell>}
- * @phpstan-type Logo array{enabled: bool, source: string, assetId: string|null, side: string, rows: int, width: int, valign: string, padding: int}
- * @phpstan-type Layout array{version: int, border: string, logo: Logo, rows: list<Row>}
+ * @phpstan-type Logo array{enabled: bool, source: string, assetId: string|null, side: string, rows: int, width: int, valign: string, padding: int, border: bool}
+ * @phpstan-type Layout array{version: int, border: string, frame: bool, logo: Logo, rows: list<Row>}
  */
 final class HeaderLayout
 {
@@ -34,91 +39,47 @@ final class HeaderLayout
     /** Widest gap from 100 (percent) that is still accepted as "adds up to 100". */
     private const WIDTH_TOLERANCE = 0.5;
 
+    /** @var Borders */
+    public const ALL_SIDES = ['top' => true, 'right' => true, 'bottom' => true, 'left' => true];
+
     /**
-     * The layout shipped for every document type that has none of its own: the Indonesian SOP
-     * control form. The company name on top, the type and the title under it, then the number,
-     * issue ("Terbit ke") and revision ("Revisi ke"), and the effective date and page. The logo
-     * sits beside all five rows.
+     * The layout of every document type that has none of its own: the template named by
+     * `dcs_header_presets.default`.
      *
      * @return Layout
      */
     public static function default(): array
     {
-        $title = ['bold' => true, 'uppercase' => true, 'align' => 'center'];
-
-        return [
-            'version' => self::VERSION,
-            'border' => HeaderPalette::BORDER,
-            'logo' => ['enabled' => true, 'source' => 'company', 'assetId' => null, 'side' => 'left', 'rows' => 5, 'width' => 21, 'valign' => 'middle', 'padding' => 8],
-            'rows' => [
-                self::row(26, [self::cell('{companyName}', 100, [...$title, 'fontSize' => 14])]),
-                self::row(18, [self::cell('{docTypeName}', 100, [...$title, 'fontSize' => 10])]),
-                self::row(18, [self::cell('{title}', 100, [...$title, 'fontSize' => 10])]),
-                self::row(20, [self::cell('No. Dokumen : {documentNumber}', 45), self::cell('Terbit ke : {issueNumber}', 26), self::cell('Revisi ke : {revisionIndex}', 29)]),
-                self::row(20, [self::cell('Tanggal Efektif : {issuedDate}', 45), self::cell('Halaman : {pageOf}', 55)]),
-            ],
-        ];
+        return self::preset((string) config('dcs_header_presets.default'))['layout'];
     }
 
     /**
-     * The earlier ISO-style layout (logo beside four rows, dark title band, six metadata cells).
-     *
-     * @return Layout
-     */
-    public static function legacyIso(): array
-    {
-        $band = ['bold' => true, 'uppercase' => true, 'align' => 'center'];
-
-        return [
-            'version' => self::VERSION,
-            'border' => HeaderPalette::BORDER,
-            'logo' => ['enabled' => true, 'source' => 'company', 'assetId' => null, 'side' => 'left', 'rows' => 4, 'width' => 22, 'valign' => 'middle', 'padding' => 8],
-            'rows' => [
-                self::row(20, [self::cell('{docTypeName}', 100, [...$band, 'background' => HeaderPalette::DARK, 'color' => HeaderPalette::WHITE])]),
-                self::row(20, [self::cell('{title}', 100, [...$band, 'uppercase' => false])]),
-                self::row(18, [self::cell('Nomor Dokumen : {documentNumber}', 58.33), self::cell('Tanggal Diterbitkan : {issuedDate}', 41.67)]),
-                self::row(18, [self::cell('Nomor Revisi/Tahun : {revisionLabel}', 58.33), self::cell('Nomor Halaman : {page}', 41.67)]),
-                self::row(18, [self::cell('Bahasa : {language}', 58.33), self::cell('Tingkat Dokumen : {documentLevel}', 41.67)]),
-                self::row(18, [self::cell('Pemilik Proses : {processOwner}', 58.33), self::cell('Status Dokumen : {status}', 41.67)]),
-            ],
-        ];
-    }
-
-    /**
-     * The starting points the editor offers. "sop" is the shipped default.
+     * The starting points the editor offers (`config/dcs_header_presets.php`), the default first.
      *
      * @return list<array{key: string, name: string, description: string, layout: Layout}>
      */
     public static function presets(): array
     {
-        $band = ['bold' => true, 'align' => 'center'];
-        $logo = self::default()['logo'];
+        $presets = array_values((array) config('dcs_header_presets.presets'));
+        $default = (string) config('dcs_header_presets.default');
 
-        return [
-            ['key' => 'sop', 'name' => 'Kop SOP Indonesia', 'description' => 'Logo di kiri, nama perusahaan, jenis dan judul, lalu nomor, terbit ke, revisi ke, tanggal efektif, dan halaman.', 'layout' => self::default()],
-            ['key' => 'iso', 'name' => 'Kop ISO', 'description' => 'Logo di kiri, pita judul biru tua, dan enam isian metadata.', 'layout' => self::legacyIso()],
-            ['key' => 'sederhana', 'name' => 'Kop sederhana', 'description' => 'Logo di kiri dengan empat baris: jenis, judul, nomor, dan halaman.', 'layout' => [
-                'version' => self::VERSION,
-                'border' => HeaderPalette::BORDER,
-                'logo' => [...$logo, 'rows' => 4, 'width' => 20],
-                'rows' => [
-                    self::row(20, [self::cell('{docTypeName}', 100, [...$band, 'uppercase' => true])]),
-                    self::row(22, [self::cell('{title}', 100, $band)]),
-                    self::row(18, [self::cell('Nomor : {documentNumber}', 60), self::cell('Revisi : {revisionLabel}', 40)]),
-                    self::row(18, [self::cell('Terbit : {issuedDate}', 60), self::cell('Halaman : {page}', 40)]),
-                ],
-            ]],
-            ['key' => 'tanpa-logo', 'name' => 'Kop tanpa logo', 'description' => 'Tiga baris selebar halaman, tanpa logo.', 'layout' => [
-                'version' => self::VERSION,
-                'border' => HeaderPalette::BORDER,
-                'logo' => [...$logo, 'enabled' => false, 'rows' => 1],
-                'rows' => [
-                    self::row(20, [self::cell('{docTypeName}', 100, [...$band, 'uppercase' => true, 'background' => HeaderPalette::DARK, 'color' => HeaderPalette::WHITE])]),
-                    self::row(20, [self::cell('{title}', 100, $band)]),
-                    self::row(18, [self::cell('Nomor Dokumen : {documentNumber}', 60), self::cell('Status : {status}', 40)]),
-                ],
-            ]],
-        ];
+        usort($presets, fn (array $a, array $b): int => ($b['key'] === $default) <=> ($a['key'] === $default));
+
+        return $presets;
+    }
+
+    /**
+     * @return array{key: string, name: string, description: string, layout: Layout}
+     */
+    public static function preset(string $key): array
+    {
+        foreach ((array) config('dcs_header_presets.presets') as $preset) {
+            if ($preset['key'] === $key) {
+                return $preset;
+            }
+        }
+
+        throw new \InvalidArgumentException("Unknown letterhead template [{$key}].");
     }
 
     /**
@@ -146,6 +107,7 @@ final class HeaderLayout
             'fontSize' => $style['fontSize'] ?? null,
             'background' => $style['background'] ?? null,
             'color' => $style['color'] ?? HeaderPalette::TEXT,
+            'borders' => self::ALL_SIDES,
         ];
     }
 
@@ -163,6 +125,7 @@ final class HeaderLayout
             $prefix => ['nullable', 'array'],
             "$prefix.version" => ['required_with:'.$prefix, 'integer', Rule::in([self::VERSION])],
             "$prefix.border" => ['required_with:'.$prefix, 'string', $hex],
+            "$prefix.frame" => ['nullable', 'boolean'],
             "$prefix.logo" => ['required_with:'.$prefix, 'array'],
             "$prefix.logo.enabled" => ['required_with:'.$prefix, 'boolean'],
             "$prefix.logo.source" => ['required_with:'.$prefix, Rule::in(['company', 'custom'])],
@@ -172,6 +135,7 @@ final class HeaderLayout
             "$prefix.logo.width" => ['required_with:'.$prefix, 'integer', 'min:10', 'max:40'],
             "$prefix.logo.valign" => ['required_with:'.$prefix, Rule::in(['top', 'middle', 'bottom'])],
             "$prefix.logo.padding" => ['required_with:'.$prefix, 'integer', 'min:0', 'max:20'],
+            "$prefix.logo.border" => ['nullable', 'boolean'],
             "$prefix.rows" => ['required_with:'.$prefix, 'array', 'min:1', 'max:'.self::MAX_ROWS],
             "$prefix.rows.*.height" => ['required', 'integer', 'min:12', 'max:60'],
             "$prefix.rows.*.cells" => ['required', 'array', 'min:1', 'max:'.self::MAX_CELLS],
@@ -184,6 +148,11 @@ final class HeaderLayout
             "$prefix.rows.*.cells.*.fontSize" => ['nullable', 'integer', 'min:6', 'max:14'],
             "$prefix.rows.*.cells.*.background" => ['nullable', 'string', $hex],
             "$prefix.rows.*.cells.*.color" => ['required', 'string', 'regex:'.HeaderPalette::COLOR_PATTERN],
+            "$prefix.rows.*.cells.*.borders" => ['nullable', 'array'],
+            "$prefix.rows.*.cells.*.borders.top" => ['nullable', 'boolean'],
+            "$prefix.rows.*.cells.*.borders.right" => ['nullable', 'boolean'],
+            "$prefix.rows.*.cells.*.borders.bottom" => ['nullable', 'boolean'],
+            "$prefix.rows.*.cells.*.borders.left" => ['nullable', 'boolean'],
         ];
     }
 
@@ -281,6 +250,7 @@ final class HeaderLayout
                     'fontSize' => isset($cell['fontSize']) ? (int) $cell['fontSize'] : null,
                     'background' => isset($cell['background']) && $cell['background'] !== '' ? HeaderPalette::canonical((string) $cell['background']) : null,
                     'color' => HeaderPalette::canonical((string) $cell['color']),
+                    'borders' => self::sides($cell['borders'] ?? null),
                 ], $cells, $widths),
             ];
         }, array_values($input['rows']));
@@ -290,6 +260,7 @@ final class HeaderLayout
         return [
             'version' => self::VERSION,
             'border' => HeaderPalette::canonical((string) $input['border']),
+            'frame' => (bool) ($input['frame'] ?? true),
             'logo' => [
                 'enabled' => (bool) $logo['enabled'],
                 'source' => (string) $logo['source'],
@@ -299,8 +270,26 @@ final class HeaderLayout
                 'width' => (int) $logo['width'],
                 'valign' => (string) $logo['valign'],
                 'padding' => (int) $logo['padding'],
+                'border' => (bool) ($logo['border'] ?? true),
             ],
             'rows' => $rows,
+        ];
+    }
+
+    /**
+     * The four sides of a cell as booleans; a side that is not given is drawn.
+     *
+     * @return Borders
+     */
+    private static function sides(mixed $borders): array
+    {
+        $given = is_array($borders) ? $borders : [];
+
+        return [
+            'top' => (bool) ($given['top'] ?? true),
+            'right' => (bool) ($given['right'] ?? true),
+            'bottom' => (bool) ($given['bottom'] ?? true),
+            'left' => (bool) ($given['left'] ?? true),
         ];
     }
 
