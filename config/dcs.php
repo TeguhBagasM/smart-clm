@@ -46,23 +46,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | AI Services
-    |--------------------------------------------------------------------------
-    |
-    | Translation and metadata extraction call Gemini through the Node
-    | application's internal endpoint, which keeps the API key and the prompts.
-    | PDFs no longer go through Node: they are drawn inside Laravel (PhpPdfEngine).
-    |
-    */
-
-    'ai' => [
-        'url' => env('DCS_AI_URL'),
-        'secret' => env('DCS_AI_SECRET'),
-        'timeout' => (int) env('DCS_AI_TIMEOUT', 120),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Appendix Uploads and Review Links
     |--------------------------------------------------------------------------
     |

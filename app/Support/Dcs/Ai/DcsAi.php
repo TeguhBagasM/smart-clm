@@ -3,8 +3,8 @@
 namespace App\Support\Dcs\Ai;
 
 /**
- * The AI services DCS uses. Today they run in the Node application (which holds
- * the Gemini key and the prompts); the interface keeps the actions independent of that.
+ * The AI services DCS uses. They run through the shared LLM layer (LlmDcsAi); the
+ * interface keeps the actions independent of the provider and lets tests bind a fake.
  */
 interface DcsAi
 {

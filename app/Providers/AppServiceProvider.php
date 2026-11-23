@@ -10,7 +10,7 @@ use App\Support\Comparison\Extraction\OcrEngine;
 use App\Support\Comparison\Extraction\PdfReader;
 use App\Support\Comparison\Extraction\PopplerPdfReader;
 use App\Support\Dcs\Ai\DcsAi;
-use App\Support\Dcs\Ai\NodeDcsAi;
+use App\Support\Dcs\Ai\LlmDcsAi;
 use App\Support\Dcs\CurrentTenant;
 use App\Support\Dcs\Notifications\DcsNotifier;
 use App\Support\Dcs\Notifications\NullDcsNotifier;
@@ -37,11 +37,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LlmManager::class);
         $this->app->bind(PdfReader::class, PopplerPdfReader::class);
         $this->app->bind(OcrEngine::class, LlmOcrEngine::class);
-        $this->app->bind(DcsAi::class, fn (): DcsAi => new NodeDcsAi(
-            config('dcs.ai.url'),
-            config('dcs.ai.secret'),
-            (int) config('dcs.ai.timeout'),
-        ));
+        $this->app->bind(DcsAi::class, LlmDcsAi::class);
         $this->app->bind(DcsNotifier::class, NullDcsNotifier::class);
         $this->app->bind(PdfEngine::class, fn (): PdfEngine => new PhpPdfEngine(config('dcs.numbering_timezone') ?? config('app.timezone')));
     }
