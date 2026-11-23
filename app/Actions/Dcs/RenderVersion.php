@@ -124,7 +124,7 @@ class RenderVersion
             'processOwner' => $type->process_owner !== '' ? $type->process_owner : $document->department->code,
             'language' => $content->language_mode === 'multi' ? 'Indonesia / English' : 'Indonesia',
             'issuedDateIso' => collect($history)->firstWhere('effectiveAt', '!=', null)['effectiveAt'] ?? null,
-            'header' => ['layout' => $headerLayout, 'values' => $this->headerValues($version, $content)],
+            'header' => ['layout' => $headerLayout, 'values' => $this->headerValues($version, $content, $settings)],
             'statusLabel' => 'Draft',
             'confidentialityNotice' => $settings->confidentiality_notice ?: null,
         ];
@@ -157,7 +157,7 @@ class RenderVersion
      *
      * @return array<string, string>
      */
-    private function headerValues(DocumentVersion $version, VersionContent $content): array
+    private function headerValues(DocumentVersion $version, VersionContent $content, TenantSetting $settings): array
     {
         $document = $version->document;
         $type = $document->type;
@@ -169,6 +169,8 @@ class RenderVersion
             HeaderField::DocTypeCode->value => $type->code,
             HeaderField::IssueNumber->value => (string) $version->major,
             HeaderField::RevisionNumber->value => str_pad((string) $version->minor, 2, '0', STR_PAD_LEFT),
+            HeaderField::RevisionIndex->value => (string) $version->minor,
+            HeaderField::CompanyName->value => (string) $settings->company_name,
             HeaderField::RevisionLabel->value => str_pad((string) $version->minor, 2, '0', STR_PAD_LEFT).'/'.substr((string) ($version->created_at ?? now())->format('Y'), -2),
             HeaderField::Language->value => $content->language_mode === 'multi' ? 'Indonesia / English' : 'Indonesia',
             HeaderField::DocumentLevel->value => $type->document_level,

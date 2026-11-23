@@ -124,7 +124,11 @@ final class HeaderGeometry
                 return '';
             }
 
-            return $m[1] === 'page' ? "Page {$pageNo} Of {$pageTotal}" : ($values[$m[1]] ?? '');
+            return match ($m[1]) {
+                'page' => "Page {$pageNo} Of {$pageTotal}",
+                'pageOf' => "{$pageNo} dari {$pageTotal}",
+                default => $values[$m[1]] ?? '',
+            };
         }, $cell['text']);
 
         return ['text' => ! empty($cell['uppercase']) ? mb_strtoupper($text) : $text, 'reactive' => $reactive];

@@ -74,7 +74,7 @@ describe('layout rules', function () {
         $twice = HeaderLayout::default();
         $twice['rows'][1]['cells'][0]['text'] = 'Tanggal {issuedDate}';
 
-        expect(HeaderLayout::problems($twice))->toHaveKey('rows.2.cells.1.text');
+        expect(HeaderLayout::problems($twice))->toHaveKey('rows.4.cells.0.text');
     });
 
     it('keeps the logo inside the rows that exist, corrects the last cell to make 100 and strips tags', function () {
@@ -120,7 +120,7 @@ describe('document type form', function () {
         $layout = HeaderLayout::default();
         $layout['rows'][0]['cells'][0]['text'] = 'Dokumen Resmi';
         $layout['rows'][0]['cells'][0]['background'] = '#ab12cd';
-        $layout['rows'][5]['cells'][1]['text'] = 'Pemilik : {owner}';
+        $layout['rows'][4]['cells'][1]['text'] = 'Pemilik : {owner}';
 
         $this->actingAs($this->admin)->post(route('documents.config.types.store'), [...hdrType(), 'headerLayout' => $layout])->assertSessionHasNoErrors();
         $type = $this->tenant->dcsDocumentTypes()->where('code', 'PRG')->first();
@@ -129,9 +129,9 @@ describe('document type form', function () {
 
         $this->actingAs($this->admin)->get(route('documents.config.types.edit', $type->uuid))->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('type.headerLayout.rows.0.cells.0.background', '#AB12CD')
-            ->where('type.headerLayout.rows.5.cells.1.text', 'Pemilik : {owner}')
+            ->where('type.headerLayout.rows.4.cells.1.text', 'Pemilik : {owner}')
             ->has('header_fields', count(HeaderField::cases()))
-            ->where('header_default.logo.rows', 4)
+            ->where('header_default.logo.rows', 5)
             ->has('header_palette.swatches', 16));
     });
 
@@ -139,7 +139,7 @@ describe('document type form', function () {
         $sop = $this->tenant->dcsDocumentTypes()->where('code', 'SOP')->first();
         expect($sop->header_layout)->toBeNull();
 
-        $this->actingAs($this->admin)->get(route('documents.config.types.edit', $sop->uuid))->assertInertia(fn (Assert $page) => $page->where('type.headerLayout.rows.2.cells.0.text', 'Nomor Dokumen : {documentNumber}'));
+        $this->actingAs($this->admin)->get(route('documents.config.types.edit', $sop->uuid))->assertInertia(fn (Assert $page) => $page->where('type.headerLayout.rows.3.cells.0.text', 'No. Dokumen : {documentNumber}'));
 
         $bad = HeaderLayout::default();
         $bad['rows'][0]['cells'][0]['background'] = 'neon';
@@ -197,7 +197,7 @@ describe('presets', function () {
     it('offers presets that all pass the same rules as a saved letterhead, with the default first', function () {
         $presets = HeaderLayout::presets();
 
-        expect($presets[0]['key'])->toBe('iso')->and($presets[0]['layout'])->toBe(HeaderLayout::default());
+        expect($presets[0]['key'])->toBe('sop')->and($presets[0]['layout'])->toBe(HeaderLayout::default())->and($presets[1]['key'])->toBe('iso')->and($presets[1]['layout'])->toBe(HeaderLayout::legacyIso());
 
         foreach ($presets as $preset) {
             $layout = $preset['layout'];
@@ -206,7 +206,7 @@ describe('presets', function () {
                 ->and(HeaderLayout::normalize($layout))->toBe($layout);
         }
 
-        $this->actingAs($this->admin)->get(route('documents.config.types.create'))->assertInertia(fn (Assert $page) => $page->has('header_presets', count($presets))->where('header_presets.0.key', 'iso'));
+        $this->actingAs($this->admin)->get(route('documents.config.types.create'))->assertInertia(fn (Assert $page) => $page->has('header_presets', count($presets))->where('header_presets.0.key', 'sop'));
     });
 });
 

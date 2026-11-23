@@ -25,6 +25,9 @@ enum HeaderField: string
     case ProcessOwner = 'processOwner';
     case Department = 'department';
     case Owner = 'owner';
+    case CompanyName = 'companyName';
+    case RevisionIndex = 'revisionIndex';
+    case PageOf = 'pageOf';
 
     public function label(): string
     {
@@ -45,6 +48,9 @@ enum HeaderField: string
             self::ProcessOwner => 'Pemilik proses',
             self::Department => 'Departemen',
             self::Owner => 'Pemilik dokumen',
+            self::CompanyName => 'Nama perusahaan',
+            self::RevisionIndex => 'Revisi ke (angka biasa)',
+            self::PageOf => 'Halaman (1 dari 5)',
         };
     }
 
@@ -68,6 +74,9 @@ enum HeaderField: string
             self::ProcessOwner => 'HED Department',
             self::Department => 'HRD',
             self::Owner => 'Nama Pemilik',
+            self::CompanyName => 'PT Nama Perusahaan',
+            self::RevisionIndex => '1',
+            self::PageOf => '1 dari 3',
         };
     }
 

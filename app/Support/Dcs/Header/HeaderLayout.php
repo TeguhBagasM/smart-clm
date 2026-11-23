@@ -35,11 +35,37 @@ final class HeaderLayout
     private const WIDTH_TOLERANCE = 0.5;
 
     /**
-     * The layout of the Indonesian ISO-style SOP: logo beside the first four rows.
+     * The layout shipped for every document type that has none of its own: the Indonesian SOP
+     * control form. The company name on top, the type and the title under it, then the number,
+     * issue ("Terbit ke") and revision ("Revisi ke"), and the effective date and page. The logo
+     * sits beside all five rows.
      *
      * @return Layout
      */
     public static function default(): array
+    {
+        $title = ['bold' => true, 'uppercase' => true, 'align' => 'center'];
+
+        return [
+            'version' => self::VERSION,
+            'border' => HeaderPalette::BORDER,
+            'logo' => ['enabled' => true, 'source' => 'company', 'assetId' => null, 'side' => 'left', 'rows' => 5, 'width' => 21, 'valign' => 'middle', 'padding' => 8],
+            'rows' => [
+                self::row(26, [self::cell('{companyName}', 100, [...$title, 'fontSize' => 14])]),
+                self::row(18, [self::cell('{docTypeName}', 100, [...$title, 'fontSize' => 10])]),
+                self::row(18, [self::cell('{title}', 100, [...$title, 'fontSize' => 10])]),
+                self::row(20, [self::cell('No. Dokumen : {documentNumber}', 45), self::cell('Terbit ke : {issueNumber}', 26), self::cell('Revisi ke : {revisionIndex}', 29)]),
+                self::row(20, [self::cell('Tanggal Efektif : {issuedDate}', 45), self::cell('Halaman : {pageOf}', 55)]),
+            ],
+        ];
+    }
+
+    /**
+     * The earlier ISO-style layout (logo beside four rows, dark title band, six metadata cells).
+     *
+     * @return Layout
+     */
+    public static function legacyIso(): array
     {
         $band = ['bold' => true, 'uppercase' => true, 'align' => 'center'];
 
@@ -59,7 +85,7 @@ final class HeaderLayout
     }
 
     /**
-     * The starting points the editor offers. "iso" is the shipped default.
+     * The starting points the editor offers. "sop" is the shipped default.
      *
      * @return list<array{key: string, name: string, description: string, layout: Layout}>
      */
@@ -69,7 +95,8 @@ final class HeaderLayout
         $logo = self::default()['logo'];
 
         return [
-            ['key' => 'iso', 'name' => 'Kop ISO', 'description' => 'Logo di kiri, pita judul biru tua, dan enam isian metadata.', 'layout' => self::default()],
+            ['key' => 'sop', 'name' => 'Kop SOP Indonesia', 'description' => 'Logo di kiri, nama perusahaan, jenis dan judul, lalu nomor, terbit ke, revisi ke, tanggal efektif, dan halaman.', 'layout' => self::default()],
+            ['key' => 'iso', 'name' => 'Kop ISO', 'description' => 'Logo di kiri, pita judul biru tua, dan enam isian metadata.', 'layout' => self::legacyIso()],
             ['key' => 'sederhana', 'name' => 'Kop sederhana', 'description' => 'Logo di kiri dengan empat baris: jenis, judul, nomor, dan halaman.', 'layout' => [
                 'version' => self::VERSION,
                 'border' => HeaderPalette::BORDER,
@@ -104,7 +131,7 @@ final class HeaderLayout
     }
 
     /**
-     * @param  array{bold?: bool, italic?: bool, uppercase?: bool, align?: string, background?: string|null, color?: string}  $style
+     * @param  array{bold?: bool, italic?: bool, uppercase?: bool, align?: string, fontSize?: int, background?: string|null, color?: string}  $style
      * @return Cell
      */
     private static function cell(string $text, float $width, array $style = []): array
@@ -116,7 +143,7 @@ final class HeaderLayout
             'italic' => $style['italic'] ?? false,
             'uppercase' => $style['uppercase'] ?? false,
             'align' => $style['align'] ?? 'left',
-            'fontSize' => null,
+            'fontSize' => $style['fontSize'] ?? null,
             'background' => $style['background'] ?? null,
             'color' => $style['color'] ?? HeaderPalette::TEXT,
         ];
