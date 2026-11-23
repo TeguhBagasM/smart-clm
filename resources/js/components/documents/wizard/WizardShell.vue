@@ -36,7 +36,12 @@ function move(by: -1 | 1): void {
     <div class="flex flex-col gap-5 p-4 md:p-6">
         <header class="flex flex-col gap-2">
             <Link
-                :href="DocumentController.show({ document: document.id })"
+                :href="
+                    DocumentController.show(
+                        { document: document.id },
+                        { query: { version: version.id } },
+                    )
+                "
                 class="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
             >
                 <ArrowLeft class="size-4" /> Keluar (draft tersimpan)

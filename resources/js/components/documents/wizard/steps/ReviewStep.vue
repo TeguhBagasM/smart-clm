@@ -108,9 +108,10 @@ async function compose(): Promise<void> {
                 <Button variant="outline" as-child>
                     <a
                         :href="
-                            DocumentController.show.url({
-                                document: documentId,
-                            })
+                            DocumentController.show.url(
+                                { document: documentId },
+                                { query: { version: versionId } },
+                            )
                         "
                         >Lihat halaman dokumen</a
                     >

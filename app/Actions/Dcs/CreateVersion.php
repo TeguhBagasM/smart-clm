@@ -13,12 +13,14 @@ use Illuminate\Support\Facades\DB;
 /**
  * Starts the next draft version of a document: "revisi" is the same Terbitan
  * with Revisi + 1, "terbitan" is Terbitan + 1 with Revisi back to 0. The base is
- * the newest version, not the effective one. The document row is locked while
+ * the newest version, not the effective one, and the new draft starts with that
+ * version's text (`CopyVersionContent`), for a revision and a new issue alike.
+ * The document row is locked while
  * the number is chosen, so two requests at once get different numbers.
  */
 class CreateVersion
 {
-    public function __construct(private RecordDocumentEvent $recordDocumentEvent) {}
+    public function __construct(private RecordDocumentEvent $recordDocumentEvent, private CopyVersionContent $copyVersionContent) {}
 
     public function handle(User $actor, Document $document, string $bump, ?string $changeSummary): DocumentVersion
     {
@@ -41,6 +43,8 @@ class CreateVersion
                 'change_summary' => $changeSummary,
                 'created_by_id' => $actor->id,
             ])->save();
+
+            $this->copyVersionContent->handle($newest, $version);
 
             $this->recordDocumentEvent->handle($document, DocumentEventType::VersionCreated, $actor, $version, [
                 'major' => $major,
