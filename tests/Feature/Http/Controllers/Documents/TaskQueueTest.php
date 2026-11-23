@@ -102,7 +102,8 @@ describe('signing tasks', function () {
         $before = $version->fresh()->updated_at;
         $this->travelTo('2026-07-05 10:00:00');
 
-        dcsAs($this->legal)->postJson('/api/dcs/versions/'.$version->uuid.'/sign-approve')->assertOk();
+        $this->actingAs($this->legal)->post(route('documents.versions.sign', [$version->document, $version]))->assertRedirect();
+        expect(Approval::query()->where('version_id', $version->id)->count())->toBe(1);
 
         expect($version->fresh()->updated_at->greaterThan($before))->toBeTrue();
     });

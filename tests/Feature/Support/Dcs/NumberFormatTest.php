@@ -54,7 +54,7 @@ describe('documents', function () {
         app(SaveNumberingRule::class)->handle($this->admin, $this->tenant, NumberingMask::SUGGESTED_MASK, null);
         $this->create = fn (string $department = 'HED', array $extra = []) => app(CreateDocument::class)->handle($this->admin, $this->tenant, [
             'docTypeCode' => 'SOP', 'department' => $department, 'title' => 'Uji', 'ownerUserId' => null, 'manualNumber' => null,
-            'initialMajor' => null, 'initialMinor' => null, 'archiveCategory' => null, 'archiveSubFolderId' => null, ...$extra,
+            'archiveCategory' => null, 'archiveSubFolderId' => null, ...$extra,
         ]);
     });
 
@@ -71,8 +71,8 @@ describe('documents', function () {
     it('writes the number of a new revision with the same pattern, and the base number stays', function () {
         ['document' => $document] = ($this->create)('HED');
 
-        $revision = app(CreateVersion::class)->handle($this->admin, $document, 'revisi', 'Perbaikan', null, null);
-        $again = app(CreateVersion::class)->handle($this->admin, $document, 'revisi', 'Lagi', null, null);
+        $revision = app(CreateVersion::class)->handle($this->admin, $document, 'revisi', 'Perbaikan');
+        $again = app(CreateVersion::class)->handle($this->admin, $document, 'revisi', 'Lagi');
 
         expect($revision->number_label)->toBe('SOP-HED-01-01-26')
             ->and($again->number_label)->toBe('SOP-HED-01-02-26')
@@ -85,7 +85,7 @@ describe('documents', function () {
 
         app(SaveNumberingRule::class)->handle($this->admin, $this->tenant, '{Seq:4}/{Rev:2}/{DocType}', null);
         ['document' => $new] = ($this->create)('HED');
-        $revision = app(CreateVersion::class)->handle($this->admin, $old, 'revisi', null, null, null);
+        $revision = app(CreateVersion::class)->handle($this->admin, $old, 'revisi', null);
 
         expect($old->refresh()->document_number)->toBe('SOP-HED-01-00-26')
             ->and($revision->number_label)->toBe('SOP-HED-01-01-26')
@@ -105,7 +105,7 @@ describe('documents', function () {
 
     it('is found by the number without its revision as well as by the full number', function () {
         ['document' => $document] = ($this->create)('HED');
-        app(CreateVersion::class)->handle($this->admin, $document, 'revisi', null, null, null);
+        app(CreateVersion::class)->handle($this->admin, $document, 'revisi', null);
 
         foreach (['SOP-HED-01-26', 'sop-hed-01-00-26'] as $term) {
             $this->actingAs($this->admin)->get(route('documents.index', ['search' => $term]))

@@ -1,4 +1,4 @@
-                                                                  STANDARD OPERATING PROCEDURE
+STANDARD OPERATING PROCEDURE
 
                                                                   Prosedur Pengadaan Barang dan Jasa
 
@@ -8,7 +8,7 @@
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : KEDALUWARSA (TIDAK TERKENDALI)
+         Pemilik Proses : HED Departement                                        Status Dokumen : EXPIRED (UNCONTROLLED)
 
 
 
@@ -47,7 +47,7 @@ UNCONTROLLED / EXPIRED · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by D
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : KEDALUWARSA (TIDAK TERKENDALI)
+         Pemilik Proses : HED Departement                                        Status Dokumen : EXPIRED (UNCONTROLLED)
 
 
 

@@ -60,6 +60,6 @@ it('shows a composed version with the live watermark for the reader and leaves t
 
     $viewed = app(ViewVersion::class)->handle($this->admin, $this->version->fresh(), false, '127.0.0.1', 'pest');
 
-    expect(PdfParity::text($viewed['bytes']))->toContain('CONTROLLED COPY')->toContain('Accessed by Dewi Ayu')->toContain('TERKENDALI (CONTROLLED)')
+    expect(PdfParity::text($viewed['bytes']))->toContain('CONTROLLED COPY')->toContain('Accessed by Dewi Ayu')->toContain('Status Dokumen : CONTROLLED')
         ->and(Storage::disk('dcs')->get($this->version->fresh()->currentRendition()->storage_key))->toBe($stored);
 });

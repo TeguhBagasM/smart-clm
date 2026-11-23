@@ -11,7 +11,6 @@ use App\Support\Comparison\Extraction\PdfReader;
 use App\Support\Comparison\Extraction\PopplerPdfReader;
 use App\Support\Dcs\Ai\DcsAi;
 use App\Support\Dcs\Ai\LlmDcsAi;
-use App\Support\Dcs\CurrentTenant;
 use App\Support\Dcs\Notifications\DcsNotifier;
 use App\Support\Dcs\Notifications\NullDcsNotifier;
 use App\Support\Dcs\Pdf\PdfEngine;
@@ -33,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(PermissionResolver::class);
-        $this->app->scoped(CurrentTenant::class);
         $this->app->singleton(LlmManager::class);
         $this->app->bind(PdfReader::class, PopplerPdfReader::class);
         $this->app->bind(OcrEngine::class, LlmOcrEngine::class);

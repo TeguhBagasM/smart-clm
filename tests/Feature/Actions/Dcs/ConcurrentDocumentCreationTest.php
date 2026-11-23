@@ -48,10 +48,10 @@ beforeEach(function () {
             $results[] = $mode === 'documents'
                 ? app(CreateDocument::class)->handle($user, $tenant, [
                     'docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Paralel', 'ownerUserId' => null, 'manualNumber' => null,
-                    'initialMajor' => null, 'initialMinor' => null, 'archiveCategory' => null, 'archiveSubFolderId' => null,
+                    'archiveCategory' => null, 'archiveSubFolderId' => null,
                 ])['document']->document_number
                 : (function () use ($user, $subject) {
-                    $version = app(CreateVersion::class)->handle($user, Document::query()->findOrFail($subject), 'revisi', null, null, null);
+                    $version = app(CreateVersion::class)->handle($user, Document::query()->findOrFail($subject), 'revisi', null);
 
                     return $version->major.'.'.$version->minor;
                 })();

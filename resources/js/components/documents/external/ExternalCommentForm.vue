@@ -115,7 +115,7 @@ function setField(value: unknown): void {
                             :key="index"
                             :value="String(index)"
                         >
-                            {{ index + 1 }}. {{ section.heading }}
+                            {{ section.heading }}
                         </SelectItem>
                     </SelectContent>
                 </Select>

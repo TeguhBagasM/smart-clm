@@ -33,7 +33,7 @@ class CreateDocument
     /**
      * @param  array{
      *     docTypeCode: string, department: string, title: string, ownerUserId: string|null, manualNumber: string|null,
-     *     initialMajor: int|null, initialMinor: int|null, archiveCategory: string|null, archiveSubFolderId: string|null
+     *     archiveCategory: string|null, archiveSubFolderId: string|null
      * }  $data
      * @return array{document: Document, version: DocumentVersion}
      */
@@ -53,7 +53,7 @@ class CreateDocument
                 $allocation = null;
                 $base = null;
                 $snapshot = ['number_mask' => null, 'number_tokens' => null];
-                $revision = (int) ($data['initialMinor'] ?? 0);
+                $revision = 0;
 
                 if ($manual !== '') {
                     $number = $manual;
@@ -90,8 +90,8 @@ class CreateDocument
                 $version->forceFill([
                     'tenant_id' => $tenant->id,
                     'document_id' => $document->id,
-                    'major' => $data['initialMajor'] ?? 1,
-                    'minor' => $data['initialMinor'] ?? 0,
+                    'major' => 1,
+                    'minor' => 0,
                     'number_label' => $number,
                     'status' => VersionStatus::Draft,
                     'created_by_id' => $actor->id,

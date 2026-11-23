@@ -5,9 +5,9 @@ namespace App\Support\Dcs;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * A DCS failure whose message is written for the user and must reach the client
- * verbatim (the Node API returned the same sentences). Other HTTP exceptions
- * get generic messages from DcsErrorRenderer.
+ * A DCS failure whose message is written for the user and must reach the screen
+ * verbatim (the pages show it as a toast). The messages keep the sentences of the
+ * Node application.
  */
 class DcsException extends HttpException
 {

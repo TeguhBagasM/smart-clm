@@ -48,8 +48,8 @@ it('fills the live header cells only when the compose step recorded where', func
     $with = PdfGolden::input('watermark', 'short-iso-effective');
     $without = ['headerLayout' => null] + $with;
 
-    expect(PdfParity::text(PdfGolden::engine()->watermark($with)))->toContain('TERKENDALI (CONTROLLED)')->toContain('20/11/2026')
-        ->and(PdfParity::text(PdfGolden::engine()->watermark($without)))->not->toContain('TERKENDALI (CONTROLLED)');
+    expect(PdfParity::text(PdfGolden::engine()->watermark($with)))->toContain('Status Dokumen : CONTROLLED')->toContain('20/11/2026')
+        ->and(PdfParity::text(PdfGolden::engine()->watermark($without)))->not->toContain('Status Dokumen : CONTROLLED');
 });
 
 it('refuses a character outside WinAnsi the way the Node engine did', function () {

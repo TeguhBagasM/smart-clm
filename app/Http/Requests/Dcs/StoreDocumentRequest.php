@@ -42,12 +42,11 @@ class StoreDocumentRequest extends FormRequest
     }
 
     /**
-     * Initial Terbitan and Revisi are optional; anything that is not a whole
-     * number in range is ignored and the default (1 and 0) applies.
+     * A new document always starts at Terbitan 1, Revisi 0: the system counts them.
      *
      * @return array{
      *     docTypeCode: string, department: string, title: string, ownerUserId: string|null, manualNumber: string|null,
-     *     initialMajor: int|null, initialMinor: int|null, archiveCategory: string|null, archiveSubFolderId: string|null
+     *     archiveCategory: string|null, archiveSubFolderId: string|null
      * }
      */
     public function documentData(): array
@@ -58,19 +57,8 @@ class StoreDocumentRequest extends FormRequest
             'title' => $this->string('title')->trim()->toString(),
             'ownerUserId' => $this->filled('ownerUserId') ? $this->string('ownerUserId')->toString() : null,
             'manualNumber' => $this->filled('manualNumber') ? $this->string('manualNumber')->toString() : null,
-            'initialMajor' => self::wholeNumber($this->input('initialMajor'), 1),
-            'initialMinor' => self::wholeNumber($this->input('initialMinor'), 0),
             'archiveCategory' => $this->filled('metadata.archiveCategory') ? $this->string('metadata.archiveCategory')->toString() : null,
             'archiveSubFolderId' => $this->filled('metadata.archiveSubFolderId') ? $this->string('metadata.archiveSubFolderId')->toString() : null,
         ];
-    }
-
-    public static function wholeNumber(mixed $value, int $minimum): ?int
-    {
-        if (! is_numeric($value) || (float) $value !== (float) (int) $value || (int) $value < $minimum) {
-            return null;
-        }
-
-        return (int) $value;
     }
 }

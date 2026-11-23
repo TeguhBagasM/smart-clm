@@ -4,22 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Legacy (Node) Session Bridge
-    |--------------------------------------------------------------------------
-    |
-    | While the React frontend and the Node application are still in use, DCS
-    | requests carry Node's `clm_token` cookie: an HS256 JWT signed with the
-    | same JWT_SECRET. Laravel only verifies it; it never issues it. With no
-    | secret configured every token is rejected.
-    |
-    */
-
-    'node_jwt_secret' => env('DCS_NODE_JWT_SECRET'),
-
-    'node_session_cookie' => 'clm_token',
-
-    /*
-    |--------------------------------------------------------------------------
     | Numbering Time Zone
     |--------------------------------------------------------------------------
     |

@@ -83,7 +83,7 @@ final class WatermarkPainter
 
         return match ($status) {
             'effective' => ['banner' => 'CONTROLLED', 'footer' => "CONTROLLED COPY · {$revision} · Accessed by {$viewer} on {$at}", 'color' => [0.16, 0.32, 0.75], 'bannerOpacity' => 0.10, 'footerOpacity' => 0.55],
-            'superseded' => ['banner' => 'OBSOLETE', 'footer' => "UNCONTROLLED / OBSOLETE · {$revision} · Retrieved by {$viewer} on {$at}", 'color' => self::RED, 'bannerOpacity' => 0.14, 'footerOpacity' => 0.65],
+            'superseded' => ['banner' => 'UNCONTROLLED', 'footer' => "UNCONTROLLED · {$revision} · Retrieved by {$viewer} on {$at}", 'color' => self::RED, 'bannerOpacity' => 0.14, 'footerOpacity' => 0.65],
             default => (function () use ($status, $revision, $viewer, $at): array {
                 $label = preg_replace('/_/', ' ', mb_strtoupper($status), 1);
 
@@ -99,12 +99,12 @@ final class WatermarkPainter
     private function headerStatus(array $in): array
     {
         if ($in['status'] === 'effective' && ! empty($in['expired'])) {
-            return ['KEDALUWARSA (TIDAK TERKENDALI)', self::RED];
+            return ['EXPIRED (UNCONTROLLED)', self::RED];
         }
 
         return match ($in['status']) {
-            'effective' => ['TERKENDALI (CONTROLLED)', [0.13, 0.50, 0.25]],
-            'superseded' => ['TIDAK TERKENDALI (OBSOLETE)', self::RED],
+            'effective' => ['CONTROLLED', [0.13, 0.50, 0.25]],
+            'superseded' => ['UNCONTROLLED', self::RED],
             'approved' => ['DISETUJUI', [0.16, 0.32, 0.75]],
             'under_review' => ['DALAM REVIEW', [0.72, 0.45, 0.05]],
             default => ['DRAFT', [0.40, 0.42, 0.48]],

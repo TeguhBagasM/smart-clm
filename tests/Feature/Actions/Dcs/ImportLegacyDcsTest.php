@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Dcs\CreateDocument;
 use App\Enums\Dcs\ActorType;
 use App\Enums\Dcs\DocumentEventType;
 use App\Enums\Dcs\ReceiptStatus;
@@ -24,6 +25,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Support\Dcs\Pdf\PdfEngine;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\Support\FakePdfEngine;
 use Tests\Support\LegacyDcsFixture;
 
@@ -82,10 +84,9 @@ describe('import', function () {
         expect(NumberAllocation::query()->where('sequence_id', $sequence->id)->orderBy('seq')->get()->map(fn ($a) => [$a->seq, $a->document_id !== null, $a->released_at !== null])->all())
             ->toBe([[2, false, true], [3, true, false]]);
 
-        $first = dcsAs($this->owner)->postJson('/api/dcs/documents', ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru'])->assertOk();
-        $second = dcsAs($this->owner)->postJson('/api/dcs/documents', ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru lagi'])->assertOk();
+        $create = fn (string $title) => app(CreateDocument::class)->handle($this->owner, $this->tenant, ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => $title, 'ownerUserId' => null, 'manualNumber' => null, 'archiveCategory' => null, 'archiveSubFolderId' => null])['document'];
 
-        expect($first->json('documentNumber'))->toBe('SOP/HRD/2026/0004')->and($second->json('documentNumber'))->toBe('SOP/HRD/2026/0005');
+        expect($create('Baru')->document_number)->toBe('SOP/HRD/2026/0004')->and($create('Baru lagi')->document_number)->toBe('SOP/HRD/2026/0005');
     });
 
     it('rebuilds the composed content, the signature columns and the attachments', function () {
@@ -118,7 +119,7 @@ describe('import', function () {
         expect($approvals->pluck('column_label')->all())->toBe(['Dibuat oleh', 'Disetujui oleh'])->and($approvals[0]->approver_user_id)->toBe($this->legal->id)->and($approvals[0]->approver_role_key)->toBe('legal')
             ->and($approvals[1]->approver_role_key)->toBe('manajemen')->and($approvals->every(fn ($a) => $a->rendition_id === $renditions[0]->id))->toBeTrue();
 
-        dcsAs($this->owner)->get("/api/dcs/versions/{$effective->uuid}/view")->assertOk();
+        $this->actingAs($this->owner)->get(route('documents.versions.file', [$effective->document, $effective]))->assertOk()->assertHeader('Content-Type', 'application/pdf');
     });
 
     it('imports comments, distribution and read receipts, skipping receipts of unknown users with a warning', function () {
@@ -137,7 +138,7 @@ describe('import', function () {
         importLegacy()->assertSuccessful();
 
         expect(ExternalReview::query()->sole()->locked)->toBeTrue();
-        $this->getJson('/api/dcs-external-review/tok-abc123')->assertOk()->assertJsonPath('locked', true);
+        $this->get(route('external-review.show', '3f9a1c0e5b7d4e8f9a2b6c1d0e7f8a3b5c4d9e0f1a2b3c4d'))->assertOk()->assertInertia(fn (Assert $page) => $page->component('public/ExternalReview')->where('review.locked', true));
     });
 
     it('imports the tenant settings and the logo when a settings file is given', function () {

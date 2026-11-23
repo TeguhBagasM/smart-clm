@@ -2,7 +2,6 @@
 
 use App\Enums\SystemRole;
 use App\Models\Role;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -58,45 +57,4 @@ function something()
 function systemRoleId(SystemRole $role): int
 {
     return Role::systemRole($role)->id;
-}
-
-/**
- * A JWT like the one the legacy Node app issues (HS256), for DCS auth tests.
- *
- * @param  array<string, mixed>  $claims
- */
-function nodeJwt(array $claims = [], string $secret = 'node-secret', string $alg = 'HS256'): string
-{
-    $encode = fn (string $data): string => rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
-
-    $header = $encode(json_encode(['alg' => $alg, 'typ' => 'JWT']));
-    $payload = $encode(json_encode([
-        'sub' => 'usr-legal',
-        'tenantId' => 't-01',
-        'role' => 'legal',
-        'iat' => time(),
-        'exp' => time() + 3600,
-        ...$claims,
-    ]));
-    $signature = $encode(hash_hmac('sha256', "{$header}.{$payload}", $secret, true));
-
-    return "{$header}.{$payload}.{$signature}";
-}
-
-/**
- * A DCS API client authenticated as the given user through a Node-style session
- * cookie. Gives the user and tenant legacy ids on the fly.
- */
-function dcsAs(User $user): TestCase
-{
-    config(['dcs.node_jwt_secret' => 'node-secret']);
-
-    $user->forceFill(['legacy_id' => $user->legacy_id ?? 'usr-'.$user->id])->save();
-    $tenant = $user->tenant;
-    $tenant?->forceFill(['legacy_id' => $tenant->legacy_id ?? 't-'.$tenant->id])->save();
-
-    return test()->withCredentials()->withUnencryptedCookie('clm_token', nodeJwt([
-        'sub' => $user->legacy_id,
-        'tenantId' => $tenant?->legacy_id ?? 't-0',
-    ]));
 }

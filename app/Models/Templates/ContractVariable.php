@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
 /**
@@ -16,7 +17,7 @@ use Illuminate\Support\Carbon;
  * names the contract field that fills it automatically (config/contract_templates.php);
  * empty = typed in when the contract is made.
  *
- * @property \Illuminate\Database\Eloquent\Relations\Pivot|null $pivot Set only on rows read through a template version's relation.
+ * @property Pivot|null $pivot Set only on rows read through a template version's relation.
  * @property int $id
  * @property int $tenant_id
  * @property string $code

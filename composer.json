@@ -71,16 +71,16 @@
         ],
         "test:pg": [
             "@php artisan config:clear --ansi",
-            "pest --configuration=phpunit.pgsql.xml"
+            "@php -d memory_limit=1G vendor/bin/pest --configuration=phpunit.pgsql.xml"
         ],
         "types:check": [
-            "phpstan analyse"
+            "phpstan analyse --memory-limit=1G"
         ],
         "test": [
             "@php artisan config:clear --ansi",
             "@lint:check",
             "@types:check",
-            "@php artisan test"
+            "@php -d memory_limit=1G artisan test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

@@ -87,7 +87,7 @@ it('adds, changes, hides and shows a vendor with toasts and audit, keeping the a
     $this->actingAs($this->legal)->patch(route('master-data.vendors.reactivate', $vendor))->assertInertiaFlash('toast.message', 'Vendor "CV Uji Jaya" ditampilkan lagi di pilihan.');
 
     expect($vendor->refresh()->only(['bank_account_number', 'is_active']))->toBe(['bank_account_number' => null, 'is_active' => true])
-        ->and(AuditLog::query()->pluck('event')->all())->toBe(['master_data.vendors.created', 'master_data.vendors.updated', 'master_data.vendors.updated', 'master_data.vendors.deactivated', 'master_data.vendors.reactivated']);
+        ->and(AuditLog::query()->orderBy('id')->pluck('event')->all())->toBe(['master_data.vendors.created', 'master_data.vendors.updated', 'master_data.vendors.updated', 'master_data.vendors.deactivated', 'master_data.vendors.reactivated']);
 });
 
 it('says how to fix each invalid field', function (array $data, string $field, string $message) {

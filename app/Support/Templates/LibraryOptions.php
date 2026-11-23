@@ -2,6 +2,7 @@
 
 namespace App\Support\Templates;
 
+use App\Enums\Templates\VariableType;
 use App\Models\Templates\ContractClause;
 use App\Models\Templates\ContractVariable;
 use App\Models\Tenant;
@@ -58,7 +59,7 @@ class LibraryOptions
     {
         $rows = [];
 
-        foreach (\App\Enums\Templates\VariableType::cases() as $type) {
+        foreach (VariableType::cases() as $type) {
             $rows[] = ['value' => $type->value, 'label' => $type->label()];
         }
 

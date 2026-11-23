@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Dcs\CreateDocument;
 use App\Enums\SystemRole;
 use App\Models\Dcs\Document;
 use App\Models\Dcs\DocumentVersion;
@@ -131,11 +132,11 @@ describe('export', function () {
 
     it('exports a document created in Laravel after the import, numbered after the counter (the released number is not reused)', function () {
         $this->travelTo('2026-07-05 10:00:00');
-        $created = dcsAs($this->owner)->postJson('/api/dcs/documents', ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru di Laravel'])->assertOk();
+        $created = app(CreateDocument::class)->handle($this->owner, $this->tenant, ['docTypeCode' => 'SOP', 'department' => 'HRD', 'title' => 'Baru di Laravel', 'ownerUserId' => null, 'manualNumber' => null, 'archiveCategory' => null, 'archiveSubFolderId' => null])['document'];
 
         exportLegacy()->assertSuccessful();
 
-        $document = $this->legacy->table('dcs_documents')->where('id', $created->json('documentId'))->first();
+        $document = $this->legacy->table('dcs_documents')->where('id', $created->uuid)->first();
         expect($document->document_number)->toBe('SOP/HRD/2026/0004')->and((int) $document->number_seq)->toBe(4)->and($document->number_scope_hash)->toBe('SOP|HRD|2026');
         $sequence = $this->legacy->table('dcs_number_sequences')->sole();
         expect((int) $sequence->current_seq)->toBe(4)->and(LegacyRows::list($sequence->released))->toBe(['2']);

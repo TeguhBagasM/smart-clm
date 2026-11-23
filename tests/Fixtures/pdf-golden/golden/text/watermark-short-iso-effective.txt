@@ -1,4 +1,4 @@
-                                                                  STANDARD OPERATING PROCEDURE
+STANDARD OPERATING PROCEDURE
 
                                                                   Prosedur Pengadaan Barang dan Jasa
 
@@ -8,7 +8,7 @@
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : TERKENDALI (CONTROLLED)
+         Pemilik Proses : HED Departement                                        Status Dokumen : CONTROLLED
 
 
 
@@ -44,7 +44,7 @@ CONTROLLED COPY · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Accessed by Dewi Ayu 
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : TERKENDALI (CONTROLLED)
+         Pemilik Proses : HED Departement                                        Status Dokumen : CONTROLLED
 
 
 

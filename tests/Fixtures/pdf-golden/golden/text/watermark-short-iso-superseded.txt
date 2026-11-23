@@ -1,4 +1,4 @@
-                                                                  STANDARD OPERATING PROCEDURE
+STANDARD OPERATING PROCEDURE
 
                                                                   Prosedur Pengadaan Barang dan Jasa
 
@@ -8,7 +8,7 @@
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : TIDAK TERKENDALI (OBSOLETE)
+         Pemilik Proses : HED Departement                                        Status Dokumen : UNCONTROLLED
 
 
 
@@ -18,23 +18,25 @@
         Menetapkan langkah pengadaan barang dan jasa agar terkendali.
 
         Ruang Lingkup
-
+                                                                                                         ED
         Berlaku untuk seluruh unit kerja yang mengajukan pengadaan.
 
         Prosedur
 
         Pemohon mengisi formulir pengadaan.
-                                                                                   TE
+                                                                                    LL
         Atasan memeriksa dan menyetujui.
         Finance memproses pembayaran.
-                                                                  LE
-                                      SO
-                         B
-          O
+                                                                         O
+                                                     TR
+                                            N
+                              O
+                 C
+UN
                                                                   Page 1 Of 2
 
 
-UNCONTROLLED / OBSOLETE · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by Dewi Ayu Kusumawardhani on 2026-11-20 02:00:00 UTC
+UNCONTROLLED · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by Dewi Ayu Kusumawardhani on 2026-11-20 02:00:00 UTC
                                                                   STANDARD OPERATING PROCEDURE
 
                                                                   Prosedur Pengadaan Barang dan Jasa
@@ -45,39 +47,41 @@ UNCONTROLLED / OBSOLETE · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by 
 
          Bahasa : Indonesia                                                      Tingkat Dokumen : Internal
 
-         Pemilik Proses : HED Departement                                        Status Dokumen : TIDAK TERKENDALI (OBSOLETE)
+         Pemilik Proses : HED Departement                                        Status Dokumen : UNCONTROLLED
 
 
 
 
+                                Dibuat oleh:
                                                         Pengesahan Dokumen
 
                                                                   Persetujuan
+                                                                                                         ED
+                                                                                            Disetujui oleh:
 
-                                Dibuat oleh:                                                Disetujui oleh:
 
 
-
-                                                                                   TE
-                              Staf Pengadaan                      LE
-                                                  Revisi Dan Riwayat Perubahan
-                                                                                             Manajer HED
+                                                                                    LL
+                              Staf Pengadaan                              O                  Manajer HED
 
 
 
 
                Rev. No.
+                                                     TR
+                                                  Revisi Dan Riwayat Perubahan
+
+                                            Tanggal                                          Catatan
 
 
-                                      SO    Tanggal                                          Catatan
 
 
-
-
-                         B
-          O
+                                            N
+                              O
+                 C
+UN
                                                                    Page 2 Of 2
 
 
-UNCONTROLLED / OBSOLETE · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by Dewi Ayu Kusumawardhani on 2026-11-20 02:00:00 UTC
+UNCONTROLLED · SOP-HED-27-00-26 Terbitan 2 Revisi 3 · Retrieved by Dewi Ayu Kusumawardhani on 2026-11-20 02:00:00 UTC
 

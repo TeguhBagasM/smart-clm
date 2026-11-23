@@ -18,6 +18,7 @@ use App\Support\Dcs\Notifications\DcsNotifier;
 use App\Support\Dcs\Pdf\PdfEngine;
 use App\Support\Dcs\Queue\TaskQueue;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Support\SessionKey;
 use Tests\Support\FakePdfEngine;
 use Tests\Support\RecordingNotifier;
 
@@ -65,40 +66,63 @@ function personalFixture(array $overrides = []): array
     return compact('tenant', 'creator', 'rina', 'colleague', 'budi', 'document', 'version');
 }
 
-function signAs(User $user, DocumentVersion $version)
+/**
+ * Signs through the document page and answers what the toast said.
+ *
+ * @return array{type: string, message: string}
+ */
+function signThroughPage(User $user, DocumentVersion $version): array
 {
-    return dcsAs($user)->postJson("/api/dcs/versions/{$version->uuid}/sign-approve");
+    test()->actingAs($user)->post(route('documents.versions.sign', [$version->document, $version]))->assertRedirect();
+
+    return session()->get(SessionKey::FLASH_DATA)['toast'];
+}
+
+function signed(User $user, DocumentVersion $version): void
+{
+    expect(signThroughPage($user, $version)['type'])->toBe('success');
+}
+
+function refused(User $user, DocumentVersion $version, ?string $message = null): void
+{
+    $toast = signThroughPage($user, $version);
+
+    expect($toast['type'])->toBe('error');
+
+    if ($message !== null) {
+        expect($toast['message'])->toBe($message);
+    }
 }
 
 describe('only the named person signs', function () {
     it('refuses a colleague with the same role and department, and lets the named person sign', function () {
         ['creator' => $creator, 'rina' => $rina, 'colleague' => $colleague, 'version' => $version] = personalFixture();
 
-        signAs($creator, $version)->assertOk();
-        signAs($colleague, $version)->assertForbidden();
+        signed($creator, $version);
+        refused($colleague, $version);
         expect(Approval::query()->where('version_id', $version->id)->count())->toBe(1);
 
-        signAs($rina, $version)->assertOk();
+        signed($rina, $version);
         expect(Approval::query()->where('version_id', $version->id)->count())->toBe(2);
     });
 
     it('closes a new-style column that has nobody yet, even to holders of its role', function () {
         ['creator' => $creator, 'rina' => $rina, 'version' => $version] = personalFixture([2 => ['user' => null]]);
 
-        signAs($creator, $version)->assertOk();
-        signAs($rina, $version)->assertForbidden();
+        signed($creator, $version);
+        refused($rina, $version);
     });
 
     it('keeps the old rule for a legacy column: anyone holding its role may sign', function () {
         ['creator' => $creator, 'colleague' => $colleague, 'version' => $version] = personalFixture([2 => ['mode' => 'legacy', 'user' => null]]);
 
-        signAs($creator, $version)->assertOk();
-        signAs($colleague, $version)->assertOk();
+        signed($creator, $version);
+        signed($colleague, $version);
     });
 
     it('gives the task only to the named person', function () {
         ['creator' => $creator, 'rina' => $rina, 'colleague' => $colleague, 'version' => $version] = personalFixture();
-        signAs($creator, $version)->assertOk();
+        signed($creator, $version);
 
         $queue = app(TaskQueue::class);
 
@@ -111,21 +135,21 @@ describe('the creator', function () {
     it('cannot approve their own document after the first column, unless the column allows it', function () {
         ['creator' => $creator, 'rina' => $rina, 'version' => $version] = personalFixture([3 => ['user' => 'creator']]);
 
-        signAs($creator, $version)->assertOk();
-        signAs($rina, $version)->assertOk();
-        signAs($creator, $version)->assertForbidden()->assertJsonPath('error', 'Pembuat dokumen tidak boleh menyetujui dokumennya sendiri.');
+        signed($creator, $version);
+        signed($rina, $version);
+        refused($creator, $version, 'Pembuat dokumen tidak boleh menyetujui dokumennya sendiri.');
 
         ['creator' => $creator2, 'rina' => $rina2, 'version' => $version2] = personalFixture([3 => ['user' => 'creator', 'allow_creator' => true]]);
-        signAs($creator2, $version2)->assertOk();
-        signAs($rina2, $version2)->assertOk();
-        signAs($creator2, $version2)->assertOk();
+        signed($creator2, $version2);
+        signed($rina2, $version2);
+        signed($creator2, $version2);
     });
 });
 
 describe('replacing a signer', function () {
     it('is done by a company administrator with a reason, is audited, and moves the task and the right to sign', function () {
         ['creator' => $creator, 'rina' => $rina, 'colleague' => $colleague, 'document' => $document, 'version' => $version] = personalFixture();
-        signAs($creator, $version)->assertOk();
+        signed($creator, $version);
         $url = route('documents.versions.signers.reassign', [$document->uuid, $version->uuid, 2]);
 
         $this->actingAs($creator)->post($url, ['user_id' => $colleague->id])->assertSessionHasErrors('reason');
@@ -144,13 +168,13 @@ describe('replacing a signer', function () {
 
         $queue = app(TaskQueue::class);
         expect($queue->counts($colleague)['sign'])->toBe(1)->and($queue->counts($rina)['sign'])->toBe(0);
-        signAs($rina, $version)->assertForbidden();
-        signAs($colleague, $version)->assertOk();
+        refused($rina, $version);
+        signed($colleague, $version);
     });
 
     it('is refused for a column already signed, for the same person, an inactive user and another company', function () {
         ['creator' => $creator, 'rina' => $rina, 'colleague' => $colleague, 'document' => $document, 'version' => $version] = personalFixture();
-        signAs($creator, $version)->assertOk();
+        signed($creator, $version);
         $reassign = fn (int $order, int $userId) => $this->actingAs($creator)->post(route('documents.versions.signers.reassign', [$document->uuid, $version->uuid, $order]), ['user_id' => $userId, 'reason' => 'Penggantian uji']);
         $assigned = fn (int $order) => VersionStep::query()->where('version_id', $version->id)->where('position', $order)->value('assigned_user_id');
 

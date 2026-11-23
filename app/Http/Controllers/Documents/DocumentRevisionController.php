@@ -21,7 +21,7 @@ class DocumentRevisionController extends Controller
     public function store(CreateRevisionRequest $request, Document $document, CreateVersion $createVersion): RedirectResponse
     {
         return $this->perform(
-            fn (): DocumentVersion => $createVersion->handle($request->user(), $document, $request->bump(), $request->changeSummary(), null, null),
+            fn (): DocumentVersion => $createVersion->handle($request->user(), $document, $request->bump(), $request->changeSummary()),
             'Draf baru dibuat. Lanjutkan menyusunnya.',
             fn (DocumentVersion $version): string => route('documents.show', ['document' => $document->uuid, 'version' => $version->uuid]),
         );

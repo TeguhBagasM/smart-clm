@@ -57,7 +57,7 @@ defineEmits<{ comment: [anchor: ExternalAnchor] }>();
         >
             <div class="flex items-center justify-between gap-2">
                 <h2 class="text-lg font-semibold">
-                    {{ index + 1 }}. {{ section.heading }}
+                    {{ section.heading }}
                 </h2>
                 <Button
                     v-if="canComment"
