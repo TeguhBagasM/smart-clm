@@ -29,6 +29,38 @@ class DocumentVersionPolicy
         return $version->status === VersionStatus::Draft && $actor->can(Permission::DcsEdit);
     }
 
+    /**
+     * Setting when the version is next reviewed: allowed at any stage of its life.
+     */
+    public function scheduleReview(User $actor, DocumentVersion $version): bool
+    {
+        return $actor->can(Permission::DcsEdit);
+    }
+
+    /**
+     * Closing or reopening the review link of outside parties.
+     */
+    public function manageExternalReview(User $actor, DocumentVersion $version): bool
+    {
+        return $actor->can(Permission::DcsEdit);
+    }
+
+    /**
+     * A new link only fits a draft or a version waiting for signatures.
+     */
+    public function startExternalReview(User $actor, DocumentVersion $version): bool
+    {
+        return in_array($version->status, [VersionStatus::Draft, VersionStatus::UnderReview], true) && $actor->can(Permission::DcsEdit);
+    }
+
+    /**
+     * An English reference copy needs content written in the system; an uploaded PDF has nothing to translate.
+     */
+    public function translate(User $actor, DocumentVersion $version): bool
+    {
+        return $actor->can(Permission::DcsEdit) && $version->content()->exists();
+    }
+
     public function submit(User $actor, DocumentVersion $version): bool
     {
         $rendition = $version->currentRendition();

@@ -339,3 +339,16 @@ it('starts a new draft with Tujuan and Ruang Lingkup as ordinary sections, and s
     wzPatch($old, ['revision' => $old['version']->content->fresh()->draft_revision, 'sections' => [['heading' => 'Maksud', 'content' => 'x']], 'purpose' => '', 'scope' => ''])->assertSessionHasNoErrors();
     expect($old['version']->content->fresh()->purpose)->toBeNull()->and($old['version']->fresh('sections')->sections->pluck('heading')->all())->toBe(['Maksud']);
 });
+
+it('composes a diagram with a step that has no text yet', function () {
+    ['document' => $document, 'version' => $version] = wzCreate();
+    $steps = [
+        ['id' => 'a', 'row' => 0, 'text' => 'Mulai', 'type' => 'start', 'actor' => 'Penyusun', 'order' => 1, 'nextId' => 'b'],
+        ['id' => 'b', 'row' => 1, 'text' => null, 'type' => 'document', 'actor' => 'Penyusun', 'order' => 2],
+    ];
+    $version->content()->update(['flow_mode' => 'builder', 'flow_steps' => $steps]);
+
+    $this->actingAs($this->admin)->from(route('documents.versions.edit', [$document, $version]))->post(route('documents.versions.render', [$document, $version]))->assertSessionHasNoErrors();
+
+    expect(wzToast()['type'])->toBe('success')->and($this->engine->composed[0]['flow']['steps'][1]['text'])->toBe('');
+});

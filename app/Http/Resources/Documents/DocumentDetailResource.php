@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Documents;
 
+use App\Enums\Dcs\VersionStatus;
 use App\Models\Dcs\Document;
 use App\Models\Dcs\DocumentVersion;
 use App\Support\Dcs\ApiDate;
@@ -33,6 +34,7 @@ class DocumentDetailResource extends JsonResource
             'archive_category' => $this->archive_category,
             'created_at' => ApiDate::format($this->created_at),
             'updated_at' => ApiDate::format($this->updated_at),
+            'can' => $this->can($request),
             'versions' => $this->versions->map(fn (DocumentVersion $version): array => [
                 'id' => $version->uuid,
                 'major' => $version->major,
@@ -46,6 +48,25 @@ class DocumentDetailResource extends JsonResource
                 'is_current' => $version->id === $this->current_version_id,
                 'is_latest' => $version->id === $latestId,
             ])->values()->all(),
+        ];
+    }
+
+    /**
+     * What the person may start on the document now. The policy answers who; the state is checked
+     * here only to offer the button when it fits (the Actions refuse the rest).
+     *
+     * @return array{create_version: bool, release_number: bool}
+     */
+    private function can(Request $request): array
+    {
+        $user = $request->user();
+        $statuses = $this->versions->pluck('status');
+
+        return [
+            'create_version' => $user->can('createVersion', $this->resource) && $statuses->isNotEmpty()
+                && $statuses->doesntContain(fn (VersionStatus $status): bool => in_array($status, [VersionStatus::Draft, VersionStatus::UnderReview, VersionStatus::Approved], true)),
+            'release_number' => $user->can('releaseNumber', $this->resource) && $statuses->every(fn (VersionStatus $status): bool => $status === VersionStatus::Draft)
+                && $this->resource->numberAllocation()->exists(),
         ];
     }
 }

@@ -35,6 +35,32 @@ class DocumentPolicy
     }
 
     /**
+     * Starting the next revision or issue of a document of the actor's own company. The state
+     * of the document is the Action's to judge; the page only offers the button when it fits.
+     */
+    public function createVersion(User $actor, Document $document): Response
+    {
+        return $this->ownCompany($actor, $document, Permission::DcsEdit);
+    }
+
+    /**
+     * Giving back the number of a cancelled document (document control).
+     */
+    public function releaseNumber(User $actor, Document $document): Response
+    {
+        return $this->ownCompany($actor, $document, Permission::DcsRelease);
+    }
+
+    private function ownCompany(User $actor, Document $document, Permission $permission): Response
+    {
+        if ($actor->tenant_id === null || $actor->tenant_id !== $document->tenant_id) {
+            return Response::denyAsNotFound();
+        }
+
+        return $actor->can($permission) ? Response::allow() : Response::deny('Anda tidak memiliki izin untuk tindakan ini.');
+    }
+
+    /**
      * Document types, clauses, departments and numbering of the actor's company.
      */
     public function configure(User $actor): bool

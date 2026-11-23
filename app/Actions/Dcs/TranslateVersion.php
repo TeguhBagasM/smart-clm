@@ -68,7 +68,7 @@ class TranslateVersion
                 ...(isset($section['table']) && is_array($section['table']) ? ['table' => $section['table']] : (isset($original['table']) ? ['table' => $original['table']] : [])),
             ], $translated['sections'], $sections),
             'flow' => $content->flow_mode === 'builder' && $content->flow_steps !== []
-                ? ['mode' => 'builder', 'steps' => $content->flow_steps, ...($content->flow_lanes === [] ? [] : ['lanes' => $content->flow_lanes])]
+                ? ['mode' => 'builder', 'steps' => $content->printableFlowSteps(), ...($content->flow_lanes === [] ? [] : ['lanes' => $content->flow_lanes])]
                 : ['mode' => 'none'],
             'signatureGroups' => [],
             'revisionHistory' => [],

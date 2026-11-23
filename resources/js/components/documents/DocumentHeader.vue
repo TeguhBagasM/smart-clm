@@ -37,17 +37,20 @@ const latest = computed(() =>
                     {{ document.title }}
                 </h1>
             </div>
-            <Button v-if="showHistoryLink" variant="outline" as-child>
-                <Link
-                    :href="
-                        DocumentTimelineController.index({
-                            document: document.id,
-                        })
-                    "
-                >
-                    <History /> Riwayat lengkap
-                </Link>
-            </Button>
+            <div class="flex flex-wrap items-center gap-2">
+                <slot />
+                <Button v-if="showHistoryLink" variant="outline" as-child>
+                    <Link
+                        :href="
+                            DocumentTimelineController.index({
+                                document: document.id,
+                            })
+                        "
+                    >
+                        <History /> Riwayat lengkap
+                    </Link>
+                </Button>
+            </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 text-sm">
             <VersionStatusBadge

@@ -58,6 +58,7 @@ export type DocumentDetail = {
     archive_category: string | null;
     created_at: string | null;
     updated_at: string | null;
+    can: { create_version: boolean; release_number: boolean };
     versions: VersionRow[];
 };
 
@@ -105,6 +106,10 @@ export type ReceiptSummary = {
 /** What the signed-in person may do to the version now (DocumentVersionPolicy). */
 export type VersionAbilities = {
     edit: boolean;
+    schedule_review: boolean;
+    translate: boolean;
+    manage_external_review: boolean;
+    start_external_review: boolean;
     submit: boolean;
     sign: boolean;
     request_changes: boolean;
@@ -133,6 +138,7 @@ export type VersionDetail = {
     effective_at: string | null;
     superseded_at: string | null;
     review_due_at: string | null;
+    review_reminder_days: number;
     scheduled_effective_at: string | null;
     review_round: number;
     has_file: boolean;

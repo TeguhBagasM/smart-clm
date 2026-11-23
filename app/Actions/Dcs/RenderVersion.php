@@ -128,7 +128,7 @@ class RenderVersion
         if ($content->flow_mode === 'builder' && $content->flow_steps !== []) {
             return [
                 'mode' => 'builder',
-                'steps' => $content->flow_steps,
+                'steps' => $content->printableFlowSteps(),
                 ...($content->flow_lanes === [] ? [] : ['lanes' => $content->flow_lanes]),
                 'displayStyle' => $content->flow_display_style,
             ];

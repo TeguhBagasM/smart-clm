@@ -46,4 +46,15 @@ class VersionContent extends Model
     {
         return ['flow_lanes' => 'array', 'flow_steps' => 'array', 'render_layout' => 'array', 'draft_revision' => 'integer'];
     }
+
+    /**
+     * The flow steps as the PDF engine needs them: a step added on the canvas and left without
+     * text has none saved, and the engine draws every step's text.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function printableFlowSteps(): array
+    {
+        return array_map(fn (array $step): array => [...$step, 'text' => (string) ($step['text'] ?? '')], $this->flow_steps ?? []);
+    }
 }

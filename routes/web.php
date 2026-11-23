@@ -14,14 +14,21 @@ use App\Http\Controllers\Documents\Config\NumberingConfigController;
 use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Documents\DocumentCreateController;
 use App\Http\Controllers\Documents\DocumentDraftController;
+use App\Http\Controllers\Documents\DocumentNumberController;
+use App\Http\Controllers\Documents\DocumentRevisionController;
 use App\Http\Controllers\Documents\DocumentTimelineController;
+use App\Http\Controllers\Documents\ExternalReviewPageController;
 use App\Http\Controllers\Documents\TaskQueueController;
 use App\Http\Controllers\Documents\VersionCommentController;
 use App\Http\Controllers\Documents\VersionDistributionController;
+use App\Http\Controllers\Documents\VersionExternalReviewController;
 use App\Http\Controllers\Documents\VersionFileController;
 use App\Http\Controllers\Documents\VersionReleaseController;
+use App\Http\Controllers\Documents\VersionReviewScheduleController;
 use App\Http\Controllers\Documents\VersionSignerController;
+use App\Http\Controllers\Documents\VersionTranslationController;
 use App\Http\Controllers\Documents\VersionWorkflowController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MasterData\DocumentTypeController;
 use App\Http\Controllers\MasterData\EmployeeController;
 use App\Http\Controllers\MasterData\FormOptionsController;
@@ -33,6 +40,7 @@ use App\Http\Controllers\MasterData\PartnerController;
 use App\Http\Controllers\MasterData\PartnerGroupController;
 use App\Http\Controllers\MasterData\VendorController;
 use App\Http\Controllers\ModulePlaceholderController;
+use App\Http\Middleware\ProtectReviewLink;
 use App\Models\AiTools\DocumentComparison;
 use App\Models\Dcs\Document;
 use App\Models\MasterData\Employee;
@@ -41,7 +49,14 @@ use App\Support\Navigation\NavigationMenu;
 use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/dashboard')->name('home');
+Route::get('/', HomeController::class)->name('home');
+
+// Outside parties open their review link without an account; the token is the credential.
+Route::prefix('tinjau/dcs/{token}')->middleware(['throttle:60,1', ProtectReviewLink::class])->where(['token' => '[A-Za-z0-9]+'])->name('external-review.')->group(function () {
+    Route::get('/', [ExternalReviewPageController::class, 'show'])->name('show');
+    Route::post('komentar', [ExternalReviewPageController::class, 'comment'])->name('comment');
+    Route::post('setuju', [ExternalReviewPageController::class, 'approve'])->name('approve');
+});
 
 // `{record}` of a master data route is the row of the list named by `{list}` or by the first path
 // segment after master-data (document-types, partner-groups, partners, employees, vendors). Another
@@ -149,6 +164,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('documents/{document:uuid}')->scopeBindings()->group(function () {
         Route::get('/', [DocumentController::class, 'show'])->name('documents.show');
         Route::get('timeline', [DocumentTimelineController::class, 'index'])->name('documents.timeline');
+        Route::post('versions', [DocumentRevisionController::class, 'store'])->middleware('can:'.Permission::DcsEdit->value)->name('documents.versions.store');
+        Route::post('release-number', [DocumentNumberController::class, 'release'])->middleware('can:'.Permission::DcsRelease->value)->name('documents.release-number');
         Route::get('versions/{version:uuid}/file', [VersionFileController::class, 'show'])->name('documents.versions.file');
 
         Route::prefix('versions/{version:uuid}')->name('documents.versions.')->group(function () {
@@ -157,6 +174,11 @@ Route::middleware(['auth'])->group(function () {
                 Route::patch('draft', [DocumentDraftController::class, 'update'])->name('draft.update');
                 Route::post('render', [DocumentDraftController::class, 'render'])->name('render');
                 Route::post('file', [DocumentDraftController::class, 'uploadFile'])->name('upload');
+                Route::put('review-schedule', [VersionReviewScheduleController::class, 'update'])->name('review-schedule');
+                Route::post('external-review', [VersionExternalReviewController::class, 'enable'])->name('external-review.enable');
+                Route::post('external-review/disable', [VersionExternalReviewController::class, 'disable'])->name('external-review.disable');
+                Route::post('external-review/unlock', [VersionExternalReviewController::class, 'unlock'])->name('external-review.unlock');
+                Route::post('translate', [VersionTranslationController::class, 'store'])->name('translate');
             });
 
             Route::post('submit', [VersionWorkflowController::class, 'submit'])->name('submit');

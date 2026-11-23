@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, usePoll } from '@inertiajs/vue3';
 import DocumentController from '@/actions/App/Http/Controllers/Documents/DocumentController';
+import DocumentActions from '@/components/documents/actions/DocumentActions.vue';
+import ExternalReviewPanel from '@/components/documents/actions/ExternalReviewPanel.vue';
 import VersionActions from '@/components/documents/actions/VersionActions.vue';
 import DocumentHeader from '@/components/documents/DocumentHeader.vue';
 import ReceiptSummary from '@/components/documents/ReceiptSummary.vue';
@@ -42,7 +44,9 @@ usePoll(15000, { only: ['document', 'version', 'recent_events'] });
     <Head :title="document.title" />
 
     <div class="flex flex-col gap-6 p-4 md:p-6">
-        <DocumentHeader :document="document" show-history-link />
+        <DocumentHeader :document="document" show-history-link>
+            <DocumentActions :document="document" />
+        </DocumentHeader>
 
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
             <div v-if="version" class="flex min-w-0 flex-col gap-6">
@@ -72,6 +76,15 @@ usePoll(15000, { only: ['document', 'version', 'recent_events'] });
                 />
                 <template v-if="version">
                     <VersionFacts :version="version" />
+                    <ExternalReviewPanel
+                        v-if="
+                            version.can.manage_external_review &&
+                            (version.external_review ||
+                                version.can.start_external_review)
+                        "
+                        :document-id="document.id"
+                        :version="version"
+                    />
                     <SignatureRoster
                         :roster="version.roster"
                         :status="version.status"

@@ -41,6 +41,7 @@ class VersionDetailResource extends JsonResource
             'effective_at' => ApiDate::format($this->effective_at),
             'superseded_at' => ApiDate::format($this->superseded_at),
             'review_due_at' => ApiDate::format($this->review_due_at),
+            'review_reminder_days' => $this->review_reminder_days,
             'scheduled_effective_at' => ApiDate::format($this->scheduled_effective_at),
             'review_round' => $this->review_round,
             'has_file' => $this->currentRendition() !== null,
@@ -62,6 +63,10 @@ class VersionDetailResource extends JsonResource
             'receipts' => $this->receipts(),
             'can' => [
                 'edit' => $user->can('edit', $this->resource),
+                'schedule_review' => $user->can('scheduleReview', $this->resource),
+                'translate' => $user->can('translate', $this->resource),
+                'manage_external_review' => $user->can('manageExternalReview', $this->resource),
+                'start_external_review' => $user->can('startExternalReview', $this->resource),
                 'submit' => $user->can('submit', $this->resource),
                 'sign' => $user->can('sign', $this->resource),
                 'request_changes' => $user->can('requestChanges', $this->resource),
