@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Documents\Concerns;
 
 use App\Support\Dcs\DcsException;
+use App\Support\Dcs\DraftNotReady;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -21,6 +22,10 @@ trait RunsDcsActions
         try {
             $result = $work();
             Inertia::flash('toast', ['type' => 'success', 'message' => $success]);
+        } catch (DraftNotReady $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Dokumen belum bisa disusun. Lihat daftar yang perlu diperbaiki.']);
+
+            return back()->withErrors(collect($e->problems)->mapWithKeys(fn (string $problem, int $index): array => ["compose.{$index}" => $problem])->all());
         } catch (DcsException $e) {
             Inertia::flash('toast', ['type' => 'error', 'message' => $e->getMessage()]);
         }

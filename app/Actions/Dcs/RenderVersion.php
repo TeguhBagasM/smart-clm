@@ -16,6 +16,7 @@ use App\Models\Dcs\VersionStep;
 use App\Models\User;
 use App\Support\Dcs\ApiDate;
 use App\Support\Dcs\DcsException;
+use App\Support\Dcs\DraftNotReady;
 use App\Support\Dcs\Header\HeaderField;
 use App\Support\Dcs\Header\HeaderLayout;
 use App\Support\Dcs\Pdf\PdfEngine;
@@ -37,6 +38,7 @@ class RenderVersion
         private PdfEngine $pdfEngine,
         private StoreRendition $storeRendition,
         private RecordDocumentEvent $recordDocumentEvent,
+        private CheckDraftForCompose $checkDraftForCompose,
     ) {}
 
     /**
@@ -47,13 +49,21 @@ class RenderVersion
         $version->load(['document.type', 'document.department', 'document.tenant.dcsSettings']);
         $content = $version->content()->first() ?? throw DcsException::conflict('Konten dokumen belum disusun.');
 
+        $problems = $this->checkDraftForCompose->handle($version, $content);
+
+        if ($problems !== []) {
+            throw new DraftNotReady($problems);
+        }
+
         try {
             $input = $this->engineInput($version, $content);
             $composed = $this->pdfEngine->compose($input);
         } catch (PdfEngineException $e) {
             report($e);
 
-            throw DcsException::serverError('Gagal menyusun dokumen.');
+            throw DcsException::serverError(preg_match('/WinAnsi cannot encode "(.+?)"/u', $e->getMessage(), $found) === 1
+                ? "Dokumen belum bisa disusun: karakter \"{$found[1]}\" tidak bisa dicetak ke PDF. Cari dan ganti dengan huruf atau tanda baca biasa (periksa juga nama dan alamat perusahaan di pengaturan)."
+                : 'Gagal menyusun dokumen.');
         }
 
         return DB::transaction(function () use ($actor, $version, $content, $composed, $input): Rendition {

@@ -6,6 +6,7 @@ import DocumentController from '@/actions/App/Http/Controllers/Documents/Documen
 import DocumentDraftController from '@/actions/App/Http/Controllers/Documents/DocumentDraftController';
 import VersionWorkflowController from '@/actions/App/Http/Controllers/Documents/VersionWorkflowController';
 import ActionDialog from '@/components/documents/actions/ActionDialog.vue';
+import ComposeProblems from '@/components/documents/wizard/steps/ComposeProblems.vue';
 import { steps } from '@/components/documents/wizard/steps';
 import { Button } from '@/components/ui/button';
 import { useWizard } from '@/composables/useDraftWizard';
@@ -87,6 +88,7 @@ async function compose(): Promise<void> {
                           : 'Susun PDF'
                 }}
             </Button>
+            <ComposeProblems />
         </div>
 
         <div class="flex flex-col gap-2 rounded-lg border p-4">

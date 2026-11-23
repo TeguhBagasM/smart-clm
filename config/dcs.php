@@ -75,4 +75,24 @@ return [
         'disk' => env('DCS_LEGACY_DISK', 'legacy'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Flow Symbol Names
+    |--------------------------------------------------------------------------
+    |
+    | How a diagram step is called in messages to the author.
+    |
+    */
+
+    'flow_symbol_labels' => [
+        'start' => 'Mulai / Selesai',
+        'process' => 'Proses',
+        'decision' => 'Keputusan',
+        'end' => 'Selesai',
+        'document' => 'Dokumen',
+        'data' => 'Data',
+        'predefined' => 'Proses terdefinisi',
+        'connector' => 'Penghubung',
+    ],
+
 ];
