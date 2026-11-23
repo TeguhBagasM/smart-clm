@@ -2,6 +2,7 @@
 
 namespace App\Support\Dcs\Pdf\Php\Compose;
 
+use App\Support\Dcs\Pdf\Php\Draw\PageCanvas;
 use App\Support\Dcs\Pdf\Php\Fonts\StandardFont;
 
 /**
@@ -53,6 +54,38 @@ final class FlowPainter
         } else {
             $this->singleColumn($ordered, $font);
         }
+    }
+
+    /**
+     * A diagram that was uploaded as a picture: the same titled bar and blue frame as the one drawn
+     * from the steps, with the picture centred inside, never larger than the frame.
+     */
+    public function image(string $bytes, string $mimeType): void
+    {
+        $l = $this->doc->layout;
+        $page = $this->doc->addPage();
+        $this->titleBar($page);
+
+        $image = $this->doc->images->embed($this->doc->file, $bytes, $mimeType);
+        $padding = 8;
+        $top = $l->contentTopY - 40;
+        $scale = min(($l->contentW - 2 * $padding) / $image->width, ($top - ($l->mBottom + 20) - 2 * $padding) / $image->height, 1);
+        [$w, $h] = [$image->width * $scale, $image->height * $scale];
+
+        $page->rect($l->mLeft, $top - $h - 2 * $padding, $l->contentW, $h + 2 * $padding, null, self::BLUE, 1);
+        $page->drawImage($image, $l->mLeft + ($l->contentW - $w) / 2, $top - $padding - $h, $w, $h);
+    }
+
+    /** The bar above a diagram: "<TITLE> - DIAGRAM ALIR" and the document number. */
+    private function titleBar(PageCanvas $page): void
+    {
+        $l = $this->doc->layout;
+        $bold = $this->doc->bodyBold;
+
+        $page->rect($l->mLeft, $l->contentTopY - 40, $l->contentW, 40, self::BLUE_FILL, self::BLUE, 1);
+        $head = TextFlow::wrap(mb_strtoupper($this->title).' - DIAGRAM ALIR', $bold, 11, $l->contentW - 12)[0] ?? '';
+        $page->text($head, $bold, 11, $l->mLeft + 6, $l->contentTopY - 16, [0, 0, 0]);
+        $page->text($this->number, $bold, 11, $l->mLeft + 6, $l->contentTopY - 33, [0, 0, 0]);
     }
 
     /** @param  list<array<string, mixed>>  $ordered */
@@ -181,10 +214,7 @@ final class FlowPainter
         $l = $this->doc->layout;
         $bold = $this->doc->bodyBold;
         $page = $this->doc->addPage();
-        $page->rect($l->mLeft, $l->contentTopY - 40, $l->contentW, 40, self::BLUE_FILL, self::BLUE, 1);
-        $head = TextFlow::wrap(mb_strtoupper($this->title).' - DIAGRAM ALIR', $bold, 11, $l->contentW - 12)[0] ?? '';
-        $page->text($head, $bold, 11, $l->mLeft + 6, $l->contentTopY - 16, [0, 0, 0]);
-        $page->text($this->number, $bold, 11, $l->mLeft + 6, $l->contentTopY - 33, [0, 0, 0]);
+        $this->titleBar($page);
 
         $hasLaneHeaders = count($lanes) > 1;
         $effectiveLanes = $hasLaneHeaders ? $lanes : ['_'];

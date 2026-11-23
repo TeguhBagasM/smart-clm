@@ -17,6 +17,10 @@ beforeEach(function () {
     }
 });
 
+// "flow-image" is a deliberate deviation from Node: an uploaded diagram now sits in the same titled
+// frame as one drawn from steps (see the test at the end of this file); its golden is the old layout.
+$parityCases = array_diff_key(PdfGolden::composeCases(), ['flow-image' => true]);
+
 it('has golden compose cases to compare against', function () {
     expect(PdfGolden::composeCases())->not->toBeEmpty();
 });
@@ -31,7 +35,7 @@ it('composes the same document as the Node engine: pages, text and every pixel',
         ->and(PdfParity::pages($composed['pdf']))->toBe(PdfParity::pages($golden))
         ->and(PdfParity::text($composed['pdf']))->toBe(PdfParity::text($golden))
         ->and($diff['differingPixels'])->toBe(0, "page {$diff['worstPage']} differs (max channel {$diff['maxChannelDifference']})");
-})->with(PdfGolden::composeCases());
+})->with($parityCases);
 
 it('hands back the same sheet page, signature layout and header cells as the Node engine', function (string $id) {
     $composed = PdfGolden::engine()->compose(PdfGolden::composeInput($id));
@@ -43,7 +47,7 @@ it('hands back the same sheet page, signature layout and header cells as the Nod
     expect($composed['signatureSheetPageIndex'])->toBe($golden['signatureSheetPageIndex'])
         ->and($round($composed['sigLayout']))->toEqual($round($golden['sigLayout']))
         ->and($round($composed['headerLayout'] ?? null))->toEqual($round($golden['headerLayout']));
-})->with(PdfGolden::composeCases());
+})->with($parityCases);
 
 it('draws the signature into the sheet it composed, like the Node engine did', function () {
     $composed = PdfGolden::engine()->compose(PdfGolden::composeInput('many-signers'));
@@ -92,4 +96,18 @@ it('can edit what it wrote: two signatures in a row land as the Node engine drew
 
     expect(PdfParity::compare(PdfGolden::pdf('sign', 'many-signers-step2'), $two)['differingPixels'])->toBe(0)
         ->and(PdfParity::text($two))->toContain($first['signerName'])->toContain($second['signerName']);
+});
+
+it('draws an uploaded flow picture in the same titled frame as a diagram made from steps', function () {
+    $input = PdfGolden::composeInput('flow-image');
+    $text = PdfParity::text(PdfGolden::engine()->compose($input)['pdf']);
+
+    expect($text)->toContain('ALUR DARI GAMBAR - DIAGRAM ALIR')->toContain($input['documentNumber'])->not->toContain('Diagram Alir');
+});
+
+it('keeps the picture inside the frame whatever its size', function () {
+    $input = PdfGolden::composeInput('flow-image');
+    $pages = PdfParity::pages(PdfGolden::engine()->compose($input)['pdf']);
+
+    expect($pages)->toBeLessThanOrEqual(PdfParity::pages(PdfGolden::pdf('compose', 'flow-image')));
 });

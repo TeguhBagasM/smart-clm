@@ -122,17 +122,11 @@ final class PdfComposer
     private function flow(array $input, Page $doc): void
     {
         $flow = $input['flow'] ?? ['mode' => 'none'];
-        $l = $doc->layout;
 
         if (($flow['mode'] ?? null) === 'builder' && ! empty($flow['steps'])) {
             (new FlowPainter($doc, $input['title'], $input['documentNumber']))->draw($flow['steps'], $doc->bodyRegular, $doc->bodyBold, $flow['lanes'] ?? null, $flow['displayStyle'] ?? null);
         } elseif (($flow['mode'] ?? null) === 'image') {
-            $page = $doc->addPage();
-            $page->text('Diagram Alir', $doc->bold, 14, $l->mLeft, $l->contentTopY, [0.16, 0.32, 0.75]);
-            $image = $doc->images->embed($doc->file, $flow['image'], $flow['mimeType']);
-            $scale = min($l->contentW / $image->width, ($l->contentTopY - $l->mBottom - 30) / $image->height, 1);
-            [$w, $h] = [$image->width * $scale, $image->height * $scale];
-            $page->drawImage($image, (Layout::PAGE_W - $w) / 2, $l->contentTopY - 30 - $h, $w, $h);
+            (new FlowPainter($doc, $input['title'], $input['documentNumber']))->image($flow['image'], $flow['mimeType']);
         }
     }
 
